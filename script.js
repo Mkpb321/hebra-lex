@@ -16,6 +16,10 @@ const state = {
   lessons: [],
   selectedLessons: new Set(),
   query: '',
+  options: {
+    fuzzyMatching: true,
+    partialMatches: true,
+  },
 };
 
 const els = {
@@ -26,6 +30,8 @@ const els = {
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
   selectNoneBtn: document.getElementById('selectNoneBtn'),
+  fuzzyToggle: document.getElementById('fuzzyToggle'),
+  partialToggle: document.getElementById('partialToggle'),
   lessonList: document.getElementById('lessonList'),
   resultsHost: document.getElementById('resultsHost'),
 };
@@ -115,7 +121,7 @@ function similarity(a, b) {
   return 1 - distance / Math.max(left.length, right.length);
 }
 
-function scoreCandidate(query, candidate) {
+function scoreCandidate(query, candidate, options = state.options) {
   const q = normalize(query);
   const c = normalize(candidate);
   if (!q || !c) return 0;
@@ -127,7 +133,7 @@ function scoreCandidate(query, candidate) {
   if (c === q) best = Math.max(best, 120);
   if (c.startsWith(q)) best = Math.max(best, 108);
   if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 104);
-  if (q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
+  if (options.partialMatches && q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
 
   if (qWords.length > 1) {
     let exact = 0;
@@ -135,9 +141,17 @@ function scoreCandidate(query, candidate) {
     let loose = 0;
 
     for (const qWord of qWords) {
-      if (cWords.some((cWord) => cWord === qWord)) exact += 1;
-      else if (cWords.some((cWord) => cWord.startsWith(qWord))) prefix += 1;
-      else if (qWord.length >= 4 && cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) loose += 1;
+      if (cWords.some((cWord) => cWord === qWord)) {
+        exact += 1;
+      } else if (cWords.some((cWord) => cWord.startsWith(qWord))) {
+        prefix += 1;
+      } else if (
+        options.partialMatches &&
+        qWord.length >= 4 &&
+        cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))
+      ) {
+        loose += 1;
+      }
     }
 
     const coverage = (exact + (prefix * 0.78) + (loose * 0.45)) / qWords.length;
@@ -146,20 +160,34 @@ function scoreCandidate(query, candidate) {
     const qWord = qWords[0] || q;
     if (cWords.some((cWord) => cWord === qWord)) best = Math.max(best, 110);
     if (cWords.some((cWord) => cWord.startsWith(qWord))) best = Math.max(best, 102);
-    if (qWord.length >= 4 && cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 4)) best = Math.max(best, 94);
-    if (qWord.length >= 4 && cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) best = Math.max(best, 84);
+    if (
+      options.partialMatches &&
+      qWord.length >= 4 &&
+      cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 4)
+    ) {
+      best = Math.max(best, 94);
+    }
+    if (
+      options.partialMatches &&
+      qWord.length >= 4 &&
+      cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))
+    ) {
+      best = Math.max(best, 84);
+    }
   }
 
-  const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
-  let bestSimilarity = 0;
-  for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
+  if (options.fuzzyMatching) {
+    const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
+    let bestSimilarity = 0;
+    for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
 
-  if (bestSimilarity >= 0.97) best = Math.max(best, 100);
-  else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
-  else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
-  else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
-  else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
-  else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+    if (bestSimilarity >= 0.97) best = Math.max(best, 100);
+    else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
+    else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
+    else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
+    else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
+    else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+  }
 
   return Math.round(best * 100) / 100;
 }
@@ -190,7 +218,7 @@ function scoreEntry(entry, query) {
   let secondarySum = 0;
 
   for (const candidate of entry.__search.Deutsch) {
-    result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate));
+    result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate, state.options));
   }
 
   for (const field of SECONDARY_FIELDS) {
@@ -199,7 +227,7 @@ function scoreEntry(entry, query) {
       const normalizedCandidate = normalize(candidate);
       if (!normalizedCandidate) continue;
       if (query.trim().length > 2 && normalizedCandidate.length < 2) continue;
-      bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate));
+      bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate, state.options));
     }
     const weighted = bestFieldScore * SECONDARY_WEIGHTS[field];
     result.secondary = Math.max(result.secondary, weighted);
@@ -271,8 +299,8 @@ function highlightDeutsch(text, query) {
       const shouldMark =
         normalizedPart === normalizedQuery ||
         normalizedPart.startsWith(normalizedQuery) ||
-        (normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
-        similarity(normalizedPart, normalizedQuery) >= 0.84;
+        (state.options.partialMatches && normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
+        (state.options.fuzzyMatching && similarity(normalizedPart, normalizedQuery) >= 0.84);
 
       return shouldMark ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part);
     })
@@ -294,6 +322,11 @@ function updateFilterButtonLabel() {
   } else {
     els.filterButton.textContent = `Kapitel (${selected})`;
   }
+}
+
+function syncOptionUi() {
+  els.fuzzyToggle.checked = state.options.fuzzyMatching;
+  els.partialToggle.checked = state.options.partialMatches;
 }
 
 function renderLessonList() {
@@ -373,6 +406,7 @@ async function loadData() {
     state.entries = prepareEntries(rows);
     state.lessons = getSortedLessons(rows);
     state.selectedLessons = new Set(state.lessons);
+    syncOptionUi();
     renderLessonList();
     render();
   } catch (error) {
@@ -415,6 +449,18 @@ els.selectNoneBtn.addEventListener('click', () => {
   debouncedRender.cancel();
   state.selectedLessons = new Set();
   renderLessonList();
+  render();
+});
+
+els.fuzzyToggle.addEventListener('change', (event) => {
+  debouncedRender.cancel();
+  state.options.fuzzyMatching = event.target.checked;
+  render();
+});
+
+els.partialToggle.addEventListener('change', (event) => {
+  debouncedRender.cancel();
+  state.options.partialMatches = event.target.checked;
   render();
 });
 

@@ -179,11 +179,29 @@ body {
   background: #fbfdff;
 }
 
-.lesson-list {
+.dropdown-section {
   display: grid;
-  gap: 6px;
+  gap: 8px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #edf2f7;
 }
 
+.dropdown-section-lessons {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.dropdown-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.toggle-option,
 .lesson-option {
   display: flex;
   align-items: center;
@@ -195,12 +213,19 @@ body {
   user-select: none;
 }
 
+.toggle-option:hover,
 .lesson-option:hover {
   background: var(--accent-soft);
 }
 
+.toggle-option input,
 .lesson-option input {
   margin: 0;
+}
+
+.lesson-list {
+  display: grid;
+  gap: 6px;
 }
 
 .list {
@@ -239,7 +264,7 @@ body {
   direction: rtl;
   text-align: right;
   font-family: "Times New Roman", Times, Georgia, serif;
-  font-size: 24px;
+  font-size: 26px;
   color: #17283d;
   line-height: 1.1;
   white-space: nowrap;
@@ -288,7 +313,7 @@ mark {
   }
 
   .hebrew {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .deutsch {
