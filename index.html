@@ -6,20 +6,16 @@
   <title>Hebräisch Vokabelsuche</title>
   <style>
     :root {
-      --bg: #f4f7fb;
-      --panel: #ffffff;
-      --panel-soft: #f8fafc;
-      --text: #112033;
-      --muted: #637389;
-      --line: #d7e0ea;
-      --line-strong: #c3cfdd;
-      --accent: #1f5eff;
-      --accent-soft: rgba(31, 94, 255, 0.10);
-      --shadow: 0 12px 36px rgba(18, 35, 61, 0.08);
-      --radius-xl: 22px;
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --max-width: 1140px;
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --text: #122033;
+      --muted: #5f7087;
+      --line: #d8e1ec;
+      --line-strong: #c8d4e3;
+      --accent: #1858e6;
+      --accent-soft: rgba(24, 88, 230, 0.08);
+      --shadow: 0 8px 24px rgba(16, 31, 50, 0.05);
+      --row-hover: #f8fbff;
     }
 
     * { box-sizing: border-box; }
@@ -27,540 +23,337 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      background: var(--bg);
       color: var(--text);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     body {
       min-height: 100vh;
-      line-height: 1.45;
+      line-height: 1.35;
     }
 
-    .shell {
-      width: min(calc(100% - 32px), var(--max-width));
+    .app {
+      width: min(100%, 1120px);
       margin: 0 auto;
-      padding: 28px 0 48px;
+      padding: 12px;
     }
 
-    .hero {
+    .topbar {
       position: sticky;
       top: 0;
       z-index: 20;
-      padding-top: 6px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(180deg, rgba(244, 247, 251, 0.95) 0%, rgba(244, 247, 251, 0.84) 78%, rgba(244, 247, 251, 0) 100%);
-    }
-
-    .hero-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(215, 224, 234, 0.95);
-      box-shadow: var(--shadow);
-      border-radius: 26px;
-      padding: 22px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
+      display: flex;
       gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.79rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
+      align-items: stretch;
+      padding: 10px 0 12px;
+      background: linear-gradient(180deg, rgba(246,248,251,0.98) 0%, rgba(246,248,251,0.94) 80%, rgba(246,248,251,0) 100%);
+      backdrop-filter: blur(10px);
     }
 
-    h1 {
-      margin: 14px 0 8px;
-      font-size: clamp(1.8rem, 2.8vw, 2.9rem);
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-    }
-
-    .subline {
-      margin: 0;
-      color: var(--muted);
-      max-width: 74ch;
-      font-size: 1rem;
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 14px;
-      margin-top: 20px;
-      align-items: center;
-    }
-
-    .search-wrap {
-      position: relative;
+    .search {
+      flex: 1 1 auto;
       display: flex;
       align-items: center;
       gap: 10px;
-      min-height: 62px;
+      min-height: 48px;
+      padding: 0 12px;
       border: 1px solid var(--line-strong);
-      background: #fff;
-      border-radius: 18px;
-      padding: 0 16px 0 14px;
-      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
     }
 
-    .search-wrap:focus-within {
-      border-color: rgba(31, 94, 255, 0.55);
-      box-shadow: 0 0 0 5px rgba(31, 94, 255, 0.10);
-      transform: translateY(-1px);
+    .search:focus-within {
+      border-color: rgba(24, 88, 230, 0.5);
+      box-shadow: 0 0 0 4px rgba(24, 88, 230, 0.08);
     }
 
-    .search-icon {
-      flex: 0 0 auto;
-      width: 20px;
-      height: 20px;
+    .search svg {
+      width: 18px;
+      height: 18px;
       color: var(--muted);
+      flex: 0 0 auto;
     }
 
     #searchInput {
       flex: 1 1 auto;
-      width: 100%;
       min-width: 0;
       border: 0;
-      outline: none;
+      outline: 0;
       background: transparent;
+      font: inherit;
+      font-size: 15px;
       color: var(--text);
-      font-size: 1.06rem;
-      font-weight: 500;
     }
 
     #searchInput::placeholder {
-      color: #91a0b5;
+      color: #8b9ab0;
     }
 
     .clear-btn {
       display: none;
-      flex: 0 0 auto;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
+      width: 28px;
+      height: 28px;
       border: 0;
       border-radius: 999px;
-      background: #eef3fa;
+      background: #eef3f9;
       color: var(--muted);
       cursor: pointer;
-      transition: background 140ms ease, color 140ms ease;
+      font: inherit;
+      font-size: 18px;
+      line-height: 1;
     }
 
-    .clear-btn:hover {
-      background: #e2eaf5;
-      color: var(--text);
+    .search.has-value .clear-btn {
+      display: inline-grid;
+      place-items: center;
     }
 
-    .search-wrap.has-value .clear-btn {
-      display: inline-flex;
-    }
-
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    .meta-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 44px;
-      padding: 0 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.92);
-      color: var(--muted);
-      font-size: 0.92rem;
-      white-space: nowrap;
-    }
-
-    .meta-pill strong {
-      color: var(--text);
-      font-weight: 700;
-    }
-
-
-
-    .filters {
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%);
-    }
-
-    .filters-head {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px 14px;
-    }
-
-    .filters-title {
-      margin: 0;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .filters-subtitle {
-      margin: 2px 0 0;
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .filter-actions {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .filter-wrap {
+      position: relative;
+      flex: 0 0 auto;
     }
 
     .filter-btn {
-      appearance: none;
-      border: 1px solid var(--line-strong);
-      background: #fff;
-      color: var(--text);
-      border-radius: 12px;
-      padding: 8px 12px;
-      font: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-    }
-
-    .filter-btn:hover {
-      border-color: rgba(31, 94, 255, 0.35);
-      background: #f8fbff;
-    }
-
-    .filter-btn:focus-visible {
-      outline: none;
-      border-color: rgba(31, 94, 255, 0.55);
-      box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.10);
-    }
-
-    .filter-btn:active {
-      transform: translateY(1px);
-    }
-
-    .lesson-picker {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .lesson-chip {
-      appearance: none;
-      border: 1px solid #d9e4f4;
-      background: #fff;
-      color: #29476b;
-      border-radius: 999px;
-      min-height: 40px;
-      padding: 0 14px;
-      font: inherit;
-      font-size: 0.9rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: border-color 140ms ease, background 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
-    }
-
-    .lesson-chip:hover {
-      border-color: rgba(31, 94, 255, 0.35);
-      background: #f7faff;
-      color: #163d77;
-    }
-
-    .lesson-chip:focus-visible {
-      outline: none;
-      border-color: rgba(31, 94, 255, 0.55);
-      box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.10);
-    }
-
-    .lesson-chip.is-active {
-      border-color: rgba(31, 94, 255, 0.22);
-      background: rgba(31, 94, 255, 0.10);
-      color: var(--accent);
-      box-shadow: inset 0 0 0 1px rgba(31, 94, 255, 0.06);
-    }
-
-    .info-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .content {
-      display: grid;
-      gap: 18px;
-    }
-
-    .status-card,
-    .empty-card,
-    .error-card {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px 18px;
-      box-shadow: 0 8px 24px rgba(17, 32, 51, 0.04);
-    }
-
-    .status-card {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 10px 16px;
-      align-items: center;
-    }
-
-    .status-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .result-card {
-      display: grid;
-      gap: 16px;
-      padding: 18px 18px 16px;
-      border-radius: var(--radius-lg);
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-      border: 1px solid rgba(215, 224, 234, 0.95);
-      box-shadow: 0 14px 34px rgba(17, 32, 51, 0.05);
-      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
-    }
-
-    .result-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(31, 94, 255, 0.18);
-      box-shadow: 0 16px 38px rgba(17, 32, 51, 0.08);
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .lektion-badge {
       display: inline-flex;
       align-items: center;
-      min-height: 30px;
-      padding: 0 10px;
-      border-radius: 999px;
-      background: #f2f6fd;
-      border: 1px solid #d9e4f4;
-      color: #29476b;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
       white-space: nowrap;
     }
 
-    .result-type {
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .filter-btn:hover,
+    .filter-btn[aria-expanded="true"] {
+      border-color: rgba(24, 88, 230, 0.35);
+      background: #fbfdff;
     }
 
-    .deutsch {
-      margin: 0;
-      font-size: 1.16rem;
-      font-weight: 700;
-      letter-spacing: -0.015em;
+    .dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: min(360px, calc(100vw - 24px));
+      max-height: min(65vh, 560px);
+      overflow: auto;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: 0 18px 44px rgba(16, 31, 50, 0.12);
+      display: none;
+    }
+
+    .dropdown.is-open {
+      display: block;
+    }
+
+    .dropdown-tools {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .tool-btn {
+      min-height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
       color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .tool-btn:hover {
+      border-color: rgba(24, 88, 230, 0.35);
+      background: #fbfdff;
+    }
+
+    .lesson-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .lesson-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 36px;
+      padding: 0 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .lesson-option:hover {
+      background: var(--accent-soft);
+    }
+
+    .lesson-option input {
+      margin: 0;
+    }
+
+    .list {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 84px minmax(150px, 240px) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row:hover {
+      background: var(--row-hover);
+    }
+
+    .lesson {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .hebrew {
-      margin: 0;
-      font-size: clamp(2rem, 3vw, 2.7rem);
-      line-height: 1.1;
-      text-align: right;
       direction: rtl;
-      color: #17283d;
+      text-align: right;
       font-family: "Times New Roman", Times, Georgia, serif;
-      letter-spacing: 0.01em;
+      font-size: 24px;
+      color: #17283d;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .deutsch {
+      min-width: 0;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     mark {
-      background: rgba(31, 94, 255, 0.12);
+      background: rgba(24, 88, 230, 0.12);
       color: inherit;
       padding: 0.02em 0.16em;
-      border-radius: 0.24em;
+      border-radius: 0.22em;
     }
 
-    .muted {
+    .plain {
+      padding: 14px;
       color: var(--muted);
+      font-size: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
     }
 
-    .empty-card h2,
-    .error-card h2 {
-      margin: 0 0 8px;
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-    }
-
-    .empty-card p,
-    .error-card p {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .error-card code {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 3px 8px;
-      border-radius: 8px;
-      background: #f2f6fd;
-      border: 1px solid #d9e4f4;
-      font-size: 0.92rem;
-      color: #29476b;
-    }
-
-    @media (max-width: 900px) {
-      .toolbar {
-        grid-template-columns: 1fr;
+    @media (max-width: 760px) {
+      .topbar {
+        gap: 6px;
       }
 
-      .meta {
-        justify-content: flex-start;
+      .filter-btn {
+        padding-inline: 12px;
       }
 
-      .result-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .shell {
-        width: min(calc(100% - 20px), var(--max-width));
-        padding-top: 18px;
-      }
-
-      .hero-card {
-        padding: 18px;
-        border-radius: 22px;
-      }
-
-      .search-wrap {
-        min-height: 58px;
-        padding-right: 12px;
-      }
-
-      .filters {
-        padding: 12px;
-      }
-
-      .filters-head {
-        align-items: flex-start;
-      }
-
-      .filter-actions {
-        width: 100%;
-      }
-
-      .result-card {
-        padding: 16px;
+      .row {
+        grid-template-columns: 70px 110px minmax(0, 1fr);
+        gap: 10px;
+        padding: 9px 10px;
       }
 
       .hebrew {
-        font-size: 1.92rem;
+        font-size: 21px;
+      }
+
+      .deutsch {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 8px;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+      }
+
+      .filter-wrap {
+        width: 100%;
+      }
+
+      .filter-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .dropdown {
+        left: 0;
+        right: 0;
+        width: auto;
+      }
+
+      .row {
+        grid-template-columns: 64px 88px minmax(0, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">Vokabelsuche</div>
-        <h1>Hebräisch–Deutsch Suche</h1>
-        <p class="subline">
-          Fuzzy-Suche mit Gewichtung auf <strong>Deutsch</strong>. Treffer im Feld <strong>Deutsch</strong> stehen immer vor Treffern aus
-          <strong>Infinitiv</strong>, <strong>Nomen</strong>, <strong>Verb</strong>, <strong>Adjektiv</strong> und <strong>Synonyme</strong>.
-        </p>
+  <div class="app">
+    <div class="topbar">
+      <label class="search" id="searchWrap" for="searchInput">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <input id="searchInput" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Deutsch suchen …" aria-label="Vokabel suchen" />
+        <button class="clear-btn" id="clearBtn" type="button" aria-label="Suche löschen">×</button>
+      </label>
 
-        <div class="toolbar">
-          <label class="search-wrap" for="searchInput" id="searchWrap">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <input
-              id="searchInput"
-              type="search"
-              inputmode="search"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="Deutsch suchen, z. B. sagen, Bund, gerecht, verfolgen …"
-              aria-label="Vokabel suchen"
-            />
-            <button class="clear-btn" id="clearBtn" type="button" aria-label="Suche löschen">×</button>
-          </label>
-
-          <div class="meta">
-            <div class="meta-pill"><strong id="entryCount">0</strong> Einträge</div>
-            <div class="meta-pill"><strong id="lessonCount">0 / 0</strong> Lektionen aktiv</div>
-            <div class="meta-pill"><strong id="shownCount">0</strong> sichtbar</div>
+      <div class="filter-wrap">
+        <button class="filter-btn" id="filterButton" type="button" aria-haspopup="true" aria-expanded="false">Kapitel</button>
+        <div class="dropdown" id="dropdown" role="dialog" aria-label="Kapitel auswählen">
+          <div class="dropdown-tools">
+            <button class="tool-btn" id="selectAllBtn" type="button">Alle</button>
+            <button class="tool-btn" id="selectNoneBtn" type="button">Keine</button>
           </div>
-        </div>
-
-
-
-        <section class="filters" aria-label="Lektionen filtern">
-          <div class="filters-head">
-            <div>
-              <p class="filters-title">Kapitel auswählen</p>
-              <p class="filters-subtitle">Standardmäßig sind alle Lektionen aktiv. Die Suche wertet nur Treffer aus den gewählten Kapiteln aus.</p>
-            </div>
-            <div class="filter-actions">
-              <button class="filter-btn" id="selectAllLessonsBtn" type="button">Alle</button>
-              <button class="filter-btn" id="clearLessonsBtn" type="button">Keine</button>
-            </div>
-          </div>
-          <div class="lesson-picker" id="lessonPicker"></div>
-        </section>
-
-        <div class="info-row">
-          <span>Suche <strong>nicht</strong> in Lektion oder Hebräisch.</span>
-          <span>Slash-getrennte Werte werden einzeln bewertet.</span>
-          <span>Hebräisch ist in <strong>Times New Roman</strong>.</span>
+          <div class="lesson-list" id="lessonList"></div>
         </div>
       </div>
-    </header>
+    </div>
 
-    <main class="content">
-      <section class="status-card" aria-live="polite">
-        <p id="statusText">Lade JSON-Datei …</p>
-        <p id="statusMode" class="muted"></p>
-      </section>
-
-      <section id="resultsHost"></section>
-    </main>
+    <div id="resultsHost" class="plain">Lade …</div>
   </div>
 
   <script>
@@ -574,28 +367,25 @@
       Adjektiv: 0.82,
       Synonyme: 0.88
     };
-    const INITIAL_LIMIT = 120;
+    const INITIAL_LIMIT = 180;
 
     const state = {
       entries: [],
-      query: '',
       lessons: [],
-      selectedLessons: new Set()
+      selectedLessons: new Set(),
+      query: ''
     };
 
     const els = {
       searchInput: document.getElementById('searchInput'),
       searchWrap: document.getElementById('searchWrap'),
       clearBtn: document.getElementById('clearBtn'),
-      entryCount: document.getElementById('entryCount'),
-      lessonCount: document.getElementById('lessonCount'),
-      shownCount: document.getElementById('shownCount'),
-      statusText: document.getElementById('statusText'),
-      statusMode: document.getElementById('statusMode'),
-      resultsHost: document.getElementById('resultsHost'),
-      lessonPicker: document.getElementById('lessonPicker'),
-      selectAllLessonsBtn: document.getElementById('selectAllLessonsBtn'),
-      clearLessonsBtn: document.getElementById('clearLessonsBtn')
+      filterButton: document.getElementById('filterButton'),
+      dropdown: document.getElementById('dropdown'),
+      selectAllBtn: document.getElementById('selectAllBtn'),
+      selectNoneBtn: document.getElementById('selectNoneBtn'),
+      lessonList: document.getElementById('lessonList'),
+      resultsHost: document.getElementById('resultsHost')
     };
 
     const collator = new Intl.Collator('de', { sensitivity: 'base', numeric: true });
@@ -662,7 +452,6 @@
     function scoreCandidate(query, candidate) {
       const q = normalize(query);
       const c = normalize(candidate);
-
       if (!q || !c) return 0;
 
       const qWords = splitWords(q);
@@ -680,20 +469,15 @@
         let loose = 0;
 
         for (const qWord of qWords) {
-          if (cWords.some(cWord => cWord === qWord)) {
-            exact += 1;
-          } else if (cWords.some(cWord => cWord.startsWith(qWord))) {
-            prefix += 1;
-          } else if (qWord.length >= 4 && cWords.some(cWord => cWord.includes(qWord) || qWord.includes(cWord))) {
-            loose += 1;
-          }
+          if (cWords.some(cWord => cWord === qWord)) exact += 1;
+          else if (cWords.some(cWord => cWord.startsWith(qWord))) prefix += 1;
+          else if (qWord.length >= 4 && cWords.some(cWord => cWord.includes(qWord) || qWord.includes(cWord))) loose += 1;
         }
 
         const coverage = (exact + (prefix * 0.78) + (loose * 0.45)) / qWords.length;
         best = Math.max(best, 38 + (coverage * 62));
       } else {
         const qWord = qWords[0] || q;
-
         if (cWords.some(cWord => cWord === qWord)) best = Math.max(best, 110);
         if (cWords.some(cWord => cWord.startsWith(qWord))) best = Math.max(best, 102);
         if (qWord.length >= 4 && cWords.some(cWord => qWord.startsWith(cWord) && cWord.length >= 4)) best = Math.max(best, 94);
@@ -702,9 +486,7 @@
 
       const relevantParts = [c, ...cWords.filter(word => word.length >= Math.min(4, q.length))];
       let bestSimilarity = 0;
-      for (const part of relevantParts) {
-        bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
-      }
+      for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
 
       if (bestSimilarity >= 0.97) best = Math.max(best, 100);
       else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
@@ -717,102 +499,40 @@
     }
 
     function prepareFieldValues(value) {
-      return splitSlashValues(value)
-        .map(part => part.trim())
-        .filter(Boolean);
+      return splitSlashValues(value).map(part => part.trim()).filter(Boolean);
     }
-
 
     function getSortedLessons(rows) {
       return [...new Set(rows.map(row => String(row?.Lektion ?? '').trim()).filter(Boolean))]
         .sort((a, b) => Number(a) - Number(b) || collator.compare(a, b));
     }
 
-    function isLessonSelected(lesson) {
-      return state.selectedLessons.has(String(lesson ?? '').trim());
-    }
-
-    function getFilteredEntries() {
-      if (!state.selectedLessons.size) return [];
-      return state.entries.filter(entry => isLessonSelected(entry.Lektion));
-    }
-
-    function renderLessonFilter() {
-      if (!els.lessonPicker) return;
-
-      if (!state.lessons.length) {
-        els.lessonPicker.innerHTML = '';
-        return;
-      }
-
-      els.lessonPicker.innerHTML = state.lessons.map(lesson => {
-        const active = isLessonSelected(lesson);
-        return `<button class="lesson-chip${active ? ' is-active' : ''}" type="button" data-lesson="${escapeHtml(lesson)}" aria-pressed="${active ? 'true' : 'false'}">Lektion ${escapeHtml(lesson)}</button>`;
-      }).join('');
-    }
-
-    function selectAllLessons() {
-      state.selectedLessons = new Set(state.lessons);
-      renderLessonFilter();
-      render();
-    }
-
-    function clearLessons() {
-      state.selectedLessons = new Set();
-      renderLessonFilter();
-      render();
-    }
-
-    function toggleLesson(lesson) {
-      const key = String(lesson ?? '').trim();
-      if (!key) return;
-
-      if (state.selectedLessons.has(key)) {
-        state.selectedLessons.delete(key);
-      } else {
-        state.selectedLessons.add(key);
-      }
-
-      renderLessonFilter();
-      render();
-    }
-
     function prepareEntries(rows) {
       return rows.map((row, index) => {
         const prepared = { ...row, __index: index, __search: {} };
-
         for (const field of SEARCH_FIELDS) {
           prepared.__search[field] = prepareFieldValues(row[field]);
         }
-
         return prepared;
       });
     }
 
     function scoreEntry(entry, query) {
-      const result = {
-        deutsch: 0,
-        secondary: 0,
-        total: 0
-      };
-
+      const result = { deutsch: 0, secondary: 0, total: 0 };
       let secondarySum = 0;
 
       for (const candidate of entry.__search.Deutsch) {
-        const score = scoreCandidate(query, candidate);
-        result.deutsch = Math.max(result.deutsch, score);
+        result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate));
       }
 
       for (const field of SECONDARY_FIELDS) {
         let bestFieldScore = 0;
-
         for (const candidate of entry.__search[field]) {
           const normalizedCandidate = normalize(candidate);
           if (!normalizedCandidate) continue;
           if (query.trim().length > 2 && normalizedCandidate.length < 2) continue;
           bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate));
         }
-
         const weighted = bestFieldScore * SECONDARY_WEIGHTS[field];
         result.secondary = Math.max(result.secondary, weighted);
         secondarySum += weighted;
@@ -831,7 +551,6 @@
     function shouldIncludeMatch(score, query) {
       const normalizedQuery = normalize(query);
       if (!normalizedQuery) return true;
-
       const isShort = normalizedQuery.length <= 2;
       if (score.deutsch >= (isShort ? 90 : 48)) return true;
       if (score.secondary >= (isShort ? 96 : 58)) return true;
@@ -840,26 +559,15 @@
 
     function rankEntries(entries, query) {
       const trimmed = query.trim();
-      if (!trimmed) {
-        return [...entries].sort(defaultSort).slice(0, INITIAL_LIMIT).map(entry => ({
-          entry,
-          score: { deutsch: 0, secondary: 0, total: 0 }
-        }));
-      }
+      if (!trimmed) return [...entries].sort(defaultSort).slice(0, INITIAL_LIMIT).map(entry => ({ entry, score: { deutsch: 0, secondary: 0, total: 0 } }));
 
       return entries
         .map(entry => ({ entry, score: scoreEntry(entry, trimmed) }))
         .filter(item => shouldIncludeMatch(item.score, trimmed))
         .sort((left, right) => {
-          if (right.score.deutsch !== left.score.deutsch) {
-            return right.score.deutsch - left.score.deutsch;
-          }
-          if (right.score.secondary !== left.score.secondary) {
-            return right.score.secondary - left.score.secondary;
-          }
-          if (right.score.total !== left.score.total) {
-            return right.score.total - left.score.total;
-          }
+          if (right.score.deutsch !== left.score.deutsch) return right.score.deutsch - left.score.deutsch;
+          if (right.score.secondary !== left.score.secondary) return right.score.secondary - left.score.secondary;
+          if (right.score.total !== left.score.total) return right.score.total - left.score.total;
           const lessonDiff = Number(left.entry.Lektion || 0) - Number(right.entry.Lektion || 0);
           if (lessonDiff !== 0) return lessonDiff;
           return collator.compare(String(left.entry.Deutsch || ''), String(right.entry.Deutsch || ''));
@@ -880,10 +588,7 @@
       const normalizedQuery = normalize(query);
       if (!normalizedQuery || normalizedQuery.length < 2) return safeText;
 
-      const escapedQuery = normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const originalWords = String(text ?? '').split(/(\s+)/);
-
-      return originalWords.map(part => {
+      return String(text ?? '').split(/(\s+)/).map(part => {
         if (/^\s+$/.test(part)) return part;
         const normalizedPart = normalize(part);
         if (!normalizedPart) return escapeHtml(part);
@@ -898,138 +603,111 @@
       }).join('');
     }
 
-    function renderResults(items, emptyState = null) {
-      if (!items.length) {
-        const title = emptyState?.title || 'Keine Treffer';
-        const text = emptyState?.text || 'Für diese Suche wurde kein ausreichend passender Eintrag gefunden.';
-        els.resultsHost.innerHTML = `
-          <section class="empty-card">
-            <h2>${escapeHtml(title)}</h2>
-            <p>${escapeHtml(text)}</p>
-          </section>
+    function getFilteredEntries() {
+      if (!state.selectedLessons.size) return [];
+      return state.entries.filter(entry => state.selectedLessons.has(String(entry.Lektion ?? '').trim()));
+    }
+
+    function updateFilterButtonLabel() {
+      const total = state.lessons.length;
+      const selected = state.selectedLessons.size;
+      if (selected === total) {
+        els.filterButton.textContent = 'Kapitel';
+      } else if (selected === 0) {
+        els.filterButton.textContent = 'Kapitel (0)';
+      } else {
+        els.filterButton.textContent = `Kapitel (${selected})`;
+      }
+    }
+
+    function renderLessonList() {
+      els.lessonList.innerHTML = state.lessons.map(lesson => {
+        const key = escapeHtml(lesson);
+        const checked = state.selectedLessons.has(lesson) ? 'checked' : '';
+        return `
+          <label class="lesson-option">
+            <input type="checkbox" value="${key}" ${checked} />
+            <span>Lektion ${key}</span>
+          </label>
         `;
+      }).join('');
+      updateFilterButtonLabel();
+    }
+
+    function renderResults(items, message = '') {
+      if (message) {
+        els.resultsHost.className = 'plain';
+        els.resultsHost.innerHTML = escapeHtml(message);
         return;
       }
 
-      const cards = items.map(({ entry }) => `
-        <article class="result-card">
-          <div class="result-top">
-            <div>
-              <div class="result-type">Deutsch</div>
-              <p class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</p>
-            </div>
-            <div class="lektion-badge">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
-          </div>
-          <p class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</p>
-        </article>
+      if (!items.length) {
+        els.resultsHost.className = 'plain';
+        els.resultsHost.textContent = 'Keine Treffer';
+        return;
+      }
+
+      const rows = items.map(({ entry }) => `
+        <div class="row">
+          <div class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
+          <div class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</div>
+          <div class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</div>
+        </div>
       `).join('');
 
-      els.resultsHost.innerHTML = `<section class="result-grid">${cards}</section>`;
-    }
-
-    function setCounters(totalEntries, visibleEntries, selectedLessonCount, totalLessonCount) {
-      els.entryCount.textContent = String(totalEntries);
-      els.lessonCount.textContent = `${selectedLessonCount} / ${totalLessonCount}`;
-      els.shownCount.textContent = String(visibleEntries);
+      els.resultsHost.className = 'list';
+      els.resultsHost.innerHTML = rows;
     }
 
     function render() {
-      const query = state.query.trim();
-      const filteredEntries = getFilteredEntries();
-      const ranked = rankEntries(filteredEntries, query);
-      const totalLessonCount = state.lessons.length;
-      const selectedLessonCount = state.selectedLessons.size;
-
-      setCounters(state.entries.length, ranked.length, selectedLessonCount, totalLessonCount);
-
-      if (!selectedLessonCount) {
-        els.statusText.textContent = 'Es ist aktuell keine Lektion ausgewählt.';
-        els.statusMode.textContent = 'Bitte mindestens ein Kapitel aktivieren.';
-        renderResults([], {
-          title: 'Keine Lektion aktiv',
-          text: 'Wähle mindestens ein Kapitel aus, damit Ergebnisse angezeigt werden können.'
-        });
+      if (!state.entries.length) return;
+      if (!state.selectedLessons.size) {
+        renderResults([], 'Keine Kapitel ausgewählt');
         return;
       }
 
-      if (!query) {
-        els.statusText.textContent = `Ohne Suchbegriff werden die ersten ${INITIAL_LIMIT} Einträge aus ${selectedLessonCount} ausgewählten Lektionen in Lektionen-Reihenfolge angezeigt.`;
-        els.statusMode.textContent = 'Sortierung: Lektion → Deutsch';
-      } else {
-        els.statusText.textContent = `${ranked.length} Treffer für „${query}“ in ${selectedLessonCount} ausgewählten Lektionen.`;
-        els.statusMode.textContent = 'Sortierung: Deutsch-Treffer zuerst, danach Hilfsfelder';
-      }
-
+      const ranked = rankEntries(getFilteredEntries(), state.query.trim());
       renderResults(ranked);
     }
 
-    function setError(message, details = '') {
-      els.resultsHost.innerHTML = `
-        <section class="error-card">
-          <h2>JSON konnte nicht geladen werden</h2>
-          <p>${escapeHtml(message)}</p>
-          ${details ? `<code>${escapeHtml(details)}</code>` : ''}
-        </section>
-      `;
-      els.statusText.textContent = 'Fehler beim Laden der Daten';
-      els.statusMode.textContent = '';
-      setCounters(0, 0, 0, 0);
+    function syncSearchUi() {
+      els.searchWrap.classList.toggle('has-value', !!els.searchInput.value.trim());
+    }
+
+    function openDropdown() {
+      els.dropdown.classList.add('is-open');
+      els.filterButton.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeDropdown() {
+      els.dropdown.classList.remove('is-open');
+      els.filterButton.setAttribute('aria-expanded', 'false');
     }
 
     async function loadData() {
       try {
         const response = await fetch(DATA_URL, { cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const rows = await response.json();
-        if (!Array.isArray(rows)) {
-          throw new Error('Die JSON-Datei ist kein Array.');
-        }
+        if (!Array.isArray(rows)) throw new Error('Die JSON-Datei ist kein Array.');
 
         state.entries = prepareEntries(rows);
         state.lessons = getSortedLessons(rows);
         state.selectedLessons = new Set(state.lessons);
-        renderLessonFilter();
+        renderLessonList();
         render();
       } catch (error) {
         const localFileHint = window.location.protocol === 'file:'
-          ? 'Tipp: Öffne die Datei über einen lokalen Server, z. B. mit: python -m http.server'
-          : '';
-
-        setError(
-          'Die HTML-Datei erwartet „Voc_erweitert.json“ im selben Ordner.',
-          localFileHint || String(error?.message || error)
-        );
+          ? 'Öffne die Datei über einen lokalen Server, z. B. mit: python -m http.server'
+          : String(error?.message || error);
+        renderResults([], localFileHint);
       }
     }
 
-    function syncSearchUi() {
-      const hasValue = !!els.searchInput.value.trim();
-      els.searchWrap.classList.toggle('has-value', hasValue);
-    }
-
-    function handleSearchInput(event) {
+    els.searchInput.addEventListener('input', event => {
       state.query = event.target.value;
       syncSearchUi();
       render();
-    }
-
-    els.searchInput.addEventListener('input', handleSearchInput);
-
-    els.lessonPicker.addEventListener('click', event => {
-      const button = event.target.closest('[data-lesson]');
-      if (!button) return;
-      toggleLesson(button.dataset.lesson);
-    });
-
-    els.selectAllLessonsBtn.addEventListener('click', () => {
-      selectAllLessons();
-    });
-
-    els.clearLessonsBtn.addEventListener('click', () => {
-      clearLessons();
     });
 
     els.clearBtn.addEventListener('click', () => {
@@ -1040,7 +718,40 @@
       els.searchInput.focus();
     });
 
+    els.filterButton.addEventListener('click', () => {
+      const isOpen = els.dropdown.classList.contains('is-open');
+      if (isOpen) closeDropdown();
+      else openDropdown();
+    });
+
+    els.selectAllBtn.addEventListener('click', () => {
+      state.selectedLessons = new Set(state.lessons);
+      renderLessonList();
+      render();
+    });
+
+    els.selectNoneBtn.addEventListener('click', () => {
+      state.selectedLessons = new Set();
+      renderLessonList();
+      render();
+    });
+
+    els.lessonList.addEventListener('change', event => {
+      const input = event.target.closest('input[type="checkbox"]');
+      if (!input) return;
+      const lesson = String(input.value ?? '').trim();
+      if (input.checked) state.selectedLessons.add(lesson);
+      else state.selectedLessons.delete(lesson);
+      updateFilterButtonLabel();
+      render();
+    });
+
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.filter-wrap')) closeDropdown();
+    });
+
     document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeDropdown();
       if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
         const targetTag = document.activeElement?.tagName?.toLowerCase();
         const isTypingContext = ['input', 'textarea'].includes(targetTag) || document.activeElement?.isContentEditable;
