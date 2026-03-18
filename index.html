@@ -189,6 +189,114 @@
       font-weight: 700;
     }
 
+
+
+    .filters {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0.96) 100%);
+    }
+
+    .filters-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 14px;
+    }
+
+    .filters-title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .filters-subtitle {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .filter-actions {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      appearance: none;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+
+    .filter-btn:hover {
+      border-color: rgba(31, 94, 255, 0.35);
+      background: #f8fbff;
+    }
+
+    .filter-btn:focus-visible {
+      outline: none;
+      border-color: rgba(31, 94, 255, 0.55);
+      box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.10);
+    }
+
+    .filter-btn:active {
+      transform: translateY(1px);
+    }
+
+    .lesson-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .lesson-chip {
+      appearance: none;
+      border: 1px solid #d9e4f4;
+      background: #fff;
+      color: #29476b;
+      border-radius: 999px;
+      min-height: 40px;
+      padding: 0 14px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 140ms ease, background 140ms ease, color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+
+    .lesson-chip:hover {
+      border-color: rgba(31, 94, 255, 0.35);
+      background: #f7faff;
+      color: #163d77;
+    }
+
+    .lesson-chip:focus-visible {
+      outline: none;
+      border-color: rgba(31, 94, 255, 0.55);
+      box-shadow: 0 0 0 4px rgba(31, 94, 255, 0.10);
+    }
+
+    .lesson-chip.is-active {
+      border-color: rgba(31, 94, 255, 0.22);
+      background: rgba(31, 94, 255, 0.10);
+      color: var(--accent);
+      box-shadow: inset 0 0 0 1px rgba(31, 94, 255, 0.06);
+    }
+
     .info-row {
       display: flex;
       flex-wrap: wrap;
@@ -364,6 +472,18 @@
         padding-right: 12px;
       }
 
+      .filters {
+        padding: 12px;
+      }
+
+      .filters-head {
+        align-items: flex-start;
+      }
+
+      .filter-actions {
+        width: 100%;
+      }
+
       .result-card {
         padding: 16px;
       }
@@ -404,10 +524,26 @@
 
           <div class="meta">
             <div class="meta-pill"><strong id="entryCount">0</strong> Einträge</div>
-            <div class="meta-pill"><strong id="lessonCount">0</strong> Lektionen</div>
+            <div class="meta-pill"><strong id="lessonCount">0 / 0</strong> Lektionen aktiv</div>
             <div class="meta-pill"><strong id="shownCount">0</strong> sichtbar</div>
           </div>
         </div>
+
+
+
+        <section class="filters" aria-label="Lektionen filtern">
+          <div class="filters-head">
+            <div>
+              <p class="filters-title">Kapitel auswählen</p>
+              <p class="filters-subtitle">Standardmäßig sind alle Lektionen aktiv. Die Suche wertet nur Treffer aus den gewählten Kapiteln aus.</p>
+            </div>
+            <div class="filter-actions">
+              <button class="filter-btn" id="selectAllLessonsBtn" type="button">Alle</button>
+              <button class="filter-btn" id="clearLessonsBtn" type="button">Keine</button>
+            </div>
+          </div>
+          <div class="lesson-picker" id="lessonPicker"></div>
+        </section>
 
         <div class="info-row">
           <span>Suche <strong>nicht</strong> in Lektion oder Hebräisch.</span>
@@ -442,7 +578,9 @@
 
     const state = {
       entries: [],
-      query: ''
+      query: '',
+      lessons: [],
+      selectedLessons: new Set()
     };
 
     const els = {
@@ -454,7 +592,10 @@
       shownCount: document.getElementById('shownCount'),
       statusText: document.getElementById('statusText'),
       statusMode: document.getElementById('statusMode'),
-      resultsHost: document.getElementById('resultsHost')
+      resultsHost: document.getElementById('resultsHost'),
+      lessonPicker: document.getElementById('lessonPicker'),
+      selectAllLessonsBtn: document.getElementById('selectAllLessonsBtn'),
+      clearLessonsBtn: document.getElementById('clearLessonsBtn')
     };
 
     const collator = new Intl.Collator('de', { sensitivity: 'base', numeric: true });
@@ -581,6 +722,61 @@
         .filter(Boolean);
     }
 
+
+    function getSortedLessons(rows) {
+      return [...new Set(rows.map(row => String(row?.Lektion ?? '').trim()).filter(Boolean))]
+        .sort((a, b) => Number(a) - Number(b) || collator.compare(a, b));
+    }
+
+    function isLessonSelected(lesson) {
+      return state.selectedLessons.has(String(lesson ?? '').trim());
+    }
+
+    function getFilteredEntries() {
+      if (!state.selectedLessons.size) return [];
+      return state.entries.filter(entry => isLessonSelected(entry.Lektion));
+    }
+
+    function renderLessonFilter() {
+      if (!els.lessonPicker) return;
+
+      if (!state.lessons.length) {
+        els.lessonPicker.innerHTML = '';
+        return;
+      }
+
+      els.lessonPicker.innerHTML = state.lessons.map(lesson => {
+        const active = isLessonSelected(lesson);
+        return `<button class="lesson-chip${active ? ' is-active' : ''}" type="button" data-lesson="${escapeHtml(lesson)}" aria-pressed="${active ? 'true' : 'false'}">Lektion ${escapeHtml(lesson)}</button>`;
+      }).join('');
+    }
+
+    function selectAllLessons() {
+      state.selectedLessons = new Set(state.lessons);
+      renderLessonFilter();
+      render();
+    }
+
+    function clearLessons() {
+      state.selectedLessons = new Set();
+      renderLessonFilter();
+      render();
+    }
+
+    function toggleLesson(lesson) {
+      const key = String(lesson ?? '').trim();
+      if (!key) return;
+
+      if (state.selectedLessons.has(key)) {
+        state.selectedLessons.delete(key);
+      } else {
+        state.selectedLessons.add(key);
+      }
+
+      renderLessonFilter();
+      render();
+    }
+
     function prepareEntries(rows) {
       return rows.map((row, index) => {
         const prepared = { ...row, __index: index, __search: {} };
@@ -702,12 +898,14 @@
       }).join('');
     }
 
-    function renderResults(items) {
+    function renderResults(items, emptyState = null) {
       if (!items.length) {
+        const title = emptyState?.title || 'Keine Treffer';
+        const text = emptyState?.text || 'Für diese Suche wurde kein ausreichend passender Eintrag gefunden.';
         els.resultsHost.innerHTML = `
           <section class="empty-card">
-            <h2>Keine Treffer</h2>
-            <p>Für diese Suche wurde kein ausreichend passender Eintrag gefunden.</p>
+            <h2>${escapeHtml(title)}</h2>
+            <p>${escapeHtml(text)}</p>
           </section>
         `;
         return;
@@ -729,24 +927,36 @@
       els.resultsHost.innerHTML = `<section class="result-grid">${cards}</section>`;
     }
 
-    function setCounters(totalEntries, visibleEntries, lessonCount) {
+    function setCounters(totalEntries, visibleEntries, selectedLessonCount, totalLessonCount) {
       els.entryCount.textContent = String(totalEntries);
-      els.lessonCount.textContent = String(lessonCount);
+      els.lessonCount.textContent = `${selectedLessonCount} / ${totalLessonCount}`;
       els.shownCount.textContent = String(visibleEntries);
     }
 
     function render() {
       const query = state.query.trim();
-      const ranked = rankEntries(state.entries, query);
-      const lessonCount = new Set(state.entries.map(entry => entry.Lektion)).size;
+      const filteredEntries = getFilteredEntries();
+      const ranked = rankEntries(filteredEntries, query);
+      const totalLessonCount = state.lessons.length;
+      const selectedLessonCount = state.selectedLessons.size;
 
-      setCounters(state.entries.length, ranked.length, lessonCount);
+      setCounters(state.entries.length, ranked.length, selectedLessonCount, totalLessonCount);
+
+      if (!selectedLessonCount) {
+        els.statusText.textContent = 'Es ist aktuell keine Lektion ausgewählt.';
+        els.statusMode.textContent = 'Bitte mindestens ein Kapitel aktivieren.';
+        renderResults([], {
+          title: 'Keine Lektion aktiv',
+          text: 'Wähle mindestens ein Kapitel aus, damit Ergebnisse angezeigt werden können.'
+        });
+        return;
+      }
 
       if (!query) {
-        els.statusText.textContent = `Ohne Suchbegriff werden die ersten ${INITIAL_LIMIT} Einträge in Lektionen-Reihenfolge angezeigt.`;
+        els.statusText.textContent = `Ohne Suchbegriff werden die ersten ${INITIAL_LIMIT} Einträge aus ${selectedLessonCount} ausgewählten Lektionen in Lektionen-Reihenfolge angezeigt.`;
         els.statusMode.textContent = 'Sortierung: Lektion → Deutsch';
       } else {
-        els.statusText.textContent = `${ranked.length} Treffer für „${query}“.`;
+        els.statusText.textContent = `${ranked.length} Treffer für „${query}“ in ${selectedLessonCount} ausgewählten Lektionen.`;
         els.statusMode.textContent = 'Sortierung: Deutsch-Treffer zuerst, danach Hilfsfelder';
       }
 
@@ -763,7 +973,7 @@
       `;
       els.statusText.textContent = 'Fehler beim Laden der Daten';
       els.statusMode.textContent = '';
-      setCounters(0, 0, 0);
+      setCounters(0, 0, 0, 0);
     }
 
     async function loadData() {
@@ -779,6 +989,9 @@
         }
 
         state.entries = prepareEntries(rows);
+        state.lessons = getSortedLessons(rows);
+        state.selectedLessons = new Set(state.lessons);
+        renderLessonFilter();
         render();
       } catch (error) {
         const localFileHint = window.location.protocol === 'file:'
@@ -804,6 +1017,20 @@
     }
 
     els.searchInput.addEventListener('input', handleSearchInput);
+
+    els.lessonPicker.addEventListener('click', event => {
+      const button = event.target.closest('[data-lesson]');
+      if (!button) return;
+      toggleLesson(button.dataset.lesson);
+    });
+
+    els.selectAllLessonsBtn.addEventListener('click', () => {
+      selectAllLessons();
+    });
+
+    els.clearLessonsBtn.addEventListener('click', () => {
+      clearLessons();
+    });
 
     els.clearBtn.addEventListener('click', () => {
       els.searchInput.value = '';
