@@ -1,0 +1,449 @@
+const DATA_URL = './Voc_erweitert.json';
+const SEARCH_FIELDS = ['Deutsch', 'Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
+const SECONDARY_FIELDS = ['Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
+const SECONDARY_WEIGHTS = {
+  Infinitiv: 1.0,
+  Nomen: 0.95,
+  Verb: 1.0,
+  Adjektiv: 0.82,
+  Synonyme: 0.88,
+};
+const INITIAL_LIMIT = 180;
+const INPUT_DEBOUNCE_MS = 180;
+
+const state = {
+  entries: [],
+  lessons: [],
+  selectedLessons: new Set(),
+  query: '',
+};
+
+const els = {
+  searchInput: document.getElementById('searchInput'),
+  searchWrap: document.getElementById('searchWrap'),
+  clearBtn: document.getElementById('clearBtn'),
+  filterButton: document.getElementById('filterButton'),
+  dropdown: document.getElementById('dropdown'),
+  selectAllBtn: document.getElementById('selectAllBtn'),
+  selectNoneBtn: document.getElementById('selectNoneBtn'),
+  lessonList: document.getElementById('lessonList'),
+  resultsHost: document.getElementById('resultsHost'),
+};
+
+const collator = new Intl.Collator('de', { sensitivity: 'base', numeric: true });
+
+function debounce(callback, wait) {
+  let timeoutId = null;
+
+  function debounced(...args) {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+
+    timeoutId = window.setTimeout(() => {
+      timeoutId = null;
+      callback(...args);
+    }, wait);
+  }
+
+  debounced.cancel = () => {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return debounced;
+}
+
+function normalize(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[(){}\[\],;:!?«»"“”„…]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function splitSlashValues(value) {
+  return String(value ?? '')
+    .split('/')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function splitWords(value) {
+  return normalize(value)
+    .split(/[\s\-–—]+/)
+    .map((word) => word.trim())
+    .filter(Boolean);
+}
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const dp = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+  for (let i = 0; i < rows; i += 1) dp[i][0] = i;
+  for (let j = 0; j < cols; j += 1) dp[0][j] = j;
+
+  for (let i = 1; i < rows; i += 1) {
+    for (let j = 1; j < cols; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost,
+      );
+    }
+  }
+
+  return dp[rows - 1][cols - 1];
+}
+
+function similarity(a, b) {
+  const left = normalize(a);
+  const right = normalize(b);
+  if (!left || !right) return 0;
+  const distance = levenshtein(left, right);
+  return 1 - distance / Math.max(left.length, right.length);
+}
+
+function scoreCandidate(query, candidate) {
+  const q = normalize(query);
+  const c = normalize(candidate);
+  if (!q || !c) return 0;
+
+  const qWords = splitWords(q);
+  const cWords = splitWords(c);
+  let best = 0;
+
+  if (c === q) best = Math.max(best, 120);
+  if (c.startsWith(q)) best = Math.max(best, 108);
+  if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 104);
+  if (q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
+
+  if (qWords.length > 1) {
+    let exact = 0;
+    let prefix = 0;
+    let loose = 0;
+
+    for (const qWord of qWords) {
+      if (cWords.some((cWord) => cWord === qWord)) exact += 1;
+      else if (cWords.some((cWord) => cWord.startsWith(qWord))) prefix += 1;
+      else if (qWord.length >= 4 && cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) loose += 1;
+    }
+
+    const coverage = (exact + (prefix * 0.78) + (loose * 0.45)) / qWords.length;
+    best = Math.max(best, 38 + (coverage * 62));
+  } else {
+    const qWord = qWords[0] || q;
+    if (cWords.some((cWord) => cWord === qWord)) best = Math.max(best, 110);
+    if (cWords.some((cWord) => cWord.startsWith(qWord))) best = Math.max(best, 102);
+    if (qWord.length >= 4 && cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 4)) best = Math.max(best, 94);
+    if (qWord.length >= 4 && cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) best = Math.max(best, 84);
+  }
+
+  const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
+  let bestSimilarity = 0;
+  for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
+
+  if (bestSimilarity >= 0.97) best = Math.max(best, 100);
+  else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
+  else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
+  else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
+  else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
+  else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+
+  return Math.round(best * 100) / 100;
+}
+
+function prepareFieldValues(value) {
+  return splitSlashValues(value)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function getSortedLessons(rows) {
+  return [...new Set(rows.map((row) => String(row?.Lektion ?? '').trim()).filter(Boolean))]
+    .sort((a, b) => Number(a) - Number(b) || collator.compare(a, b));
+}
+
+function prepareEntries(rows) {
+  return rows.map((row, index) => {
+    const prepared = { ...row, __index: index, __search: {} };
+    for (const field of SEARCH_FIELDS) {
+      prepared.__search[field] = prepareFieldValues(row[field]);
+    }
+    return prepared;
+  });
+}
+
+function scoreEntry(entry, query) {
+  const result = { deutsch: 0, secondary: 0, total: 0 };
+  let secondarySum = 0;
+
+  for (const candidate of entry.__search.Deutsch) {
+    result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate));
+  }
+
+  for (const field of SECONDARY_FIELDS) {
+    let bestFieldScore = 0;
+    for (const candidate of entry.__search[field]) {
+      const normalizedCandidate = normalize(candidate);
+      if (!normalizedCandidate) continue;
+      if (query.trim().length > 2 && normalizedCandidate.length < 2) continue;
+      bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate));
+    }
+    const weighted = bestFieldScore * SECONDARY_WEIGHTS[field];
+    result.secondary = Math.max(result.secondary, weighted);
+    secondarySum += weighted;
+  }
+
+  result.total = (result.deutsch * 4) + result.secondary + (secondarySum * 0.22);
+  return result;
+}
+
+function defaultSort(a, b) {
+  const lessonDiff = Number(a.Lektion || 0) - Number(b.Lektion || 0);
+  if (lessonDiff !== 0) return lessonDiff;
+  return collator.compare(String(a.Deutsch || ''), String(b.Deutsch || ''));
+}
+
+function shouldIncludeMatch(score, query) {
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery) return true;
+  const isShort = normalizedQuery.length <= 2;
+  if (score.deutsch >= (isShort ? 90 : 48)) return true;
+  if (score.secondary >= (isShort ? 96 : 58)) return true;
+  return false;
+}
+
+function rankEntries(entries, query) {
+  const trimmed = query.trim();
+  if (!trimmed) {
+    return [...entries]
+      .sort(defaultSort)
+      .slice(0, INITIAL_LIMIT)
+      .map((entry) => ({ entry, score: { deutsch: 0, secondary: 0, total: 0 } }));
+  }
+
+  return entries
+    .map((entry) => ({ entry, score: scoreEntry(entry, trimmed) }))
+    .filter((item) => shouldIncludeMatch(item.score, trimmed))
+    .sort((left, right) => {
+      if (right.score.deutsch !== left.score.deutsch) return right.score.deutsch - left.score.deutsch;
+      if (right.score.secondary !== left.score.secondary) return right.score.secondary - left.score.secondary;
+      if (right.score.total !== left.score.total) return right.score.total - left.score.total;
+      const lessonDiff = Number(left.entry.Lektion || 0) - Number(right.entry.Lektion || 0);
+      if (lessonDiff !== 0) return lessonDiff;
+      return collator.compare(String(left.entry.Deutsch || ''), String(right.entry.Deutsch || ''));
+    });
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function highlightDeutsch(text, query) {
+  const safeText = escapeHtml(text);
+  const normalizedQuery = normalize(query);
+  if (!normalizedQuery || normalizedQuery.length < 2) return safeText;
+
+  return String(text ?? '')
+    .split(/(\s+)/)
+    .map((part) => {
+      if (/^\s+$/.test(part)) return part;
+      const normalizedPart = normalize(part);
+      if (!normalizedPart) return escapeHtml(part);
+
+      const shouldMark =
+        normalizedPart === normalizedQuery ||
+        normalizedPart.startsWith(normalizedQuery) ||
+        (normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
+        similarity(normalizedPart, normalizedQuery) >= 0.84;
+
+      return shouldMark ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part);
+    })
+    .join('');
+}
+
+function getFilteredEntries() {
+  if (!state.selectedLessons.size) return [];
+  return state.entries.filter((entry) => state.selectedLessons.has(String(entry.Lektion ?? '').trim()));
+}
+
+function updateFilterButtonLabel() {
+  const total = state.lessons.length;
+  const selected = state.selectedLessons.size;
+  if (selected === total) {
+    els.filterButton.textContent = 'Kapitel';
+  } else if (selected === 0) {
+    els.filterButton.textContent = 'Kapitel (0)';
+  } else {
+    els.filterButton.textContent = `Kapitel (${selected})`;
+  }
+}
+
+function renderLessonList() {
+  els.lessonList.innerHTML = state.lessons.map((lesson) => {
+    const key = escapeHtml(lesson);
+    const checked = state.selectedLessons.has(lesson) ? 'checked' : '';
+    return `
+      <label class="lesson-option">
+        <input type="checkbox" value="${key}" ${checked} />
+        <span>Lektion ${key}</span>
+      </label>
+    `;
+  }).join('');
+
+  updateFilterButtonLabel();
+}
+
+function renderResults(items, message = '') {
+  if (message) {
+    els.resultsHost.className = 'plain';
+    els.resultsHost.innerHTML = escapeHtml(message);
+    return;
+  }
+
+  if (!items.length) {
+    els.resultsHost.className = 'plain';
+    els.resultsHost.textContent = 'Keine Treffer';
+    return;
+  }
+
+  const rows = items.map(({ entry }) => `
+    <div class="row">
+      <div class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
+      <div class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</div>
+      <div class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</div>
+    </div>
+  `).join('');
+
+  els.resultsHost.className = 'list';
+  els.resultsHost.innerHTML = rows;
+}
+
+function render() {
+  if (!state.entries.length) return;
+  if (!state.selectedLessons.size) {
+    renderResults([], 'Keine Kapitel ausgewählt');
+    return;
+  }
+
+  const ranked = rankEntries(getFilteredEntries(), state.query.trim());
+  renderResults(ranked);
+}
+
+const debouncedRender = debounce(render, INPUT_DEBOUNCE_MS);
+
+function syncSearchUi() {
+  els.searchWrap.classList.toggle('has-value', !!els.searchInput.value.trim());
+}
+
+function openDropdown() {
+  els.dropdown.classList.add('is-open');
+  els.filterButton.setAttribute('aria-expanded', 'true');
+}
+
+function closeDropdown() {
+  els.dropdown.classList.remove('is-open');
+  els.filterButton.setAttribute('aria-expanded', 'false');
+}
+
+async function loadData() {
+  try {
+    const response = await fetch(DATA_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const rows = await response.json();
+    if (!Array.isArray(rows)) throw new Error('Die JSON-Datei ist kein Array.');
+
+    state.entries = prepareEntries(rows);
+    state.lessons = getSortedLessons(rows);
+    state.selectedLessons = new Set(state.lessons);
+    renderLessonList();
+    render();
+  } catch (error) {
+    const localFileHint = window.location.protocol === 'file:'
+      ? 'Öffne die Datei über einen lokalen Server, z. B. mit: python -m http.server'
+      : String(error?.message || error);
+    renderResults([], localFileHint);
+  }
+}
+
+els.searchInput.addEventListener('input', (event) => {
+  state.query = event.target.value;
+  syncSearchUi();
+  debouncedRender();
+});
+
+els.clearBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  els.searchInput.value = '';
+  state.query = '';
+  syncSearchUi();
+  render();
+  els.searchInput.focus();
+});
+
+els.filterButton.addEventListener('click', () => {
+  const isOpen = els.dropdown.classList.contains('is-open');
+  if (isOpen) closeDropdown();
+  else openDropdown();
+});
+
+els.selectAllBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  state.selectedLessons = new Set(state.lessons);
+  renderLessonList();
+  render();
+});
+
+els.selectNoneBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  state.selectedLessons = new Set();
+  renderLessonList();
+  render();
+});
+
+els.lessonList.addEventListener('change', (event) => {
+  debouncedRender.cancel();
+  const input = event.target.closest('input[type="checkbox"]');
+  if (!input) return;
+  const lesson = String(input.value ?? '').trim();
+  if (input.checked) state.selectedLessons.add(lesson);
+  else state.selectedLessons.delete(lesson);
+  updateFilterButtonLabel();
+  render();
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.filter-wrap')) closeDropdown();
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeDropdown();
+  if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
+    const targetTag = document.activeElement?.tagName?.toLowerCase();
+    const isTypingContext = ['input', 'textarea'].includes(targetTag) || document.activeElement?.isContentEditable;
+    if (!isTypingContext) {
+      event.preventDefault();
+      els.searchInput.focus();
+      els.searchInput.select();
+    }
+  }
+});
+
+loadData();
