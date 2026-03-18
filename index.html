@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hebräisch Vokabelsuche</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --text: #112033;
+      --muted: #637389;
+      --line: #d7e0ea;
+      --line-strong: #c3cfdd;
+      --accent: #1f5eff;
+      --accent-soft: rgba(31, 94, 255, 0.10);
+      --shadow: 0 12px 36px rgba(18, 35, 61, 0.08);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --max-width: 1140px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .shell {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding-top: 6px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(244, 247, 251, 0.95) 0%, rgba(244, 247, 251, 0.84) 78%, rgba(244, 247, 251, 0) 100%);
+    }
+
+    .hero-card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(215, 224, 234, 0.95);
+      box-shadow: var(--shadow);
+      border-radius: 26px;
+      padding: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.79rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 14px 0 8px;
+      font-size: clamp(1.8rem, 2.8vw, 2.9rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .subline {
+      margin: 0;
+      color: var(--muted);
+      max-width: 74ch;
+      font-size: 1rem;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      margin-top: 20px;
+      align-items: center;
+    }
+
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 62px;
+      border: 1px solid var(--line-strong);
+      background: #fff;
+      border-radius: 18px;
+      padding: 0 16px 0 14px;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .search-wrap:focus-within {
+      border-color: rgba(31, 94, 255, 0.55);
+      box-shadow: 0 0 0 5px rgba(31, 94, 255, 0.10);
+      transform: translateY(-1px);
+    }
+
+    .search-icon {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+    }
+
+    #searchInput {
+      flex: 1 1 auto;
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.06rem;
+      font-weight: 500;
+    }
+
+    #searchInput::placeholder {
+      color: #91a0b5;
+    }
+
+    .clear-btn {
+      display: none;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px;
+      background: #eef3fa;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 140ms ease, color 140ms ease;
+    }
+
+    .clear-btn:hover {
+      background: #e2eaf5;
+      color: var(--text);
+    }
+
+    .search-wrap.has-value .clear-btn {
+      display: inline-flex;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--muted);
+      font-size: 0.92rem;
+      white-space: nowrap;
+    }
+
+    .meta-pill strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .info-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .status-card,
+    .empty-card,
+    .error-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 8px 24px rgba(17, 32, 51, 0.04);
+    }
+
+    .status-card {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px 16px;
+      align-items: center;
+    }
+
+    .status-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .result-card {
+      display: grid;
+      gap: 16px;
+      padding: 18px 18px 16px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border: 1px solid rgba(215, 224, 234, 0.95);
+      box-shadow: 0 14px 34px rgba(17, 32, 51, 0.05);
+      transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+    }
+
+    .result-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(31, 94, 255, 0.18);
+      box-shadow: 0 16px 38px rgba(17, 32, 51, 0.08);
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .lektion-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #f2f6fd;
+      border: 1px solid #d9e4f4;
+      color: #29476b;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .result-type {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .deutsch {
+      margin: 0;
+      font-size: 1.16rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+
+    .hebrew {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 2.7rem);
+      line-height: 1.1;
+      text-align: right;
+      direction: rtl;
+      color: #17283d;
+      font-family: "Times New Roman", Times, Georgia, serif;
+      letter-spacing: 0.01em;
+    }
+
+    mark {
+      background: rgba(31, 94, 255, 0.12);
+      color: inherit;
+      padding: 0.02em 0.16em;
+      border-radius: 0.24em;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .empty-card h2,
+    .error-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+    }
+
+    .empty-card p,
+    .error-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .error-card code {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: #f2f6fd;
+      border: 1px solid #d9e4f4;
+      font-size: 0.92rem;
+      color: #29476b;
+    }
+
+    @media (max-width: 900px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .meta {
+        justify-content: flex-start;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(calc(100% - 20px), var(--max-width));
+        padding-top: 18px;
+      }
+
+      .hero-card {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .search-wrap {
+        min-height: 58px;
+        padding-right: 12px;
+      }
+
+      .result-card {
+        padding: 16px;
+      }
+
+      .hebrew {
+        font-size: 1.92rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Vokabelsuche</div>
+        <h1>Hebräisch–Deutsch Suche</h1>
+        <p class="subline">
+          Fuzzy-Suche mit Gewichtung auf <strong>Deutsch</strong>. Treffer im Feld <strong>Deutsch</strong> stehen immer vor Treffern aus
+          <strong>Infinitiv</strong>, <strong>Nomen</strong>, <strong>Verb</strong>, <strong>Adjektiv</strong> und <strong>Synonyme</strong>.
+        </p>
+
+        <div class="toolbar">
+          <label class="search-wrap" for="searchInput" id="searchWrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input
+              id="searchInput"
+              type="search"
+              inputmode="search"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Deutsch suchen, z. B. sagen, Bund, gerecht, verfolgen …"
+              aria-label="Vokabel suchen"
+            />
+            <button class="clear-btn" id="clearBtn" type="button" aria-label="Suche löschen">×</button>
+          </label>
+
+          <div class="meta">
+            <div class="meta-pill"><strong id="entryCount">0</strong> Einträge</div>
+            <div class="meta-pill"><strong id="lessonCount">0</strong> Lektionen</div>
+            <div class="meta-pill"><strong id="shownCount">0</strong> sichtbar</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span>Suche <strong>nicht</strong> in Lektion oder Hebräisch.</span>
+          <span>Slash-getrennte Werte werden einzeln bewertet.</span>
+          <span>Hebräisch ist in <strong>Times New Roman</strong>.</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="status-card" aria-live="polite">
+        <p id="statusText">Lade JSON-Datei …</p>
+        <p id="statusMode" class="muted"></p>
+      </section>
+
+      <section id="resultsHost"></section>
+    </main>
+  </div>
+
+  <script>
+    const DATA_URL = './Voc_erweitert.json';
+    const SEARCH_FIELDS = ['Deutsch', 'Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
+    const SECONDARY_FIELDS = ['Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
+    const SECONDARY_WEIGHTS = {
+      Infinitiv: 1.00,
+      Nomen: 0.95,
+      Verb: 1.00,
+      Adjektiv: 0.82,
+      Synonyme: 0.88
+    };
+    const INITIAL_LIMIT = 120;
+
+    const state = {
+      entries: [],
+      query: ''
+    };
+
+    const els = {
+      searchInput: document.getElementById('searchInput'),
+      searchWrap: document.getElementById('searchWrap'),
+      clearBtn: document.getElementById('clearBtn'),
+      entryCount: document.getElementById('entryCount'),
+      lessonCount: document.getElementById('lessonCount'),
+      shownCount: document.getElementById('shownCount'),
+      statusText: document.getElementById('statusText'),
+      statusMode: document.getElementById('statusMode'),
+      resultsHost: document.getElementById('resultsHost')
+    };
+
+    const collator = new Intl.Collator('de', { sensitivity: 'base', numeric: true });
+
+    function normalize(value) {
+      return String(value ?? '')
+        .toLowerCase()
+        .replace(/ß/g, 'ss')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[(){}\[\],;:!?«»"“”„…]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function splitSlashValues(value) {
+      return String(value ?? '')
+        .split('/')
+        .map(part => part.trim())
+        .filter(Boolean);
+    }
+
+    function splitWords(value) {
+      return normalize(value)
+        .split(/[\s\-–—]+/)
+        .map(word => word.trim())
+        .filter(Boolean);
+    }
+
+    function levenshtein(a, b) {
+      if (a === b) return 0;
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+
+      const rows = a.length + 1;
+      const cols = b.length + 1;
+      const dp = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+      for (let i = 0; i < rows; i++) dp[i][0] = i;
+      for (let j = 0; j < cols; j++) dp[0][j] = j;
+
+      for (let i = 1; i < rows; i++) {
+        for (let j = 1; j < cols; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1,
+            dp[i][j - 1] + 1,
+            dp[i - 1][j - 1] + cost
+          );
+        }
+      }
+
+      return dp[rows - 1][cols - 1];
+    }
+
+    function similarity(a, b) {
+      const left = normalize(a);
+      const right = normalize(b);
+      if (!left || !right) return 0;
+      const distance = levenshtein(left, right);
+      return 1 - distance / Math.max(left.length, right.length);
+    }
+
+    function scoreCandidate(query, candidate) {
+      const q = normalize(query);
+      const c = normalize(candidate);
+
+      if (!q || !c) return 0;
+
+      const qWords = splitWords(q);
+      const cWords = splitWords(c);
+      let best = 0;
+
+      if (c === q) best = Math.max(best, 120);
+      if (c.startsWith(q)) best = Math.max(best, 108);
+      if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 104);
+      if (q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
+
+      if (qWords.length > 1) {
+        let exact = 0;
+        let prefix = 0;
+        let loose = 0;
+
+        for (const qWord of qWords) {
+          if (cWords.some(cWord => cWord === qWord)) {
+            exact += 1;
+          } else if (cWords.some(cWord => cWord.startsWith(qWord))) {
+            prefix += 1;
+          } else if (qWord.length >= 4 && cWords.some(cWord => cWord.includes(qWord) || qWord.includes(cWord))) {
+            loose += 1;
+          }
+        }
+
+        const coverage = (exact + (prefix * 0.78) + (loose * 0.45)) / qWords.length;
+        best = Math.max(best, 38 + (coverage * 62));
+      } else {
+        const qWord = qWords[0] || q;
+
+        if (cWords.some(cWord => cWord === qWord)) best = Math.max(best, 110);
+        if (cWords.some(cWord => cWord.startsWith(qWord))) best = Math.max(best, 102);
+        if (qWord.length >= 4 && cWords.some(cWord => qWord.startsWith(cWord) && cWord.length >= 4)) best = Math.max(best, 94);
+        if (qWord.length >= 4 && cWords.some(cWord => cWord.includes(qWord) || qWord.includes(cWord))) best = Math.max(best, 84);
+      }
+
+      const relevantParts = [c, ...cWords.filter(word => word.length >= Math.min(4, q.length))];
+      let bestSimilarity = 0;
+      for (const part of relevantParts) {
+        bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
+      }
+
+      if (bestSimilarity >= 0.97) best = Math.max(best, 100);
+      else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
+      else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
+      else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
+      else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
+      else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+
+      return Math.round(best * 100) / 100;
+    }
+
+    function prepareFieldValues(value) {
+      return splitSlashValues(value)
+        .map(part => part.trim())
+        .filter(Boolean);
+    }
+
+    function prepareEntries(rows) {
+      return rows.map((row, index) => {
+        const prepared = { ...row, __index: index, __search: {} };
+
+        for (const field of SEARCH_FIELDS) {
+          prepared.__search[field] = prepareFieldValues(row[field]);
+        }
+
+        return prepared;
+      });
+    }
+
+    function scoreEntry(entry, query) {
+      const result = {
+        deutsch: 0,
+        secondary: 0,
+        total: 0
+      };
+
+      let secondarySum = 0;
+
+      for (const candidate of entry.__search.Deutsch) {
+        const score = scoreCandidate(query, candidate);
+        result.deutsch = Math.max(result.deutsch, score);
+      }
+
+      for (const field of SECONDARY_FIELDS) {
+        let bestFieldScore = 0;
+
+        for (const candidate of entry.__search[field]) {
+          const normalizedCandidate = normalize(candidate);
+          if (!normalizedCandidate) continue;
+          if (query.trim().length > 2 && normalizedCandidate.length < 2) continue;
+          bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate));
+        }
+
+        const weighted = bestFieldScore * SECONDARY_WEIGHTS[field];
+        result.secondary = Math.max(result.secondary, weighted);
+        secondarySum += weighted;
+      }
+
+      result.total = (result.deutsch * 4) + result.secondary + (secondarySum * 0.22);
+      return result;
+    }
+
+    function defaultSort(a, b) {
+      const lessonDiff = Number(a.Lektion || 0) - Number(b.Lektion || 0);
+      if (lessonDiff !== 0) return lessonDiff;
+      return collator.compare(String(a.Deutsch || ''), String(b.Deutsch || ''));
+    }
+
+    function shouldIncludeMatch(score, query) {
+      const normalizedQuery = normalize(query);
+      if (!normalizedQuery) return true;
+
+      const isShort = normalizedQuery.length <= 2;
+      if (score.deutsch >= (isShort ? 90 : 48)) return true;
+      if (score.secondary >= (isShort ? 96 : 58)) return true;
+      return false;
+    }
+
+    function rankEntries(entries, query) {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        return [...entries].sort(defaultSort).slice(0, INITIAL_LIMIT).map(entry => ({
+          entry,
+          score: { deutsch: 0, secondary: 0, total: 0 }
+        }));
+      }
+
+      return entries
+        .map(entry => ({ entry, score: scoreEntry(entry, trimmed) }))
+        .filter(item => shouldIncludeMatch(item.score, trimmed))
+        .sort((left, right) => {
+          if (right.score.deutsch !== left.score.deutsch) {
+            return right.score.deutsch - left.score.deutsch;
+          }
+          if (right.score.secondary !== left.score.secondary) {
+            return right.score.secondary - left.score.secondary;
+          }
+          if (right.score.total !== left.score.total) {
+            return right.score.total - left.score.total;
+          }
+          const lessonDiff = Number(left.entry.Lektion || 0) - Number(right.entry.Lektion || 0);
+          if (lessonDiff !== 0) return lessonDiff;
+          return collator.compare(String(left.entry.Deutsch || ''), String(right.entry.Deutsch || ''));
+        });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function highlightDeutsch(text, query) {
+      const safeText = escapeHtml(text);
+      const normalizedQuery = normalize(query);
+      if (!normalizedQuery || normalizedQuery.length < 2) return safeText;
+
+      const escapedQuery = normalizedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const originalWords = String(text ?? '').split(/(\s+)/);
+
+      return originalWords.map(part => {
+        if (/^\s+$/.test(part)) return part;
+        const normalizedPart = normalize(part);
+        if (!normalizedPart) return escapeHtml(part);
+
+        const shouldMark =
+          normalizedPart === normalizedQuery ||
+          normalizedPart.startsWith(normalizedQuery) ||
+          (normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
+          similarity(normalizedPart, normalizedQuery) >= 0.84;
+
+        return shouldMark ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part);
+      }).join('');
+    }
+
+    function renderResults(items) {
+      if (!items.length) {
+        els.resultsHost.innerHTML = `
+          <section class="empty-card">
+            <h2>Keine Treffer</h2>
+            <p>Für diese Suche wurde kein ausreichend passender Eintrag gefunden.</p>
+          </section>
+        `;
+        return;
+      }
+
+      const cards = items.map(({ entry }) => `
+        <article class="result-card">
+          <div class="result-top">
+            <div>
+              <div class="result-type">Deutsch</div>
+              <p class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</p>
+            </div>
+            <div class="lektion-badge">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
+          </div>
+          <p class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</p>
+        </article>
+      `).join('');
+
+      els.resultsHost.innerHTML = `<section class="result-grid">${cards}</section>`;
+    }
+
+    function setCounters(totalEntries, visibleEntries, lessonCount) {
+      els.entryCount.textContent = String(totalEntries);
+      els.lessonCount.textContent = String(lessonCount);
+      els.shownCount.textContent = String(visibleEntries);
+    }
+
+    function render() {
+      const query = state.query.trim();
+      const ranked = rankEntries(state.entries, query);
+      const lessonCount = new Set(state.entries.map(entry => entry.Lektion)).size;
+
+      setCounters(state.entries.length, ranked.length, lessonCount);
+
+      if (!query) {
+        els.statusText.textContent = `Ohne Suchbegriff werden die ersten ${INITIAL_LIMIT} Einträge in Lektionen-Reihenfolge angezeigt.`;
+        els.statusMode.textContent = 'Sortierung: Lektion → Deutsch';
+      } else {
+        els.statusText.textContent = `${ranked.length} Treffer für „${query}“.`;
+        els.statusMode.textContent = 'Sortierung: Deutsch-Treffer zuerst, danach Hilfsfelder';
+      }
+
+      renderResults(ranked);
+    }
+
+    function setError(message, details = '') {
+      els.resultsHost.innerHTML = `
+        <section class="error-card">
+          <h2>JSON konnte nicht geladen werden</h2>
+          <p>${escapeHtml(message)}</p>
+          ${details ? `<code>${escapeHtml(details)}</code>` : ''}
+        </section>
+      `;
+      els.statusText.textContent = 'Fehler beim Laden der Daten';
+      els.statusMode.textContent = '';
+      setCounters(0, 0, 0);
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(DATA_URL, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const rows = await response.json();
+        if (!Array.isArray(rows)) {
+          throw new Error('Die JSON-Datei ist kein Array.');
+        }
+
+        state.entries = prepareEntries(rows);
+        render();
+      } catch (error) {
+        const localFileHint = window.location.protocol === 'file:'
+          ? 'Tipp: Öffne die Datei über einen lokalen Server, z. B. mit: python -m http.server'
+          : '';
+
+        setError(
+          'Die HTML-Datei erwartet „Voc_erweitert.json“ im selben Ordner.',
+          localFileHint || String(error?.message || error)
+        );
+      }
+    }
+
+    function syncSearchUi() {
+      const hasValue = !!els.searchInput.value.trim();
+      els.searchWrap.classList.toggle('has-value', hasValue);
+    }
+
+    function handleSearchInput(event) {
+      state.query = event.target.value;
+      syncSearchUi();
+      render();
+    }
+
+    els.searchInput.addEventListener('input', handleSearchInput);
+
+    els.clearBtn.addEventListener('click', () => {
+      els.searchInput.value = '';
+      state.query = '';
+      syncSearchUi();
+      render();
+      els.searchInput.focus();
+    });
+
+    document.addEventListener('keydown', event => {
+      if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
+        const targetTag = document.activeElement?.tagName?.toLowerCase();
+        const isTypingContext = ['input', 'textarea'].includes(targetTag) || document.activeElement?.isContentEditable;
+        if (!isTypingContext) {
+          event.preventDefault();
+          els.searchInput.focus();
+          els.searchInput.select();
+        }
+      }
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
