@@ -8,7 +8,6 @@ const SECONDARY_WEIGHTS = {
   Adjektiv: 0.82,
   Synonyme: 0.88,
 };
-const INITIAL_LIMIT = 180;
 const INPUT_DEBOUNCE_MS = 180;
 
 const state = {
@@ -16,10 +15,6 @@ const state = {
   lessons: [],
   selectedLessons: new Set(),
   query: '',
-  options: {
-    fuzzyMatching: true,
-    partialMatches: true,
-  },
 };
 
 const els = {
@@ -30,9 +25,8 @@ const els = {
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
   selectNoneBtn: document.getElementById('selectNoneBtn'),
-  fuzzyToggle: document.getElementById('fuzzyToggle'),
-  partialToggle: document.getElementById('partialToggle'),
   lessonList: document.getElementById('lessonList'),
+  resultCount: document.getElementById('resultCount'),
   resultsHost: document.getElementById('resultsHost'),
 };
 
@@ -121,7 +115,7 @@ function similarity(a, b) {
   return 1 - distance / Math.max(left.length, right.length);
 }
 
-function scoreCandidate(query, candidate, options = state.options) {
+function scoreCandidate(query, candidate) {
   const q = normalize(query);
   const c = normalize(candidate);
   if (!q || !c) return 0;
@@ -133,7 +127,7 @@ function scoreCandidate(query, candidate, options = state.options) {
   if (c === q) best = Math.max(best, 120);
   if (c.startsWith(q)) best = Math.max(best, 108);
   if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 104);
-  if (options.partialMatches && q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
+  if (q.length >= 3 && c.includes(q)) best = Math.max(best, 90);
 
   if (qWords.length > 1) {
     let exact = 0;
@@ -146,7 +140,6 @@ function scoreCandidate(query, candidate, options = state.options) {
       } else if (cWords.some((cWord) => cWord.startsWith(qWord))) {
         prefix += 1;
       } else if (
-        options.partialMatches &&
         qWord.length >= 4 &&
         cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))
       ) {
@@ -161,14 +154,12 @@ function scoreCandidate(query, candidate, options = state.options) {
     if (cWords.some((cWord) => cWord === qWord)) best = Math.max(best, 110);
     if (cWords.some((cWord) => cWord.startsWith(qWord))) best = Math.max(best, 102);
     if (
-      options.partialMatches &&
       qWord.length >= 4 &&
       cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 4)
     ) {
       best = Math.max(best, 94);
     }
     if (
-      options.partialMatches &&
       qWord.length >= 4 &&
       cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))
     ) {
@@ -176,7 +167,7 @@ function scoreCandidate(query, candidate, options = state.options) {
     }
   }
 
-  if (options.fuzzyMatching) {
+  {
     const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
     let bestSimilarity = 0;
     for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
@@ -218,7 +209,7 @@ function scoreEntry(entry, query) {
   let secondarySum = 0;
 
   for (const candidate of entry.__search.Deutsch) {
-    result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate, state.options));
+    result.deutsch = Math.max(result.deutsch, scoreCandidate(query, candidate));
   }
 
   for (const field of SECONDARY_FIELDS) {
@@ -227,7 +218,7 @@ function scoreEntry(entry, query) {
       const normalizedCandidate = normalize(candidate);
       if (!normalizedCandidate) continue;
       if (query.trim().length > 2 && normalizedCandidate.length < 2) continue;
-      bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate, state.options));
+      bestFieldScore = Math.max(bestFieldScore, scoreCandidate(query, candidate));
     }
     const weighted = bestFieldScore * SECONDARY_WEIGHTS[field];
     result.secondary = Math.max(result.secondary, weighted);
@@ -258,7 +249,6 @@ function rankEntries(entries, query) {
   if (!trimmed) {
     return [...entries]
       .sort(defaultSort)
-      .slice(0, INITIAL_LIMIT)
       .map((entry) => ({ entry, score: { deutsch: 0, secondary: 0, total: 0 } }));
   }
 
@@ -299,8 +289,8 @@ function highlightDeutsch(text, query) {
       const shouldMark =
         normalizedPart === normalizedQuery ||
         normalizedPart.startsWith(normalizedQuery) ||
-        (state.options.partialMatches && normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
-        (state.options.fuzzyMatching && similarity(normalizedPart, normalizedQuery) >= 0.84);
+        (normalizedQuery.length >= 4 && normalizedPart.includes(normalizedQuery)) ||
+        similarity(normalizedPart, normalizedQuery) >= 0.84;
 
       return shouldMark ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part);
     })
@@ -324,11 +314,6 @@ function updateFilterButtonLabel() {
   }
 }
 
-function syncOptionUi() {
-  els.fuzzyToggle.checked = state.options.fuzzyMatching;
-  els.partialToggle.checked = state.options.partialMatches;
-}
-
 function renderLessonList() {
   els.lessonList.innerHTML = state.lessons.map((lesson) => {
     const key = escapeHtml(lesson);
@@ -346,16 +331,20 @@ function renderLessonList() {
 
 function renderResults(items, message = '') {
   if (message) {
+    els.resultCount.textContent = '0 Einträge';
     els.resultsHost.className = 'plain';
     els.resultsHost.innerHTML = escapeHtml(message);
     return;
   }
 
   if (!items.length) {
+    els.resultCount.textContent = '0 Einträge';
     els.resultsHost.className = 'plain';
     els.resultsHost.textContent = 'Keine Treffer';
     return;
   }
+
+  els.resultCount.textContent = `${items.length} Einträge`;
 
   const rows = items.map(({ entry }) => `
     <div class="row">
@@ -406,7 +395,6 @@ async function loadData() {
     state.entries = prepareEntries(rows);
     state.lessons = getSortedLessons(rows);
     state.selectedLessons = new Set(state.lessons);
-    syncOptionUi();
     renderLessonList();
     render();
   } catch (error) {
@@ -449,18 +437,6 @@ els.selectNoneBtn.addEventListener('click', () => {
   debouncedRender.cancel();
   state.selectedLessons = new Set();
   renderLessonList();
-  render();
-});
-
-els.fuzzyToggle.addEventListener('change', (event) => {
-  debouncedRender.cancel();
-  state.options.fuzzyMatching = event.target.checked;
-  render();
-});
-
-els.partialToggle.addEventListener('change', (event) => {
-  debouncedRender.cancel();
-  state.options.partialMatches = event.target.checked;
   render();
 });
 

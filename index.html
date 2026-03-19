@@ -20,22 +20,10 @@
 
       <div class="filter-wrap">
         <button class="filter-btn" id="filterButton" type="button" aria-haspopup="true" aria-expanded="false">Kapitel</button>
-        <div class="dropdown" id="dropdown" role="dialog" aria-label="Kapitel und Suchoptionen auswählen">
+        <div class="dropdown" id="dropdown" role="dialog" aria-label="Kapitel auswählen">
           <div class="dropdown-tools">
             <button class="tool-btn" id="selectAllBtn" type="button">Alle</button>
             <button class="tool-btn" id="selectNoneBtn" type="button">Keine</button>
-          </div>
-
-          <div class="dropdown-section">
-            <div class="dropdown-section-title">Suche</div>
-            <label class="toggle-option" for="fuzzyToggle">
-              <input id="fuzzyToggle" type="checkbox" checked />
-              <span>Fuzzy Matching</span>
-            </label>
-            <label class="toggle-option" for="partialToggle">
-              <input id="partialToggle" type="checkbox" checked />
-              <span>Teiltreffer anzeigen</span>
-            </label>
           </div>
 
           <div class="dropdown-section dropdown-section-lessons">
@@ -46,6 +34,7 @@
       </div>
     </div>
 
+    <div id="resultCount" class="result-count" aria-live="polite"></div>
     <div id="resultsHost" class="plain">Lade …</div>
   </div>
 </body>
