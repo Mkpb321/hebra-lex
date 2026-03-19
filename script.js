@@ -26,7 +26,6 @@ const els = {
   selectAllBtn: document.getElementById('selectAllBtn'),
   selectNoneBtn: document.getElementById('selectNoneBtn'),
   lessonList: document.getElementById('lessonList'),
-  resultCount: document.getElementById('resultCount'),
   resultsHost: document.getElementById('resultsHost'),
 };
 
@@ -331,20 +330,16 @@ function renderLessonList() {
 
 function renderResults(items, message = '') {
   if (message) {
-    els.resultCount.textContent = '0 Einträge';
     els.resultsHost.className = 'plain';
     els.resultsHost.innerHTML = escapeHtml(message);
     return;
   }
 
   if (!items.length) {
-    els.resultCount.textContent = '0 Einträge';
     els.resultsHost.className = 'plain';
     els.resultsHost.textContent = 'Keine Treffer';
     return;
   }
-
-  els.resultCount.textContent = `${items.length} Einträge`;
 
   const rows = items.map(({ entry }) => `
     <div class="row">

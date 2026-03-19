@@ -225,19 +225,6 @@ body {
   gap: 6px;
 }
 
-
-.result-count {
-  margin: 0 0 10px;
-  padding: 0 2px;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.result-count:empty {
-  display: none;
-}
-
 .list {
   background: var(--surface);
   border: 1px solid var(--line);
