@@ -19,13 +19,23 @@
 <body>
   <div class="app">
     <div class="topbar">
-      <label class="search" id="searchWrap" for="searchInput">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <input id="searchInput" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Deutsch suchen …" aria-label="Vokabel suchen" />
-        <button class="clear-btn" id="clearBtn" type="button" aria-label="Suche löschen">×</button>
-      </label>
+      <div class="searches" aria-label="Suchfelder">
+        <label class="search" id="searchWrap" for="searchInput">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input id="searchInput" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Deutsch suchen …" aria-label="Deutsch suchen" />
+          <button class="clear-btn" id="clearBtn" type="button" aria-label="Deutschsuche löschen">×</button>
+        </label>
+
+        <label class="search" id="transcriptionSearchWrap" for="transcriptionSearchInput">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input id="transcriptionSearchInput" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Transkription suchen …" aria-label="Transkription suchen" />
+          <button class="clear-btn" id="transcriptionClearBtn" type="button" aria-label="Transkriptionssuche löschen">×</button>
+        </label>
+      </div>
 
       <div class="filter-wrap">
         <button class="filter-btn" id="filterButton" type="button" aria-haspopup="true" aria-expanded="false">Kapitel</button>

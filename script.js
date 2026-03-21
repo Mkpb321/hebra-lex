@@ -9,18 +9,23 @@ const SECONDARY_WEIGHTS = {
   Synonyme: 0.88,
 };
 const INPUT_DEBOUNCE_MS = 180;
+const TRANSCRIPTION_FIELD = 'Transkription';
 
 const state = {
   entries: [],
   lessons: [],
   selectedLessons: new Set(),
   query: '',
+  transcriptionQuery: '',
 };
 
 const els = {
   searchInput: document.getElementById('searchInput'),
   searchWrap: document.getElementById('searchWrap'),
   clearBtn: document.getElementById('clearBtn'),
+  transcriptionSearchInput: document.getElementById('transcriptionSearchInput'),
+  transcriptionSearchWrap: document.getElementById('transcriptionSearchWrap'),
+  transcriptionClearBtn: document.getElementById('transcriptionClearBtn'),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
@@ -66,6 +71,13 @@ function normalize(value) {
     .trim();
 }
 
+function normalizeTranscription(value) {
+  return normalize(value)
+    .replace(/[jy]/g, 'i')
+    .replace(/ä/g, 'e')
+    .replace(/(.)\1+/g, '$1');
+}
+
 function splitSlashValues(value) {
   return String(value ?? '')
     .split('/')
@@ -75,6 +87,13 @@ function splitSlashValues(value) {
 
 function splitWords(value) {
   return normalize(value)
+    .split(/[\s\-–—]+/)
+    .map((word) => word.trim())
+    .filter(Boolean);
+}
+
+function splitTranscriptionWords(value) {
+  return normalizeTranscription(value)
     .split(/[\s\-–—]+/)
     .map((word) => word.trim())
     .filter(Boolean);
@@ -109,6 +128,14 @@ function levenshtein(a, b) {
 function similarity(a, b) {
   const left = normalize(a);
   const right = normalize(b);
+  if (!left || !right) return 0;
+  const distance = levenshtein(left, right);
+  return 1 - distance / Math.max(left.length, right.length);
+}
+
+function transcriptionSimilarity(a, b) {
+  const left = normalizeTranscription(a);
+  const right = normalizeTranscription(b);
   if (!left || !right) return 0;
   const distance = levenshtein(left, right);
   return 1 - distance / Math.max(left.length, right.length);
@@ -166,18 +193,71 @@ function scoreCandidate(query, candidate) {
     }
   }
 
-  {
-    const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
-    let bestSimilarity = 0;
-    for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
+  const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(4, q.length))];
+  let bestSimilarity = 0;
+  for (const part of relevantParts) bestSimilarity = Math.max(bestSimilarity, similarity(q, part));
 
-    if (bestSimilarity >= 0.97) best = Math.max(best, 100);
-    else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
-    else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
-    else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
-    else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
-    else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+  if (bestSimilarity >= 0.97) best = Math.max(best, 100);
+  else if (bestSimilarity >= 0.92) best = Math.max(best, 92);
+  else if (bestSimilarity >= 0.86) best = Math.max(best, 82);
+  else if (bestSimilarity >= 0.78) best = Math.max(best, 70);
+  else if (bestSimilarity >= 0.70) best = Math.max(best, 58);
+  else if (bestSimilarity >= 0.63) best = Math.max(best, 48);
+
+  return Math.round(best * 100) / 100;
+}
+
+function scoreTranscriptionCandidate(query, candidate) {
+  const q = normalizeTranscription(query);
+  const c = normalizeTranscription(candidate);
+  if (!q || !c) return 0;
+
+  const qWords = splitTranscriptionWords(q);
+  const cWords = splitTranscriptionWords(c);
+  let best = 0;
+
+  if (c === q) best = Math.max(best, 132);
+  if (c.startsWith(q)) best = Math.max(best, 118);
+  if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 112);
+  if (q.length >= 2 && c.includes(q)) best = Math.max(best, 98);
+
+  if (qWords.length > 1) {
+    let matched = 0;
+    let prefix = 0;
+    let loose = 0;
+
+    for (const qWord of qWords) {
+      if (cWords.some((cWord) => cWord === qWord)) {
+        matched += 1;
+      } else if (cWords.some((cWord) => cWord.startsWith(qWord) || qWord.startsWith(cWord))) {
+        prefix += 1;
+      } else if (cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) {
+        loose += 1;
+      }
+    }
+
+    const coverage = (matched + (prefix * 0.8) + (loose * 0.5)) / qWords.length;
+    best = Math.max(best, 42 + (coverage * 70));
+  } else {
+    const qWord = qWords[0] || q;
+    if (cWords.some((cWord) => cWord === qWord)) best = Math.max(best, 124);
+    if (cWords.some((cWord) => cWord.startsWith(qWord))) best = Math.max(best, 114);
+    if (cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 2)) best = Math.max(best, 104);
+    if (cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) best = Math.max(best, 94);
   }
+
+  const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(2, q.length))];
+  let bestSimilarity = 0;
+  for (const part of relevantParts) {
+    bestSimilarity = Math.max(bestSimilarity, transcriptionSimilarity(q, part));
+  }
+
+  if (bestSimilarity >= 0.98) best = Math.max(best, 120);
+  else if (bestSimilarity >= 0.94) best = Math.max(best, 112);
+  else if (bestSimilarity >= 0.88) best = Math.max(best, 100);
+  else if (bestSimilarity >= 0.82) best = Math.max(best, 88);
+  else if (bestSimilarity >= 0.74) best = Math.max(best, 72);
+  else if (bestSimilarity >= 0.66) best = Math.max(best, 58);
 
   return Math.round(best * 100) / 100;
 }
@@ -195,10 +275,17 @@ function getSortedLessons(rows) {
 
 function prepareEntries(rows) {
   return rows.map((row, index) => {
-    const prepared = { ...row, __index: index, __search: {} };
+    const prepared = {
+      ...row,
+      __index: index,
+      __search: {},
+      __transcriptionSearch: prepareFieldValues(row[TRANSCRIPTION_FIELD]),
+    };
+
     for (const field of SEARCH_FIELDS) {
       prepared.__search[field] = prepareFieldValues(row[field]);
     }
+
     return prepared;
   });
 }
@@ -228,6 +315,19 @@ function scoreEntry(entry, query) {
   return result;
 }
 
+function scoreTranscriptionEntry(entry, query) {
+  const result = { transcription: 0, total: 0 };
+
+  for (const candidate of entry.__transcriptionSearch) {
+    const normalizedCandidate = normalizeTranscription(candidate);
+    if (!normalizedCandidate) continue;
+    result.transcription = Math.max(result.transcription, scoreTranscriptionCandidate(query, candidate));
+  }
+
+  result.total = result.transcription;
+  return result;
+}
+
 function defaultSort(a, b) {
   const lessonDiff = Number(a.Lektion || 0) - Number(b.Lektion || 0);
   if (lessonDiff !== 0) return lessonDiff;
@@ -243,18 +343,50 @@ function shouldIncludeMatch(score, query) {
   return false;
 }
 
-function rankEntries(entries, query) {
+function shouldIncludeTranscriptionMatch(score, query) {
+  const normalizedQuery = normalizeTranscription(query);
+  if (!normalizedQuery) return true;
+  const isShort = normalizedQuery.length <= 2;
+  return score.transcription >= (isShort ? 96 : 58);
+}
+
+function rankEntries(entries, query, transcriptionQuery) {
   const trimmed = query.trim();
-  if (!trimmed) {
+  const trimmedTranscription = transcriptionQuery.trim();
+
+  if (!trimmed && !trimmedTranscription) {
     return [...entries]
       .sort(defaultSort)
-      .map((entry) => ({ entry, score: { deutsch: 0, secondary: 0, total: 0 } }));
+      .map((entry) => ({
+        entry,
+        score: { deutsch: 0, secondary: 0, transcription: 0, total: 0 },
+      }));
   }
 
   return entries
-    .map((entry) => ({ entry, score: scoreEntry(entry, trimmed) }))
-    .filter((item) => shouldIncludeMatch(item.score, trimmed))
+    .map((entry) => {
+      const textScore = trimmed ? scoreEntry(entry, trimmed) : { deutsch: 0, secondary: 0, total: 0 };
+      const transcriptionScore = trimmedTranscription
+        ? scoreTranscriptionEntry(entry, trimmedTranscription)
+        : { transcription: 0, total: 0 };
+
+      return {
+        entry,
+        score: {
+          deutsch: textScore.deutsch,
+          secondary: textScore.secondary,
+          transcription: transcriptionScore.transcription,
+          total: textScore.total + (transcriptionScore.total * 4),
+        },
+      };
+    })
+    .filter((item) => {
+      const matchesText = !trimmed || shouldIncludeMatch(item.score, trimmed);
+      const matchesTranscription = !trimmedTranscription || shouldIncludeTranscriptionMatch(item.score, trimmedTranscription);
+      return matchesText && matchesTranscription;
+    })
     .sort((left, right) => {
+      if (right.score.transcription !== left.score.transcription) return right.score.transcription - left.score.transcription;
       if (right.score.deutsch !== left.score.deutsch) return right.score.deutsch - left.score.deutsch;
       if (right.score.secondary !== left.score.secondary) return right.score.secondary - left.score.secondary;
       if (right.score.total !== left.score.total) return right.score.total - left.score.total;
@@ -360,7 +492,7 @@ function render() {
     return;
   }
 
-  const ranked = rankEntries(getFilteredEntries(), state.query.trim());
+  const ranked = rankEntries(getFilteredEntries(), state.query, state.transcriptionQuery);
   renderResults(ranked);
 }
 
@@ -368,6 +500,7 @@ const debouncedRender = debounce(render, INPUT_DEBOUNCE_MS);
 
 function syncSearchUi() {
   els.searchWrap.classList.toggle('has-value', !!els.searchInput.value.trim());
+  els.transcriptionSearchWrap.classList.toggle('has-value', !!els.transcriptionSearchInput.value.trim());
 }
 
 function openDropdown() {
@@ -406,6 +539,12 @@ els.searchInput.addEventListener('input', (event) => {
   debouncedRender();
 });
 
+els.transcriptionSearchInput.addEventListener('input', (event) => {
+  state.transcriptionQuery = event.target.value;
+  syncSearchUi();
+  debouncedRender();
+});
+
 els.clearBtn.addEventListener('click', () => {
   debouncedRender.cancel();
   els.searchInput.value = '';
@@ -413,6 +552,15 @@ els.clearBtn.addEventListener('click', () => {
   syncSearchUi();
   render();
   els.searchInput.focus();
+});
+
+els.transcriptionClearBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  els.transcriptionSearchInput.value = '';
+  state.transcriptionQuery = '';
+  syncSearchUi();
+  render();
+  els.transcriptionSearchInput.focus();
 });
 
 els.filterButton.addEventListener('click', () => {
@@ -463,4 +611,5 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+syncSearchUi();
 loadData();
