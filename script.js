@@ -1,6 +1,8 @@
 
 function removeDiacritics(str) {
-    return removeDiacritics(str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+  return String(str ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 const DATA_URL = './Voc_erweitert.json';
@@ -77,13 +79,26 @@ function normalize(value) {
 }
 
 function normalizeTranscription(value) {
-    // remove diacritics
-
-  return normalize(value)
-    .replace(/[jy]/g, 'i')
-    .replace(/ä/g, 'e')
-    .replace(/(.)\1+/g, '$1');
+  return removeDiacritics(
+    normalize(value)
+      .replace(/ts/g, 's')
+      .replace(/z/g, 's')
+      .replace(/[jy]/g, 'i')
+      .replace(/ö/g, 'e')
+      .replace(/ä/g, 'e')
+      .replace(/(.)\1+/g, '$1')
+  );
 }
+
+
+function getTranscriptionVariants(value) {
+    if (value == null) return [];
+    return String(value)
+        .split("/")
+        .map(part => normalizeTranscription(part.trim()))
+        .filter(Boolean);
+}
+
 
 function splitSlashValues(value) {
   return String(value ?? '')
