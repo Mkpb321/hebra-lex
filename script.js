@@ -1,3 +1,8 @@
+
+function removeDiacritics(str) {
+    return removeDiacritics(str.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+}
+
 const DATA_URL = './Voc_erweitert.json';
 const SEARCH_FIELDS = ['Deutsch', 'Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
 const SECONDARY_FIELDS = ['Infinitiv', 'Nomen', 'Verb', 'Adjektiv', 'Synonyme'];
@@ -72,6 +77,8 @@ function normalize(value) {
 }
 
 function normalizeTranscription(value) {
+    // remove diacritics
+
   return normalize(value)
     .replace(/[jy]/g, 'i')
     .replace(/ä/g, 'e')
