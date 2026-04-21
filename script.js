@@ -1,4 +1,3 @@
-
 function removeDiacritics(str) {
   return String(str ?? '')
     .normalize('NFD')
@@ -17,6 +16,7 @@ const SECONDARY_WEIGHTS = {
 };
 const INPUT_DEBOUNCE_MS = 180;
 const TRANSCRIPTION_FIELD = 'Transkription';
+const HEBREW_FIELD = 'Hebräisch';
 
 const state = {
   entries: [],
@@ -24,6 +24,7 @@ const state = {
   selectedLessons: new Set(),
   query: '',
   transcriptionQuery: '',
+  hebrewQuery: '',
 };
 
 const els = {
@@ -33,6 +34,9 @@ const els = {
   transcriptionSearchInput: document.getElementById('transcriptionSearchInput'),
   transcriptionSearchWrap: document.getElementById('transcriptionSearchWrap'),
   transcriptionClearBtn: document.getElementById('transcriptionClearBtn'),
+  hebrewSearchInput: document.getElementById('hebrewSearchInput'),
+  hebrewSearchWrap: document.getElementById('hebrewSearchWrap'),
+  hebrewClearBtn: document.getElementById('hebrewClearBtn'),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
@@ -90,15 +94,23 @@ function normalizeTranscription(value) {
   );
 }
 
-
-function getTranscriptionVariants(value) {
-    if (value == null) return [];
-    return String(value)
-        .split("/")
-        .map(part => normalizeTranscription(part.trim()))
-        .filter(Boolean);
+function normalizeHebrew(value) {
+  return String(value ?? '')
+    .normalize('NFC')
+    .replace(/[\u0591-\u05BD\u05BF-\u05C2\u05C4-\u05C5\u05C7]/g, '')
+    .replace(/[\u200e\u200f\u202a-\u202e]/g, '')
+    .replace(/[־׀׃״׳"'`´.,;:!?(){}\[\]<>/\\|+-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
+function getTranscriptionVariants(value) {
+  if (value == null) return [];
+  return String(value)
+    .split('/')
+    .map((part) => normalizeTranscription(part.trim()))
+    .filter(Boolean);
+}
 
 function splitSlashValues(value) {
   return String(value ?? '')
@@ -116,6 +128,13 @@ function splitWords(value) {
 
 function splitTranscriptionWords(value) {
   return normalizeTranscription(value)
+    .split(/[\s\-–—]+/)
+    .map((word) => word.trim())
+    .filter(Boolean);
+}
+
+function splitHebrewWords(value) {
+  return normalizeHebrew(value)
     .split(/[\s\-–—]+/)
     .map((word) => word.trim())
     .filter(Boolean);
@@ -158,6 +177,14 @@ function similarity(a, b) {
 function transcriptionSimilarity(a, b) {
   const left = normalizeTranscription(a);
   const right = normalizeTranscription(b);
+  if (!left || !right) return 0;
+  const distance = levenshtein(left, right);
+  return 1 - distance / Math.max(left.length, right.length);
+}
+
+function hebrewSimilarity(a, b) {
+  const left = normalizeHebrew(a);
+  const right = normalizeHebrew(b);
   if (!left || !right) return 0;
   const distance = levenshtein(left, right);
   return 1 - distance / Math.max(left.length, right.length);
@@ -284,6 +311,61 @@ function scoreTranscriptionCandidate(query, candidate) {
   return Math.round(best * 100) / 100;
 }
 
+function scoreHebrewCandidate(query, candidate) {
+  const q = normalizeHebrew(query);
+  const c = normalizeHebrew(candidate);
+  if (!q || !c) return 0;
+
+  const qWords = splitHebrewWords(q);
+  const cWords = splitHebrewWords(c);
+  let best = 0;
+
+  if (c === q) best = Math.max(best, 136);
+  if (c.startsWith(q)) best = Math.max(best, 122);
+  if (` ${c} `.includes(` ${q} `)) best = Math.max(best, 116);
+  if (q.length >= 2 && c.includes(q)) best = Math.max(best, 102);
+
+  if (qWords.length > 1) {
+    let exact = 0;
+    let prefix = 0;
+    let loose = 0;
+
+    for (const qWord of qWords) {
+      if (cWords.some((cWord) => cWord === qWord)) {
+        exact += 1;
+      } else if (cWords.some((cWord) => cWord.startsWith(qWord) || qWord.startsWith(cWord))) {
+        prefix += 1;
+      } else if (cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) {
+        loose += 1;
+      }
+    }
+
+    const coverage = (exact + (prefix * 0.8) + (loose * 0.52)) / qWords.length;
+    best = Math.max(best, 44 + (coverage * 72));
+  } else {
+    const qWord = qWords[0] || q;
+    if (cWords.some((cWord) => cWord === qWord)) best = Math.max(best, 128);
+    if (cWords.some((cWord) => cWord.startsWith(qWord))) best = Math.max(best, 118);
+    if (cWords.some((cWord) => qWord.startsWith(cWord) && cWord.length >= 2)) best = Math.max(best, 108);
+    if (cWords.some((cWord) => cWord.includes(qWord) || qWord.includes(cWord))) best = Math.max(best, 96);
+  }
+
+  const relevantParts = [c, ...cWords.filter((word) => word.length >= Math.min(2, q.length))];
+  let bestSimilarity = 0;
+  for (const part of relevantParts) {
+    bestSimilarity = Math.max(bestSimilarity, hebrewSimilarity(q, part));
+  }
+
+  if (bestSimilarity >= 0.98) best = Math.max(best, 124);
+  else if (bestSimilarity >= 0.94) best = Math.max(best, 116);
+  else if (bestSimilarity >= 0.88) best = Math.max(best, 104);
+  else if (bestSimilarity >= 0.82) best = Math.max(best, 92);
+  else if (bestSimilarity >= 0.74) best = Math.max(best, 76);
+  else if (bestSimilarity >= 0.66) best = Math.max(best, 62);
+
+  return Math.round(best * 100) / 100;
+}
+
 function prepareFieldValues(value) {
   return splitSlashValues(value)
     .map((part) => part.trim())
@@ -302,6 +384,7 @@ function prepareEntries(rows) {
       __index: index,
       __search: {},
       __transcriptionSearch: prepareFieldValues(row[TRANSCRIPTION_FIELD]),
+      __hebrewSearch: prepareFieldValues(row[HEBREW_FIELD]),
     };
 
     for (const field of SEARCH_FIELDS) {
@@ -350,6 +433,19 @@ function scoreTranscriptionEntry(entry, query) {
   return result;
 }
 
+function scoreHebrewEntry(entry, query) {
+  const result = { hebrew: 0, total: 0 };
+
+  for (const candidate of entry.__hebrewSearch) {
+    const normalizedCandidate = normalizeHebrew(candidate);
+    if (!normalizedCandidate) continue;
+    result.hebrew = Math.max(result.hebrew, scoreHebrewCandidate(query, candidate));
+  }
+
+  result.total = result.hebrew;
+  return result;
+}
+
 function defaultSort(a, b) {
   const lessonDiff = Number(a.Lektion || 0) - Number(b.Lektion || 0);
   if (lessonDiff !== 0) return lessonDiff;
@@ -372,16 +468,24 @@ function shouldIncludeTranscriptionMatch(score, query) {
   return score.transcription >= (isShort ? 96 : 58);
 }
 
-function rankEntries(entries, query, transcriptionQuery) {
+function shouldIncludeHebrewMatch(score, query) {
+  const normalizedQuery = normalizeHebrew(query);
+  if (!normalizedQuery) return true;
+  const isShort = normalizedQuery.length <= 2;
+  return score.hebrew >= (isShort ? 98 : 62);
+}
+
+function rankEntries(entries, query, transcriptionQuery, hebrewQuery) {
   const trimmed = query.trim();
   const trimmedTranscription = transcriptionQuery.trim();
+  const trimmedHebrew = hebrewQuery.trim();
 
-  if (!trimmed && !trimmedTranscription) {
+  if (!trimmed && !trimmedTranscription && !trimmedHebrew) {
     return [...entries]
       .sort(defaultSort)
       .map((entry) => ({
         entry,
-        score: { deutsch: 0, secondary: 0, transcription: 0, total: 0 },
+        score: { deutsch: 0, secondary: 0, transcription: 0, hebrew: 0, total: 0 },
       }));
   }
 
@@ -391,6 +495,9 @@ function rankEntries(entries, query, transcriptionQuery) {
       const transcriptionScore = trimmedTranscription
         ? scoreTranscriptionEntry(entry, trimmedTranscription)
         : { transcription: 0, total: 0 };
+      const hebrewScore = trimmedHebrew
+        ? scoreHebrewEntry(entry, trimmedHebrew)
+        : { hebrew: 0, total: 0 };
 
       return {
         entry,
@@ -398,16 +505,19 @@ function rankEntries(entries, query, transcriptionQuery) {
           deutsch: textScore.deutsch,
           secondary: textScore.secondary,
           transcription: transcriptionScore.transcription,
-          total: textScore.total + (transcriptionScore.total * 4),
+          hebrew: hebrewScore.hebrew,
+          total: textScore.total + (transcriptionScore.total * 4) + (hebrewScore.total * 4.25),
         },
       };
     })
     .filter((item) => {
       const matchesText = !trimmed || shouldIncludeMatch(item.score, trimmed);
       const matchesTranscription = !trimmedTranscription || shouldIncludeTranscriptionMatch(item.score, trimmedTranscription);
-      return matchesText && matchesTranscription;
+      const matchesHebrew = !trimmedHebrew || shouldIncludeHebrewMatch(item.score, trimmedHebrew);
+      return matchesText && matchesTranscription && matchesHebrew;
     })
     .sort((left, right) => {
+      if (right.score.hebrew !== left.score.hebrew) return right.score.hebrew - left.score.hebrew;
       if (right.score.transcription !== left.score.transcription) return right.score.transcription - left.score.transcription;
       if (right.score.deutsch !== left.score.deutsch) return right.score.deutsch - left.score.deutsch;
       if (right.score.secondary !== left.score.secondary) return right.score.secondary - left.score.secondary;
@@ -514,7 +624,7 @@ function render() {
     return;
   }
 
-  const ranked = rankEntries(getFilteredEntries(), state.query, state.transcriptionQuery);
+  const ranked = rankEntries(getFilteredEntries(), state.query, state.transcriptionQuery, state.hebrewQuery);
   renderResults(ranked);
 }
 
@@ -523,6 +633,7 @@ const debouncedRender = debounce(render, INPUT_DEBOUNCE_MS);
 function syncSearchUi() {
   els.searchWrap.classList.toggle('has-value', !!els.searchInput.value.trim());
   els.transcriptionSearchWrap.classList.toggle('has-value', !!els.transcriptionSearchInput.value.trim());
+  els.hebrewSearchWrap.classList.toggle('has-value', !!els.hebrewSearchInput.value.trim());
 }
 
 function openDropdown() {
@@ -567,6 +678,12 @@ els.transcriptionSearchInput.addEventListener('input', (event) => {
   debouncedRender();
 });
 
+els.hebrewSearchInput.addEventListener('input', (event) => {
+  state.hebrewQuery = event.target.value;
+  syncSearchUi();
+  debouncedRender();
+});
+
 els.clearBtn.addEventListener('click', () => {
   debouncedRender.cancel();
   els.searchInput.value = '';
@@ -583,6 +700,15 @@ els.transcriptionClearBtn.addEventListener('click', () => {
   syncSearchUi();
   render();
   els.transcriptionSearchInput.focus();
+});
+
+els.hebrewClearBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  els.hebrewSearchInput.value = '';
+  state.hebrewQuery = '';
+  syncSearchUi();
+  render();
+  els.hebrewSearchInput.focus();
 });
 
 els.filterButton.addEventListener('click', () => {
