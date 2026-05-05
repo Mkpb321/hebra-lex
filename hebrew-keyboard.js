@@ -153,19 +153,9 @@ const COMBO_MARK_MAP = {
   const SEARCH_INPUT_ID = 'hebrewSearchInput';
   const PANEL_ID = 'hebrewKeyboardPanel';
   const KEYS_HOST_ID = 'hebrewKeyboardKeys';
-  const SEARCH_BTN_ID = 'hebrewKeyboardSearchBtn';
-  const SPACE_BTN_ID = 'hebrewKeyboardSpaceBtn';
-  const BACKSPACE_BTN_ID = 'hebrewKeyboardBackspaceBtn';
-  const CLEAR_BTN_ID = 'hebrewKeyboardClearBtn';
-
   const input = document.getElementById(SEARCH_INPUT_ID);
   const panel = document.getElementById(PANEL_ID);
   const keyboard = document.getElementById(KEYS_HOST_ID);
-  const searchBtn = document.getElementById(SEARCH_BTN_ID);
-  const spaceBtn = document.getElementById(SPACE_BTN_ID);
-  const backspaceBtn = document.getElementById(BACKSPACE_BTN_ID);
-  const clearBtn = document.getElementById(CLEAR_BTN_ID);
-
   if (!input || !panel || !keyboard) return;
 
   const COMBO_BASE_KEYS = new Set(['a', 'ä', 'o']);
@@ -286,7 +276,7 @@ const COMBO_MARK_MAP = {
     commitValue('', 0);
   }
 
-  function searchAndClose() {
+  function closeFromKeyboard() {
     dispatchSearchInput();
     hideKeyboard();
     input.blur();
@@ -348,6 +338,10 @@ const COMBO_MARK_MAP = {
     return !panel.hidden && document.activeElement === input;
   }
 
+  function isPrintableKey(event) {
+    return event.key.length === 1;
+  }
+
   function handlePhysicalKeyboard(event) {
     if (!isKeyboardActive()) return;
 
@@ -361,7 +355,7 @@ const COMBO_MARK_MAP = {
 
     if (key === 'enter') {
       event.preventDefault();
-      searchAndClose();
+      closeFromKeyboard();
       return;
     }
 
@@ -438,7 +432,10 @@ const COMBO_MARK_MAP = {
       return;
     }
 
-    if (!KEY_MAP[key]) return;
+    if (!KEY_MAP[key]) {
+      if (isPrintableKey(event)) event.preventDefault();
+      return;
+    }
 
     event.preventDefault();
 
@@ -596,15 +593,6 @@ const COMBO_MARK_MAP = {
   document.addEventListener('keydown', handlePhysicalKeyboard, true);
   document.addEventListener('keyup', handlePhysicalKeyboardKeyup, true);
   window.addEventListener('blur', clearActivePhysicalKeys);
-
-  [searchBtn, spaceBtn, backspaceBtn, clearBtn].forEach((button) => {
-    button?.addEventListener('mousedown', (event) => event.preventDefault());
-  });
-
-  searchBtn?.addEventListener('click', searchAndClose);
-  spaceBtn?.addEventListener('click', () => { showKeyboard(); addSpace(); });
-  backspaceBtn?.addEventListener('click', () => { showKeyboard(); backspace(); });
-  clearBtn?.addEventListener('click', () => { showKeyboard(); clearAll(); });
 
   buildKeyboard();
   hideKeyboard();

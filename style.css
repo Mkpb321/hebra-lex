@@ -405,46 +405,6 @@ mark {
   display: none;
 }
 
-.hebrew-keyboard-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.hebrew-keyboard-action {
-  appearance: none;
-  min-height: 34px;
-  padding: 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 9px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.hebrew-keyboard-action:hover,
-.hebrew-keyboard-action:focus-visible {
-  border-color: rgba(24, 88, 230, 0.35);
-  background: #fbfdff;
-  outline: none;
-}
-
-.hebrew-keyboard-action.search-action {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.hebrew-keyboard-action.search-action:hover,
-.hebrew-keyboard-action.search-action:focus-visible {
-  background: #164fcf;
-  border-color: #164fcf;
-}
-
 .hebrew-keyboard {
   width: 100%;
   display: flex;
@@ -529,20 +489,6 @@ mark {
     border-radius: 12px;
   }
 
-  .hebrew-keyboard-actions {
-    display: grid;
-    grid-template-columns: 1.3fr 1fr 48px 48px;
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-
-  .hebrew-keyboard-action {
-    min-height: 32px;
-    min-width: 0;
-    padding: 0 8px;
-    font-size: 12px;
-  }
-
   .hebrew-keyboard {
     gap: 2px;
     padding: 2px;
@@ -564,10 +510,6 @@ mark {
 }
 
 @media (max-width: 390px) {
-  .hebrew-keyboard-actions {
-    grid-template-columns: 1fr 1fr 42px 42px;
-  }
-
   .hebrew-keyboard-key {
     width: 30px;
     height: 30px;
