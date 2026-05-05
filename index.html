@@ -14,6 +14,7 @@
   <link rel="manifest" href="./favicon/site.webmanifest" />
   <title>Hebräisch Vokabelsuche</title>
   <link rel="stylesheet" href="./style.css" />
+  <script src="./hebrew-keyboard.js" defer></script>
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -40,7 +41,7 @@
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <input id="hebrewSearchInput" type="search" inputmode="search" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Hebräisch suchen …" aria-label="Hebräisch suchen" />
+          <input id="hebrewSearchInput" type="search" inputmode="none" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Hebräisch suchen …" aria-label="Hebräisch suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
           <button class="clear-btn" id="hebrewClearBtn" type="button" aria-label="Hebräischsuche löschen">×</button>
         </label>
       </div>
@@ -60,6 +61,18 @@
         </div>
       </div>
     </div>
+
+
+
+    <section class="hebrew-keyboard-panel" id="hebrewKeyboardPanel" aria-label="Hebräische Tastatur" aria-hidden="true" hidden>
+      <div class="hebrew-keyboard-actions" aria-label="Tastaturaktionen">
+        <button class="hebrew-keyboard-action search-action" id="hebrewKeyboardSearchBtn" type="button">Suchen</button>
+        <button class="hebrew-keyboard-action" id="hebrewKeyboardSpaceBtn" type="button">Leerzeichen</button>
+        <button class="hebrew-keyboard-action" id="hebrewKeyboardBackspaceBtn" type="button" aria-label="Zeichen löschen">⌫</button>
+        <button class="hebrew-keyboard-action" id="hebrewKeyboardClearBtn" type="button" aria-label="Hebräischsuche leeren">×</button>
+      </div>
+      <div class="hebrew-keyboard" id="hebrewKeyboardKeys" aria-label="Hebräische Zeichen"></div>
+    </section>
 
     <div id="resultsHost" class="plain">Lade …</div>
   </div>

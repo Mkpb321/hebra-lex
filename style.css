@@ -391,3 +391,185 @@ mark {
     grid-template-columns: 64px 88px minmax(0, 1fr);
   }
 }
+
+.hebrew-keyboard-panel {
+  margin: -6px 0 12px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 18px 44px rgba(16, 31, 50, 0.12);
+}
+
+.hebrew-keyboard-panel[hidden] {
+  display: none;
+}
+
+.hebrew-keyboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.hebrew-keyboard-action {
+  appearance: none;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hebrew-keyboard-action:hover,
+.hebrew-keyboard-action:focus-visible {
+  border-color: rgba(24, 88, 230, 0.35);
+  background: #fbfdff;
+  outline: none;
+}
+
+.hebrew-keyboard-action.search-action {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.hebrew-keyboard-action.search-action:hover,
+.hebrew-keyboard-action.search-action:focus-visible {
+  background: #164fcf;
+  border-color: #164fcf;
+}
+
+.hebrew-keyboard {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.hebrew-keyboard-key {
+  appearance: none;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  font-family: "SBL Hebrew", "Cardo", "Noto Sans Hebrew", "Times New Roman", "Arial Hebrew", "Segoe UI Symbol", serif;
+}
+
+.hebrew-keyboard-key:hover {
+  border-color: #b8c4d1;
+  filter: brightness(0.995);
+}
+
+.hebrew-keyboard-key.blocked {
+  background: #f1f4f8;
+  color: #9aa6b4;
+}
+
+.hebrew-keyboard-key.active {
+  border-color: #7ba5ea;
+  background: #d7e7ff;
+}
+
+.hebrew-keyboard-key.tone-consonant {
+  background: #eef4ff;
+  border-color: #d9e6ff;
+}
+
+.hebrew-keyboard-key.tone-vowel {
+  background: #edf9f3;
+  border-color: #d5efdf;
+}
+
+.hebrew-keyboard-key.tone-sign {
+  background: #fff6e9;
+  border-color: #fde8c6;
+}
+
+.hebrew-keyboard-glyph {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hebrew-keyboard-glyph.consonant {
+  font-size: 40px;
+  transform: translateY(1px);
+}
+
+.hebrew-keyboard-glyph.mark {
+  font-size: 40px;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 760px) {
+  .hebrew-keyboard-panel {
+    margin-top: -2px;
+    padding: 4px;
+    border-radius: 12px;
+  }
+
+  .hebrew-keyboard-actions {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 48px 48px;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .hebrew-keyboard-action {
+    min-height: 32px;
+    min-width: 0;
+    padding: 0 8px;
+    font-size: 12px;
+  }
+
+  .hebrew-keyboard {
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .hebrew-keyboard-key {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+  }
+
+  .hebrew-keyboard-glyph.consonant {
+    font-size: 22px;
+  }
+
+  .hebrew-keyboard-glyph.mark {
+    font-size: 27px;
+  }
+}
+
+@media (max-width: 390px) {
+  .hebrew-keyboard-actions {
+    grid-template-columns: 1fr 1fr 42px 42px;
+  }
+
+  .hebrew-keyboard-key {
+    width: 30px;
+    height: 30px;
+  }
+}
