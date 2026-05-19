@@ -37,6 +37,9 @@ const els = {
   hebrewSearchInput: document.getElementById('hebrewSearchInput'),
   hebrewSearchWrap: document.getElementById('hebrewSearchWrap'),
   hebrewClearBtn: document.getElementById('hebrewClearBtn'),
+  infoButton: document.getElementById('infoButton'),
+  infoOverlay: document.getElementById('infoOverlay'),
+  infoCloseButton: document.getElementById('infoCloseButton'),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
@@ -646,6 +649,20 @@ function closeDropdown() {
   els.filterButton.setAttribute('aria-expanded', 'false');
 }
 
+function openInfoOverlay() {
+  closeDropdown();
+  els.infoOverlay.hidden = false;
+  els.infoButton.setAttribute('aria-expanded', 'true');
+  els.infoCloseButton.focus({ preventScroll: true });
+}
+
+function closeInfoOverlay({ restoreFocus = false } = {}) {
+  if (els.infoOverlay.hidden) return;
+  els.infoOverlay.hidden = true;
+  els.infoButton.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) els.infoButton.focus({ preventScroll: true });
+}
+
 async function loadData() {
   try {
     const response = await fetch(DATA_URL, { cache: 'no-store' });
@@ -711,6 +728,18 @@ els.hebrewClearBtn.addEventListener('click', () => {
   els.hebrewSearchInput.focus();
 });
 
+els.infoButton.addEventListener('click', () => {
+  openInfoOverlay();
+});
+
+els.infoCloseButton.addEventListener('click', () => {
+  closeInfoOverlay({ restoreFocus: true });
+});
+
+els.infoOverlay.addEventListener('click', (event) => {
+  if (event.target === els.infoOverlay) closeInfoOverlay({ restoreFocus: true });
+});
+
 els.filterButton.addEventListener('click', () => {
   const isOpen = els.dropdown.classList.contains('is-open');
   if (isOpen) closeDropdown();
@@ -747,7 +776,10 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') closeDropdown();
+  if (event.key === 'Escape') {
+    closeDropdown();
+    closeInfoOverlay({ restoreFocus: true });
+  }
   if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
     const targetTag = document.activeElement?.tagName?.toLowerCase();
     const isTypingContext = ['input', 'textarea'].includes(targetTag) || document.activeElement?.isContentEditable;

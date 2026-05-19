@@ -46,23 +46,32 @@
         </label>
       </div>
 
-      <div class="filter-wrap">
-        <button class="filter-btn" id="filterButton" type="button" aria-haspopup="true" aria-expanded="false">Kapitel</button>
-        <div class="dropdown" id="dropdown" role="dialog" aria-label="Kapitel auswählen">
-          <div class="dropdown-tools">
-            <button class="tool-btn" id="selectAllBtn" type="button">Alle</button>
-            <button class="tool-btn" id="selectNoneBtn" type="button">Keine</button>
-          </div>
+      <div class="topbar-actions">
+        <button class="info-btn" id="infoButton" type="button" aria-haspopup="dialog" aria-controls="infoOverlay" aria-expanded="false" aria-label="Informationen öffnen">i</button>
 
-          <div class="dropdown-section dropdown-section-lessons">
-            <div class="dropdown-section-title">Kapitel</div>
-            <div class="lesson-list" id="lessonList"></div>
+        <div class="filter-wrap">
+          <button class="filter-btn" id="filterButton" type="button" aria-haspopup="true" aria-expanded="false">Kapitel</button>
+          <div class="dropdown" id="dropdown" role="dialog" aria-label="Kapitel auswählen">
+            <div class="dropdown-tools">
+              <button class="tool-btn" id="selectAllBtn" type="button">Alle</button>
+              <button class="tool-btn" id="selectNoneBtn" type="button">Keine</button>
+            </div>
+
+            <div class="dropdown-section dropdown-section-lessons">
+              <div class="dropdown-section-title">Kapitel</div>
+              <div class="lesson-list" id="lessonList"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-
+    <div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="Informationen" hidden>
+      <div class="info-dialog" role="document">
+        <button class="info-close-btn" id="infoCloseButton" type="button" aria-label="Informationen schließen">×</button>
+        <div class="info-content" id="infoContent"></div>
+      </div>
+    </div>
 
     <section class="hebrew-keyboard-panel" id="hebrewKeyboardPanel" aria-label="Hebräische Tastatur" aria-hidden="true" hidden>
       <div class="hebrew-keyboard" id="hebrewKeyboardKeys" aria-label="Hebräische Zeichen"></div>
