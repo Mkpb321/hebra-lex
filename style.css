@@ -723,9 +723,10 @@ mark {
 
 .mapping-list li {
   display: grid;
-  grid-template-columns: minmax(72px, auto) 18px minmax(0, 1fr);
+  grid-template-columns: max-content max-content max-content;
   align-items: center;
-  gap: 8px;
+  justify-content: start;
+  gap: 6px;
 }
 
 .mapping-key {
@@ -734,7 +735,6 @@ mark {
 }
 
 .mapping-arrow {
-  text-align: center;
   color: var(--muted);
 }
 
@@ -743,7 +743,7 @@ mark {
   font-size: 24px;
   line-height: 1;
   direction: rtl;
-  text-align: right;
+  text-align: left;
 }
 
 @media (max-width: 900px) {
@@ -770,7 +770,7 @@ mark {
   }
 
   .mapping-list li {
-    grid-template-columns: minmax(78px, auto) 16px minmax(0, 1fr);
+    grid-template-columns: max-content max-content max-content;
     gap: 6px;
   }
 
