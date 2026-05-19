@@ -125,88 +125,6 @@ body {
   place-items: center;
 }
 
-
-.topbar-actions {
-  flex: 0 0 auto;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.info-btn {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-  color: var(--text);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.info-btn:hover,
-.info-btn[aria-expanded="true"] {
-  border-color: rgba(24, 88, 230, 0.35);
-  background: #fbfdff;
-}
-
-.info-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-  background: rgba(18, 32, 51, 0.42);
-}
-
-.info-overlay[hidden] {
-  display: none;
-}
-
-.info-dialog {
-  position: relative;
-  width: min(560px, 100%);
-  min-height: 220px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--surface);
-  box-shadow: 0 24px 70px rgba(16, 31, 50, 0.22);
-}
-
-.info-close-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 999px;
-  background: #eef3f9;
-  color: var(--muted);
-  cursor: pointer;
-  font: inherit;
-  font-size: 20px;
-  line-height: 1;
-}
-
-.info-close-btn:hover {
-  background: #e2ebf5;
-  color: var(--text);
-}
-
-.info-content {
-  min-height: 220px;
-  padding: 56px 24px 24px;
-}
-
 .filter-wrap {
   position: relative;
   flex: 0 0 auto;
@@ -450,15 +368,6 @@ mark {
     gap: 8px;
   }
 
-  .topbar-actions {
-    gap: 6px;
-  }
-
-  .info-btn {
-    width: 32px;
-    height: 32px;
-  }
-
   .filter-wrap {
     width: auto;
     flex: 0 0 auto;
@@ -607,26 +516,94 @@ mark {
   }
 }
 
+
+.topbar-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.info-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.info-btn:hover,
+.info-btn[aria-expanded="true"] {
+  border-color: rgba(24, 88, 230, 0.35);
+  background: #fbfdff;
+}
+
+.info-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(18, 32, 51, 0.42);
+}
+
+.info-overlay[hidden] {
+  display: none;
+}
+
 .info-dialog {
+  position: relative;
   width: min(920px, 100%);
   min-height: 260px;
   max-height: min(88vh, 920px);
   overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 24px 70px rgba(16, 31, 50, 0.22);
+}
+
+.info-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef3f9;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.info-close-btn:hover {
+  background: #e2ebf5;
+  color: var(--text);
 }
 
 .info-content {
   min-height: 260px;
+  padding: 56px 24px 24px;
 }
 
 .info-title {
   margin: 0 0 16px;
   font-size: 24px;
   line-height: 1.15;
-}
-
-.info-placeholder {
-  margin: 0;
-  color: var(--muted);
 }
 
 .info-copy {
@@ -677,6 +654,34 @@ mark {
 
 .info-tab-panel.is-active {
   display: block;
+}
+
+.info-general {
+  display: grid;
+  gap: 16px;
+}
+
+.info-section {
+  display: grid;
+  gap: 8px;
+}
+
+.info-section h3 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.info-section p {
+  margin: 0;
+}
+
+.info-section code {
+  padding: 0.05em 0.28em;
+  border-radius: 0.28em;
+  background: #eef3f9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.95em;
 }
 
 .mapping-grid {
@@ -747,8 +752,8 @@ mark {
 }
 
 @media (max-width: 900px) {
-  .info-dialog {
-    width: min(760px, 100%);
+  .topbar {
+    align-items: stretch;
   }
 
   .mapping-grid {
@@ -757,6 +762,10 @@ mark {
 }
 
 @media (max-width: 560px) {
+  .topbar-actions {
+    gap: 6px;
+  }
+
   .info-content {
     padding: 56px 16px 18px;
   }

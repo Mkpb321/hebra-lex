@@ -37,17 +37,17 @@ const els = {
   hebrewSearchInput: document.getElementById('hebrewSearchInput'),
   hebrewSearchWrap: document.getElementById('hebrewSearchWrap'),
   hebrewClearBtn: document.getElementById('hebrewClearBtn'),
-  infoButton: document.getElementById('infoButton'),
-  infoOverlay: document.getElementById('infoOverlay'),
-  infoCloseButton: document.getElementById('infoCloseButton'),
-  infoTabButtons: Array.from(document.querySelectorAll('.info-tab-btn')),
-  infoTabPanels: Array.from(document.querySelectorAll('.info-tab-panel')),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
   selectNoneBtn: document.getElementById('selectNoneBtn'),
   lessonList: document.getElementById('lessonList'),
   resultsHost: document.getElementById('resultsHost'),
+  infoButton: document.getElementById('infoButton'),
+  infoOverlay: document.getElementById('infoOverlay'),
+  infoCloseButton: document.getElementById('infoCloseButton'),
+  infoTabButtons: Array.from(document.querySelectorAll('.info-tab-btn')),
+  infoTabPanels: Array.from(document.querySelectorAll('.info-tab-panel')),
 };
 
 const collator = new Intl.Collator('de', { sensitivity: 'base', numeric: true });
@@ -669,8 +669,8 @@ function setInfoTab(tabName) {
 }
 
 function openInfoOverlay() {
-  setInfoTab('general');
   closeDropdown();
+  setInfoTab('general');
   els.infoOverlay.hidden = false;
   els.infoButton.setAttribute('aria-expanded', 'true');
   els.infoCloseButton.focus({ preventScroll: true });
@@ -752,13 +752,6 @@ els.infoButton.addEventListener('click', () => {
   openInfoOverlay();
 });
 
-for (const button of els.infoTabButtons) {
-  button.addEventListener('click', () => {
-    setInfoTab(button.dataset.tabTarget || 'general');
-  });
-}
-
-
 els.infoCloseButton.addEventListener('click', () => {
   closeInfoOverlay({ restoreFocus: true });
 });
@@ -766,6 +759,12 @@ els.infoCloseButton.addEventListener('click', () => {
 els.infoOverlay.addEventListener('click', (event) => {
   if (event.target === els.infoOverlay) closeInfoOverlay({ restoreFocus: true });
 });
+
+for (const button of els.infoTabButtons) {
+  button.addEventListener('click', () => {
+    setInfoTab(button.dataset.tabTarget || 'general');
+  });
+}
 
 els.filterButton.addEventListener('click', () => {
   const isOpen = els.dropdown.classList.contains('is-open');
@@ -803,10 +802,7 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    closeDropdown();
-    closeInfoOverlay({ restoreFocus: true });
-  }
+  if (event.key === 'Escape') closeDropdown();
   if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
     const targetTag = document.activeElement?.tagName?.toLowerCase();
     const isTypingContext = ['input', 'textarea'].includes(targetTag) || document.activeElement?.isContentEditable;

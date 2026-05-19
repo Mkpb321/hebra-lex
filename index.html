@@ -99,7 +99,60 @@
           </div>
 
           <section class="info-tab-panel is-active" id="infoPanelGeneral" role="tabpanel" aria-labelledby="infoTabButtonGeneral" data-tab-panel="general">
-            <p class="info-placeholder">Inhalt folgt.</p>
+            <div class="info-copy info-general">
+              <section class="info-section">
+                <h3>Vokabular</h3>
+                <p>
+                  HebraLex enthält Vokabular aus <strong>Alttestamentliches Hebräisch. Vorbereitung auf das Hebraicum</strong>
+                  von <strong>Barbara Mäder</strong>. Die Sammlung ist für den Hebräischunterricht an der <strong>STH Basel</strong> gedacht.
+                </p>
+              </section>
+
+              <section class="info-section">
+                <h3>Suche</h3>
+                <p>
+                  Es gibt drei Suchfelder: <strong>Deutsch</strong>, <strong>Transkription</strong> und <strong>Hebräisch</strong>.
+                  Die Treffer werden nach Ähnlichkeit sortiert und können zusätzlich über die Kapitel-Auswahl eingeschränkt werden.
+                </p>
+              </section>
+
+              <section class="info-section">
+                <h3>Hebräische Suche</h3>
+                <p>
+                  Die hebräische Suche entfernt Vokale, Akzente und andere Punktierungen. Gesucht wird deshalb im Wesentlichen
+                  nach den Konsonanten beziehungsweise Radikalen. Dadurch findest du Wörter auch dann, wenn du die Vokalisierung
+                  nicht kennst oder nicht eingibst.
+                </p>
+                <p>
+                  Im Feld <strong>„Hebräisch …“</strong> steht eine hebräische Tastatur zur Verfügung. Die Bildschirmtastatur
+                  öffnet sich beim Fokussieren des Feldes. Weitere Tastaturbelegungen findest du im Tab <strong>„Tastatur“</strong>.
+                </p>
+              </section>
+
+              <section class="info-section">
+                <h3>Transkriptionssuche</h3>
+                <p>
+                  Die Transkriptionssuche ist absichtlich tolerant, aber dadurch nicht exakt. Transkriptionen sind nicht eindeutig:
+                  derselbe hebräische Laut kann unterschiedlich umschrieben werden, und verschiedene Umschriften können sehr ähnlich aussehen.
+                  Deshalb kann diese Suche passende Treffer übersehen oder zusätzliche, nur ungefähr passende Treffer anzeigen.
+                </p>
+                <p>
+                  Das Programm übersetzt die Eingabe nicht. Es vergleicht deine Eingabe mit den gespeicherten Transkriptionsformen:
+                  Groß-/Kleinschreibung, Akzente und Satzzeichen werden vereinheitlicht, Varianten mit <code>/</code> werden getrennt geprüft,
+                  und ähnliche Schreibungen werden zusammengeführt, zum Beispiel <code>ts</code> und <code>z</code> zu <code>s</code> sowie
+                  <code>j</code> und <code>y</code> zu <code>i</code>. Zusätzlich werden Wortanfänge, enthaltene Wortteile und eine
+                  ungefähre Ähnlichkeit der Zeichenfolge bewertet.
+                </p>
+              </section>
+
+              <section class="info-section">
+                <h3>Kapitel</h3>
+                <p>
+                  Über den Button <strong>„Kapitel“</strong> kannst du einzelne Kapitel ein- oder ausblenden. So lässt sich die Suche
+                  auf den aktuellen Lernstoff begrenzen.
+                </p>
+              </section>
+            </div>
           </section>
 
           <section class="info-tab-panel" id="infoPanelKeyboard" role="tabpanel" aria-labelledby="infoTabButtonKeyboard" data-tab-panel="keyboard" hidden>
@@ -114,58 +167,58 @@
               <section class="mapping-card mapping-card-consonants">
                 <h3>Konsonanten</h3>
                 <ul class="mapping-list">
-                  <li><span class="mapping-key">x</span><span class="mapping-arrow">→</span><span class="mapping-value">א</span></li>
-                  <li><span class="mapping-key">b</span><span class="mapping-arrow">→</span><span class="mapping-value">ב</span></li>
-                  <li><span class="mapping-key">g</span><span class="mapping-arrow">→</span><span class="mapping-value">ג</span></li>
-                  <li><span class="mapping-key">d</span><span class="mapping-arrow">→</span><span class="mapping-value">ד</span></li>
-                  <li><span class="mapping-key">h</span><span class="mapping-arrow">→</span><span class="mapping-value">ה</span></li>
-                  <li><span class="mapping-key">w</span><span class="mapping-arrow">→</span><span class="mapping-value">ו</span></li>
-                  <li><span class="mapping-key">Shift+W</span><span class="mapping-arrow">→</span><span class="mapping-value">ש</span></li>
-                  <li><span class="mapping-key">Shift+W+1</span><span class="mapping-arrow">→</span><span class="mapping-value">שׂ</span></li>
-                  <li><span class="mapping-key">Shift+W+2</span><span class="mapping-arrow">→</span><span class="mapping-value">שׁ</span></li>
-                  <li><span class="mapping-key">z</span><span class="mapping-arrow">→</span><span class="mapping-value">ז</span></li>
-                  <li><span class="mapping-key">c</span><span class="mapping-arrow">→</span><span class="mapping-value">ח</span></li>
-                  <li><span class="mapping-key">Shift+C</span><span class="mapping-arrow">→</span><span class="mapping-value">ץ</span></li>
-                  <li><span class="mapping-key">t</span><span class="mapping-arrow">→</span><span class="mapping-value">ט</span></li>
-                  <li><span class="mapping-key">Shift+T</span><span class="mapping-arrow">→</span><span class="mapping-value">ת</span></li>
-                  <li><span class="mapping-key">j</span><span class="mapping-arrow">→</span><span class="mapping-value">י</span></li>
-                  <li><span class="mapping-key">k</span><span class="mapping-arrow">→</span><span class="mapping-value">כ</span></li>
-                  <li><span class="mapping-key">Shift+K</span><span class="mapping-arrow">→</span><span class="mapping-value">ך</span></li>
-                  <li><span class="mapping-key">l</span><span class="mapping-arrow">→</span><span class="mapping-value">ל</span></li>
-                  <li><span class="mapping-key">m</span><span class="mapping-arrow">→</span><span class="mapping-value">מ</span></li>
-                  <li><span class="mapping-key">Shift+M</span><span class="mapping-arrow">→</span><span class="mapping-value">ם</span></li>
-                  <li><span class="mapping-key">n</span><span class="mapping-arrow">→</span><span class="mapping-value">נ</span></li>
-                  <li><span class="mapping-key">Shift+N</span><span class="mapping-arrow">→</span><span class="mapping-value">ן</span></li>
-                  <li><span class="mapping-key">s</span><span class="mapping-arrow">→</span><span class="mapping-value">ס</span></li>
-                  <li><span class="mapping-key">y</span><span class="mapping-arrow">→</span><span class="mapping-value">ע</span></li>
-                  <li><span class="mapping-key">p</span><span class="mapping-arrow">→</span><span class="mapping-value">פ</span></li>
-                  <li><span class="mapping-key">Shift+P</span><span class="mapping-arrow">→</span><span class="mapping-value">ף</span></li>
-                  <li><span class="mapping-key">q</span><span class="mapping-arrow">→</span><span class="mapping-value">ק</span></li>
-                  <li><span class="mapping-key">r</span><span class="mapping-arrow">→</span><span class="mapping-value">ר</span></li>
+                  <li><span class="mapping-value">א</span><span class="mapping-arrow">←</span><span class="mapping-key">x</span></li>
+                  <li><span class="mapping-value">ב</span><span class="mapping-arrow">←</span><span class="mapping-key">b</span></li>
+                  <li><span class="mapping-value">ג</span><span class="mapping-arrow">←</span><span class="mapping-key">g</span></li>
+                  <li><span class="mapping-value">ד</span><span class="mapping-arrow">←</span><span class="mapping-key">d</span></li>
+                  <li><span class="mapping-value">ה</span><span class="mapping-arrow">←</span><span class="mapping-key">h</span></li>
+                  <li><span class="mapping-value">ו</span><span class="mapping-arrow">←</span><span class="mapping-key">w</span></li>
+                  <li><span class="mapping-value">ש</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+W</span></li>
+                  <li><span class="mapping-value">שׂ</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+W+1</span></li>
+                  <li><span class="mapping-value">שׁ</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+W+2</span></li>
+                  <li><span class="mapping-value">ז</span><span class="mapping-arrow">←</span><span class="mapping-key">z</span></li>
+                  <li><span class="mapping-value">ח</span><span class="mapping-arrow">←</span><span class="mapping-key">c</span></li>
+                  <li><span class="mapping-value">ץ</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+C</span></li>
+                  <li><span class="mapping-value">ט</span><span class="mapping-arrow">←</span><span class="mapping-key">t</span></li>
+                  <li><span class="mapping-value">ת</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+T</span></li>
+                  <li><span class="mapping-value">י</span><span class="mapping-arrow">←</span><span class="mapping-key">j</span></li>
+                  <li><span class="mapping-value">כ</span><span class="mapping-arrow">←</span><span class="mapping-key">k</span></li>
+                  <li><span class="mapping-value">ך</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+K</span></li>
+                  <li><span class="mapping-value">ל</span><span class="mapping-arrow">←</span><span class="mapping-key">l</span></li>
+                  <li><span class="mapping-value">מ</span><span class="mapping-arrow">←</span><span class="mapping-key">m</span></li>
+                  <li><span class="mapping-value">ם</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+M</span></li>
+                  <li><span class="mapping-value">נ</span><span class="mapping-arrow">←</span><span class="mapping-key">n</span></li>
+                  <li><span class="mapping-value">ן</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+N</span></li>
+                  <li><span class="mapping-value">ס</span><span class="mapping-arrow">←</span><span class="mapping-key">s</span></li>
+                  <li><span class="mapping-value">ע</span><span class="mapping-arrow">←</span><span class="mapping-key">y</span></li>
+                  <li><span class="mapping-value">פ</span><span class="mapping-arrow">←</span><span class="mapping-key">p</span></li>
+                  <li><span class="mapping-value">ף</span><span class="mapping-arrow">←</span><span class="mapping-key">Shift+P</span></li>
+                  <li><span class="mapping-value">ק</span><span class="mapping-arrow">←</span><span class="mapping-key">q</span></li>
+                  <li><span class="mapping-value">ר</span><span class="mapping-arrow">←</span><span class="mapping-key">r</span></li>
                 </ul>
               </section>
 
               <section class="mapping-card mapping-card-vowels">
                 <h3>Vokale</h3>
                 <ul class="mapping-list">
-                  <li><span class="mapping-key">u</span><span class="mapping-arrow">→</span><span class="mapping-value">בֻ</span></li>
-                  <li><span class="mapping-key">i</span><span class="mapping-arrow">→</span><span class="mapping-value">בִ</span></li>
-                  <li><span class="mapping-key">ä</span><span class="mapping-arrow">→</span><span class="mapping-value">בֶ</span></li>
-                  <li><span class="mapping-key">a</span><span class="mapping-arrow">→</span><span class="mapping-value">בָ</span></li>
-                  <li><span class="mapping-key">e</span><span class="mapping-arrow">→</span><span class="mapping-value">בֵ</span></li>
-                  <li><span class="mapping-key">o</span><span class="mapping-arrow">→</span><span class="mapping-value">בֹ</span></li>
-                  <li><span class="mapping-key">a+1</span><span class="mapping-arrow">→</span><span class="mapping-value">בַ</span></li>
-                  <li><span class="mapping-key">a+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֲ</span></li>
-                  <li><span class="mapping-key">ä+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֱ</span></li>
-                  <li><span class="mapping-key">o+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֳ</span></li>
-                  <li><span class="mapping-key">:</span><span class="mapping-arrow">→</span><span class="mapping-value">בְ</span></li>
+                  <li><span class="mapping-value">בֻ</span><span class="mapping-arrow">←</span><span class="mapping-key">u</span></li>
+                  <li><span class="mapping-value">בִ</span><span class="mapping-arrow">←</span><span class="mapping-key">i</span></li>
+                  <li><span class="mapping-value">בֶ</span><span class="mapping-arrow">←</span><span class="mapping-key">ä</span></li>
+                  <li><span class="mapping-value">בָ</span><span class="mapping-arrow">←</span><span class="mapping-key">a</span></li>
+                  <li><span class="mapping-value">בֵ</span><span class="mapping-arrow">←</span><span class="mapping-key">e</span></li>
+                  <li><span class="mapping-value">בֹ</span><span class="mapping-arrow">←</span><span class="mapping-key">o</span></li>
+                  <li><span class="mapping-value">בַ</span><span class="mapping-arrow">←</span><span class="mapping-key">a+1</span></li>
+                  <li><span class="mapping-value">בֲ</span><span class="mapping-arrow">←</span><span class="mapping-key">a+2</span></li>
+                  <li><span class="mapping-value">בֱ</span><span class="mapping-arrow">←</span><span class="mapping-key">ä+2</span></li>
+                  <li><span class="mapping-value">בֳ</span><span class="mapping-arrow">←</span><span class="mapping-key">o+2</span></li>
+                  <li><span class="mapping-value">בְ</span><span class="mapping-arrow">←</span><span class="mapping-key">:</span></li>
                 </ul>
               </section>
 
               <section class="mapping-card mapping-card-signs">
                 <h3>Zeichen</h3>
                 <ul class="mapping-list">
-                  <li><span class="mapping-key">.</span><span class="mapping-arrow">→</span><span class="mapping-value">בּ</span></li>
+                  <li><span class="mapping-value">בּ</span><span class="mapping-arrow">←</span><span class="mapping-key">.</span></li>
                 </ul>
               </section>
             </div>
