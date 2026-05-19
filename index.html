@@ -66,10 +66,111 @@
       </div>
     </div>
 
-    <div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-label="Informationen" hidden>
+    <div class="info-overlay" id="infoOverlay" role="dialog" aria-modal="true" aria-labelledby="infoDialogTitle" hidden>
       <div class="info-dialog" role="document">
         <button class="info-close-btn" id="infoCloseButton" type="button" aria-label="Informationen schließen">×</button>
-        <div class="info-content" id="infoContent"></div>
+        <div class="info-content" id="infoContent">
+          <h2 class="info-title" id="infoDialogTitle">Informationen</h2>
+
+          <div class="info-tabs" role="tablist" aria-label="Informationsbereiche">
+            <button
+              class="info-tab-btn is-active"
+              id="infoTabButtonGeneral"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="infoPanelGeneral"
+              data-tab-target="general"
+            >
+              Allgemein
+            </button>
+            <button
+              class="info-tab-btn"
+              id="infoTabButtonKeyboard"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="infoPanelKeyboard"
+              data-tab-target="keyboard"
+              tabindex="-1"
+            >
+              Tastatur
+            </button>
+          </div>
+
+          <section class="info-tab-panel is-active" id="infoPanelGeneral" role="tabpanel" aria-labelledby="infoTabButtonGeneral" data-tab-panel="general">
+            <p class="info-placeholder">Inhalt folgt.</p>
+          </section>
+
+          <section class="info-tab-panel" id="infoPanelKeyboard" role="tabpanel" aria-labelledby="infoTabButtonKeyboard" data-tab-panel="keyboard" hidden>
+            <div class="info-copy">
+              <p>
+                Im Feld <strong>„Hebräisch …“</strong> kannst du entweder die Bildschirmtastatur oder deine physische Tastatur verwenden.
+                Vokale und Zeichen werden jeweils auf den zuletzt eingegebenen hebräischen Buchstaben gesetzt.
+              </p>
+            </div>
+
+            <div class="mapping-grid" aria-label="Tastatur-Mapping">
+              <section class="mapping-card mapping-card-consonants">
+                <h3>Konsonanten</h3>
+                <ul class="mapping-list">
+                  <li><span class="mapping-key">x</span><span class="mapping-arrow">→</span><span class="mapping-value">א</span></li>
+                  <li><span class="mapping-key">b</span><span class="mapping-arrow">→</span><span class="mapping-value">ב</span></li>
+                  <li><span class="mapping-key">g</span><span class="mapping-arrow">→</span><span class="mapping-value">ג</span></li>
+                  <li><span class="mapping-key">d</span><span class="mapping-arrow">→</span><span class="mapping-value">ד</span></li>
+                  <li><span class="mapping-key">h</span><span class="mapping-arrow">→</span><span class="mapping-value">ה</span></li>
+                  <li><span class="mapping-key">w</span><span class="mapping-arrow">→</span><span class="mapping-value">ו</span></li>
+                  <li><span class="mapping-key">Shift+W</span><span class="mapping-arrow">→</span><span class="mapping-value">ש</span></li>
+                  <li><span class="mapping-key">Shift+W+1</span><span class="mapping-arrow">→</span><span class="mapping-value">שׂ</span></li>
+                  <li><span class="mapping-key">Shift+W+2</span><span class="mapping-arrow">→</span><span class="mapping-value">שׁ</span></li>
+                  <li><span class="mapping-key">z</span><span class="mapping-arrow">→</span><span class="mapping-value">ז</span></li>
+                  <li><span class="mapping-key">c</span><span class="mapping-arrow">→</span><span class="mapping-value">ח</span></li>
+                  <li><span class="mapping-key">Shift+C</span><span class="mapping-arrow">→</span><span class="mapping-value">ץ</span></li>
+                  <li><span class="mapping-key">t</span><span class="mapping-arrow">→</span><span class="mapping-value">ט</span></li>
+                  <li><span class="mapping-key">Shift+T</span><span class="mapping-arrow">→</span><span class="mapping-value">ת</span></li>
+                  <li><span class="mapping-key">j</span><span class="mapping-arrow">→</span><span class="mapping-value">י</span></li>
+                  <li><span class="mapping-key">k</span><span class="mapping-arrow">→</span><span class="mapping-value">כ</span></li>
+                  <li><span class="mapping-key">Shift+K</span><span class="mapping-arrow">→</span><span class="mapping-value">ך</span></li>
+                  <li><span class="mapping-key">l</span><span class="mapping-arrow">→</span><span class="mapping-value">ל</span></li>
+                  <li><span class="mapping-key">m</span><span class="mapping-arrow">→</span><span class="mapping-value">מ</span></li>
+                  <li><span class="mapping-key">Shift+M</span><span class="mapping-arrow">→</span><span class="mapping-value">ם</span></li>
+                  <li><span class="mapping-key">n</span><span class="mapping-arrow">→</span><span class="mapping-value">נ</span></li>
+                  <li><span class="mapping-key">Shift+N</span><span class="mapping-arrow">→</span><span class="mapping-value">ן</span></li>
+                  <li><span class="mapping-key">s</span><span class="mapping-arrow">→</span><span class="mapping-value">ס</span></li>
+                  <li><span class="mapping-key">y</span><span class="mapping-arrow">→</span><span class="mapping-value">ע</span></li>
+                  <li><span class="mapping-key">p</span><span class="mapping-arrow">→</span><span class="mapping-value">פ</span></li>
+                  <li><span class="mapping-key">Shift+P</span><span class="mapping-arrow">→</span><span class="mapping-value">ף</span></li>
+                  <li><span class="mapping-key">q</span><span class="mapping-arrow">→</span><span class="mapping-value">ק</span></li>
+                  <li><span class="mapping-key">r</span><span class="mapping-arrow">→</span><span class="mapping-value">ר</span></li>
+                </ul>
+              </section>
+
+              <section class="mapping-card mapping-card-vowels">
+                <h3>Vokale</h3>
+                <ul class="mapping-list">
+                  <li><span class="mapping-key">u</span><span class="mapping-arrow">→</span><span class="mapping-value">בֻ</span></li>
+                  <li><span class="mapping-key">i</span><span class="mapping-arrow">→</span><span class="mapping-value">בִ</span></li>
+                  <li><span class="mapping-key">ä</span><span class="mapping-arrow">→</span><span class="mapping-value">בֶ</span></li>
+                  <li><span class="mapping-key">a</span><span class="mapping-arrow">→</span><span class="mapping-value">בָ</span></li>
+                  <li><span class="mapping-key">e</span><span class="mapping-arrow">→</span><span class="mapping-value">בֵ</span></li>
+                  <li><span class="mapping-key">o</span><span class="mapping-arrow">→</span><span class="mapping-value">בֹ</span></li>
+                  <li><span class="mapping-key">a+1</span><span class="mapping-arrow">→</span><span class="mapping-value">בַ</span></li>
+                  <li><span class="mapping-key">a+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֲ</span></li>
+                  <li><span class="mapping-key">ä+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֱ</span></li>
+                  <li><span class="mapping-key">o+2</span><span class="mapping-arrow">→</span><span class="mapping-value">בֳ</span></li>
+                </ul>
+              </section>
+
+              <section class="mapping-card mapping-card-signs">
+                <h3>Zeichen</h3>
+                <ul class="mapping-list">
+                  <li><span class="mapping-key">:</span><span class="mapping-arrow">→</span><span class="mapping-value">בְ</span></li>
+                  <li><span class="mapping-key">.</span><span class="mapping-arrow">→</span><span class="mapping-value">בּ</span></li>
+                </ul>
+              </section>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
 

@@ -40,6 +40,8 @@ const els = {
   infoButton: document.getElementById('infoButton'),
   infoOverlay: document.getElementById('infoOverlay'),
   infoCloseButton: document.getElementById('infoCloseButton'),
+  infoTabButtons: Array.from(document.querySelectorAll('.info-tab-btn')),
+  infoTabPanels: Array.from(document.querySelectorAll('.info-tab-panel')),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
@@ -649,7 +651,25 @@ function closeDropdown() {
   els.filterButton.setAttribute('aria-expanded', 'false');
 }
 
+function setInfoTab(tabName) {
+  if (!els.infoTabButtons.length || !els.infoTabPanels.length) return;
+
+  for (const button of els.infoTabButtons) {
+    const isActive = button.dataset.tabTarget === tabName;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-selected', String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
+  }
+
+  for (const panel of els.infoTabPanels) {
+    const isActive = panel.dataset.tabPanel === tabName;
+    panel.classList.toggle('is-active', isActive);
+    panel.hidden = !isActive;
+  }
+}
+
 function openInfoOverlay() {
+  setInfoTab('general');
   closeDropdown();
   els.infoOverlay.hidden = false;
   els.infoButton.setAttribute('aria-expanded', 'true');
@@ -732,6 +752,13 @@ els.infoButton.addEventListener('click', () => {
   openInfoOverlay();
 });
 
+for (const button of els.infoTabButtons) {
+  button.addEventListener('click', () => {
+    setInfoTab(button.dataset.tabTarget || 'general');
+  });
+}
+
+
 els.infoCloseButton.addEventListener('click', () => {
   closeInfoOverlay({ restoreFocus: true });
 });
@@ -792,4 +819,5 @@ document.addEventListener('keydown', (event) => {
 });
 
 syncSearchUi();
+setInfoTab('general');
 loadData();

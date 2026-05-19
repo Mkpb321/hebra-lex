@@ -606,3 +606,179 @@ mark {
     height: 30px;
   }
 }
+
+.info-dialog {
+  width: min(920px, 100%);
+  min-height: 260px;
+  max-height: min(88vh, 920px);
+  overflow: auto;
+}
+
+.info-content {
+  min-height: 260px;
+}
+
+.info-title {
+  margin: 0 0 16px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.info-placeholder {
+  margin: 0;
+  color: var(--muted);
+}
+
+.info-copy {
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.info-copy p {
+  margin: 0;
+}
+
+.info-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.info-tab-btn {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.info-tab-btn:hover {
+  border-color: rgba(24, 88, 230, 0.35);
+  color: var(--text);
+}
+
+.info-tab-btn.is-active,
+.info-tab-btn[aria-selected="true"] {
+  border-color: rgba(24, 88, 230, 0.35);
+  background: #eef4ff;
+  color: var(--accent);
+}
+
+.info-tab-panel {
+  display: none;
+}
+
+.info-tab-panel.is-active {
+  display: block;
+}
+
+.mapping-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(220px, 0.8fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.mapping-card {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.mapping-card h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.mapping-card-consonants {
+  background: #eef4ff;
+  border-color: #d9e6ff;
+}
+
+.mapping-card-vowels {
+  background: #edf9f3;
+  border-color: #d5efdf;
+}
+
+.mapping-card-signs {
+  background: #fff6e9;
+  border-color: #fde8c6;
+}
+
+.mapping-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.mapping-list li {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) 18px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.mapping-key {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+}
+
+.mapping-arrow {
+  text-align: center;
+  color: var(--muted);
+}
+
+.mapping-value {
+  font-family: "SBL Hebrew", "Cardo", "Noto Sans Hebrew", "Times New Roman", "Arial Hebrew", "Segoe UI Symbol", serif;
+  font-size: 24px;
+  line-height: 1;
+  direction: rtl;
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .info-dialog {
+    width: min(760px, 100%);
+  }
+
+  .mapping-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .info-content {
+    padding: 56px 16px 18px;
+  }
+
+  .info-title {
+    font-size: 22px;
+  }
+
+  .info-tabs {
+    flex-wrap: wrap;
+  }
+
+  .mapping-list li {
+    grid-template-columns: minmax(78px, auto) 16px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .mapping-key {
+    font-size: 13px;
+  }
+
+  .mapping-value {
+    font-size: 22px;
+  }
+}
