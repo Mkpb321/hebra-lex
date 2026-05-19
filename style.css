@@ -130,21 +130,21 @@ body {
   flex: 0 0 auto;
   display: flex;
   gap: 8px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .info-btn {
   display: inline-grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: var(--surface);
   box-shadow: var(--shadow);
   color: var(--text);
   font: inherit;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -455,8 +455,8 @@ mark {
   }
 
   .info-btn {
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
   }
 
   .filter-wrap {
