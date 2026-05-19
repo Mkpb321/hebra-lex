@@ -100,57 +100,71 @@
 
           <section class="info-tab-panel is-active" id="infoPanelGeneral" role="tabpanel" aria-labelledby="infoTabButtonGeneral" data-tab-panel="general">
             <div class="info-copy info-general">
-              <section class="info-section">
+              <section class="info-card info-source-card">
                 <h3>Vokabular</h3>
-                <p>
-                  HebraLex enthält Vokabular aus <strong>Alttestamentliches Hebräisch. Vorbereitung auf das Hebraicum</strong>
-                  von <strong>Barbara Mäder</strong>. Die Sammlung ist für den Hebräischunterricht an der <strong>STH Basel</strong> gedacht.
-                </p>
+                <ul class="info-list">
+                  <li><strong>Quelle:</strong> Anki-Datei mit dem Unterrichtsvokabular.</li>
+                  <li><strong>Grundlage:</strong> <em>Alttestamentliches Hebräisch. Vorbereitung auf das Hebraicum</em> von Barbara Mäder.</li>
+                  <li><strong>Zweck:</strong> Lern- und Suchhilfe für den Hebräischunterricht an der STH Basel.</li>
+                  <li><strong>Hinweis:</strong> HebraLex ist kein vollständiges Wörterbuch, sondern auf das vorhandene Vokabular beschränkt.</li>
+                </ul>
               </section>
 
-              <section class="info-section">
+              <section class="info-card">
                 <h3>Suche</h3>
-                <p>
-                  Es gibt drei Suchfelder: <strong>Deutsch</strong>, <strong>Transkription</strong> und <strong>Hebräisch</strong>.
-                  Die Treffer werden nach Ähnlichkeit sortiert und können zusätzlich über die Kapitel-Auswahl eingeschränkt werden.
-                </p>
+                <dl class="info-def-list">
+                  <div>
+                    <dt>Deutsch</dt>
+                    <dd>Sucht in deutschen Bedeutungen und weiteren deutschen Angaben.</dd>
+                  </div>
+                  <div>
+                    <dt>Transkription</dt>
+                    <dd>Sucht in den gespeicherten Umschriften. Diese Suche ist bewusst ungenau.</dd>
+                  </div>
+                  <div>
+                    <dt>Hebräisch</dt>
+                    <dd>Sucht im hebräischen Wortbestand ohne Vokale und Punktierung.</dd>
+                  </div>
+                </dl>
               </section>
 
-              <section class="info-section">
+              <section class="info-card">
                 <h3>Hebräische Suche</h3>
-                <p>
-                  Die hebräische Suche entfernt Vokale, Akzente und andere Punktierungen. Gesucht wird deshalb im Wesentlichen
-                  nach den Konsonanten beziehungsweise Radikalen. Dadurch findest du Wörter auch dann, wenn du die Vokalisierung
-                  nicht kennst oder nicht eingibst.
-                </p>
-                <p>
-                  Im Feld <strong>„Hebräisch …“</strong> steht eine hebräische Tastatur zur Verfügung. Die Bildschirmtastatur
-                  öffnet sich beim Fokussieren des Feldes. Weitere Tastaturbelegungen findest du im Tab <strong>„Tastatur“</strong>.
-                </p>
+                <ul class="info-list">
+                  <li>Vokale, Akzente und andere Punktierungen werden entfernt.</li>
+                  <li>Gesucht wird dadurch vor allem nach den Konsonanten beziehungsweise Radikalen.</li>
+                  <li>Das hilft, wenn du die Vokalisierung nicht kennst oder nicht eingeben möchtest.</li>
+                  <li>Im Feld <strong>„Hebräisch …“</strong> öffnet sich eine hebräische Bildschirmtastatur.</li>
+                  <li>Mehr zur Belegung der physischen Tastatur steht im Tab <strong>„Tastatur“</strong>.</li>
+                </ul>
               </section>
 
-              <section class="info-section">
+              <section class="info-card info-warning-card">
                 <h3>Transkriptionssuche</h3>
-                <p>
-                  Die Transkriptionssuche ist absichtlich tolerant, aber dadurch nicht exakt. Transkriptionen sind nicht eindeutig:
-                  derselbe hebräische Laut kann unterschiedlich umschrieben werden, und verschiedene Umschriften können sehr ähnlich aussehen.
-                  Deshalb kann diese Suche passende Treffer übersehen oder zusätzliche, nur ungefähr passende Treffer anzeigen.
-                </p>
-                <p>
-                  Das Programm übersetzt die Eingabe nicht. Es vergleicht deine Eingabe mit den gespeicherten Transkriptionsformen:
-                  Groß-/Kleinschreibung, Akzente und Satzzeichen werden vereinheitlicht, Varianten mit <code>/</code> werden getrennt geprüft,
-                  und ähnliche Schreibungen werden zusammengeführt, zum Beispiel <code>ts</code> und <code>z</code> zu <code>s</code> sowie
-                  <code>j</code> und <code>y</code> zu <code>i</code>. Zusätzlich werden Wortanfänge, enthaltene Wortteile und eine
-                  ungefähre Ähnlichkeit der Zeichenfolge bewertet.
-                </p>
+                <ul class="info-list">
+                  <li><strong>Wichtig:</strong> Das Programm übersetzt deine Eingabe nicht.</li>
+                  <li>Es vergleicht deine Eingabe nur mit den gespeicherten Transkriptionsformen aus den Vokabeldaten.</li>
+                  <li>Transkriptionen sind nicht eindeutig. Ein hebräischer Laut kann unterschiedlich umschrieben werden.</li>
+                  <li>Darum kann die Suche Treffer übersehen oder auch nur ungefähr passende Treffer anzeigen.</li>
+                </ul>
+
+                <h4>So funktioniert das Matching ungefähr</h4>
+                <ul class="info-list info-compact-list">
+                  <li>Groß-/Kleinschreibung, Akzente und Satzzeichen werden vereinheitlicht.</li>
+                  <li>Varianten mit <code>/</code> werden getrennt geprüft.</li>
+                  <li>Ähnliche Schreibweisen werden angenähert, zum Beispiel <code>ts</code>/<code>z</code> → <code>s</code> und <code>j</code>/<code>y</code> → <code>i</code>.</li>
+                  <li>Doppelte Buchstaben werden vereinfacht.</li>
+                  <li>Exakte Treffer, Wortanfänge, enthaltene Wortteile und ähnliche Zeichenfolgen bekommen unterschiedliche Trefferpunkte.</li>
+                </ul>
               </section>
 
-              <section class="info-section">
+              <section class="info-card">
                 <h3>Kapitel</h3>
-                <p>
-                  Über den Button <strong>„Kapitel“</strong> kannst du einzelne Kapitel ein- oder ausblenden. So lässt sich die Suche
-                  auf den aktuellen Lernstoff begrenzen.
-                </p>
+                <ul class="info-list">
+                  <li>Über <strong>„Kapitel“</strong> können einzelne Kapitel ein- oder ausgeblendet werden.</li>
+                  <li>So lässt sich die Suche auf den aktuellen Lernstoff begrenzen.</li>
+                  <li><strong>Alle</strong> und <strong>Keine</strong> setzen die Kapitel-Auswahl schnell zurück.</li>
+                </ul>
               </section>
             </div>
           </section>

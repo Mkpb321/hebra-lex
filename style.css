@@ -791,3 +791,259 @@ mark {
     font-size: 22px;
   }
 }
+
+/* Refined info overlay layout */
+.info-dialog {
+  display: grid;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.info-close-btn {
+  z-index: 2;
+  top: 18px;
+  right: 18px;
+}
+
+.info-content {
+  max-height: min(calc(88vh - 16px), 904px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 14px;
+  padding: 48px 20px 20px;
+  scrollbar-gutter: stable;
+}
+
+.info-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.info-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.info-content::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: #cfd8e3;
+  background-clip: content-box;
+}
+
+.info-content::-webkit-scrollbar-thumb:hover {
+  background: #aebdcb;
+  background-clip: content-box;
+}
+
+.info-general {
+  gap: 12px;
+}
+
+.info-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.info-source-card {
+  background: #f8fbff;
+}
+
+.info-warning-card {
+  background: #fffaf2;
+  border-color: #fde8c6;
+}
+
+.info-card h3,
+.info-card h4 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.info-card h3 {
+  font-size: 17px;
+}
+
+.info-card h4 {
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.info-list,
+.info-def-list {
+  margin: 0;
+  padding: 0;
+}
+
+.info-list {
+  display: grid;
+  gap: 7px;
+  padding-left: 1.15rem;
+}
+
+.info-compact-list {
+  gap: 5px;
+}
+
+.info-def-list {
+  display: grid;
+  gap: 8px;
+}
+
+.info-def-list > div {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.32fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 8px 0;
+  border-top: 1px solid #edf2f7;
+}
+
+.info-def-list > div:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.info-def-list > div:last-child {
+  padding-bottom: 0;
+}
+
+.info-def-list dt {
+  font-weight: 700;
+}
+
+.info-def-list dd {
+  margin: 0;
+  color: var(--text);
+}
+
+/* Keep the keyboard mapping in columns on narrow screens. */
+.mapping-grid {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.88fr) minmax(0, 0.55fr);
+  gap: clamp(5px, 1.4vw, 12px);
+}
+
+.mapping-card {
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(8px, 1.5vw, 14px);
+}
+
+.mapping-card h3 {
+  margin-bottom: clamp(7px, 1.2vw, 12px);
+  font-size: clamp(13px, 2vw, 18px);
+}
+
+.mapping-list {
+  gap: clamp(4px, 1vw, 8px);
+}
+
+.mapping-list li {
+  min-width: 0;
+  gap: clamp(2px, 0.8vw, 6px);
+}
+
+.mapping-key {
+  min-width: 0;
+  font-size: clamp(10px, 1.55vw, 14px);
+  white-space: nowrap;
+}
+
+.mapping-arrow {
+  font-size: clamp(10px, 1.4vw, 14px);
+}
+
+.mapping-value {
+  font-size: clamp(17px, 3vw, 24px);
+}
+
+@media (max-width: 900px) {
+  .mapping-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.88fr) minmax(0, 0.55fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .info-overlay {
+    padding: 12px;
+  }
+
+  .info-dialog {
+    max-height: calc(100dvh - 24px);
+    padding: 6px;
+  }
+
+  .info-close-btn {
+    top: 14px;
+    right: 14px;
+  }
+
+  .info-content {
+    max-height: calc(100dvh - 36px);
+    padding: 46px 12px 14px;
+  }
+
+  .info-card {
+    padding: 12px;
+  }
+
+  .info-def-list > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .mapping-grid {
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, 0.85fr) minmax(0, 0.5fr);
+    gap: 5px;
+  }
+
+  .mapping-card {
+    padding: 7px;
+    border-radius: 10px;
+  }
+
+  .mapping-card h3 {
+    font-size: 12px;
+  }
+
+  .mapping-key {
+    font-size: 9.5px;
+  }
+
+  .mapping-arrow {
+    font-size: 10px;
+  }
+
+  .mapping-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .mapping-grid {
+    gap: 4px;
+  }
+
+  .mapping-card {
+    padding: 6px;
+  }
+
+  .mapping-list li {
+    gap: 2px;
+  }
+
+  .mapping-key {
+    font-size: 8.5px;
+  }
+
+  .mapping-arrow {
+    font-size: 9px;
+  }
+
+  .mapping-value {
+    font-size: 15px;
+  }
+}
