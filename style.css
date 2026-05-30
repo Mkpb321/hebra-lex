@@ -1047,3 +1047,121 @@ mark {
     font-size: 15px;
   }
 }
+
+/* Keyboard-info refinements: keep columns first, shrink text only on very narrow screens. */
+.keyboard-info {
+  margin-bottom: 14px;
+}
+
+.keyboard-info .info-card {
+  background: #f8fbff;
+}
+
+.mapping-grid {
+  grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.78fr) minmax(0, 0.44fr);
+  gap: clamp(4px, 1vw, 12px);
+}
+
+.mapping-card {
+  min-width: 0;
+  padding: clamp(6px, 1.2vw, 14px);
+}
+
+.mapping-card h3 {
+  font-size: 18px;
+}
+
+.mapping-list {
+  gap: clamp(4px, 0.8vw, 8px);
+}
+
+.mapping-list li {
+  min-width: 0;
+  grid-template-columns: max-content max-content max-content;
+  gap: clamp(2px, 0.55vw, 6px);
+}
+
+.mapping-key {
+  min-width: 0;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.mapping-arrow {
+  font-size: 14px;
+}
+
+.mapping-value {
+  font-size: 24px;
+}
+
+@media (max-width: 560px) {
+  .mapping-grid {
+    grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.78fr) minmax(0, 0.44fr);
+    gap: 4px;
+  }
+
+  .mapping-card {
+    padding: 6px;
+  }
+
+  .mapping-card h3 {
+    font-size: 16px;
+  }
+
+  .mapping-key {
+    font-size: 14px;
+  }
+
+  .mapping-arrow {
+    font-size: 14px;
+  }
+
+  .mapping-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 360px) {
+  .mapping-card h3 {
+    font-size: 14px;
+  }
+
+  .mapping-key {
+    font-size: 12.5px;
+  }
+
+  .mapping-arrow {
+    font-size: 12px;
+  }
+
+  .mapping-value {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 330px) {
+  .mapping-grid {
+    gap: 3px;
+  }
+
+  .mapping-card {
+    padding: 5px;
+  }
+
+  .mapping-list li {
+    gap: 1.5px;
+  }
+
+  .mapping-key {
+    font-size: 11.5px;
+  }
+
+  .mapping-arrow {
+    font-size: 11px;
+  }
+
+  .mapping-value {
+    font-size: 19px;
+  }
+}
