@@ -1172,7 +1172,7 @@ mark {
   -webkit-user-select: none;
   user-select: none;
   touch-action: pan-y;
-  cursor: copy;
+  cursor: default;
 }
 
 .row[data-copy-hebrew][data-copy-deutsch] * {
@@ -1182,8 +1182,14 @@ mark {
 }
 
 .row.is-copy-pending,
+.row.is-copy-ready,
+.row.is-copied {
+  transition: background-color 120ms ease, filter 120ms ease;
+}
+
 .row.is-copy-ready {
   background: var(--row-hover);
+  filter: brightness(0.985);
 }
 
 .row.is-copied {

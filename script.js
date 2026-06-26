@@ -1019,6 +1019,10 @@ function startLongPressCopy(event) {
   const row = getCopyRowFromEvent(event);
   if (!row) return;
 
+  if (event.pointerType === 'mouse') {
+    event.preventDefault();
+  }
+
   cancelLongPressCopy();
 
   const press = state.longPressCopy;
@@ -1121,6 +1125,9 @@ document.addEventListener('pointercancel', endLongPressCopy);
 document.addEventListener('touchend', endTouchLongPressCopy, { passive: false });
 document.addEventListener('touchcancel', cancelTouchLongPressCopy, { passive: true });
 els.resultsHost.addEventListener('contextmenu', (event) => {
+  if (getCopyRowFromEvent(event)) event.preventDefault();
+});
+els.resultsHost.addEventListener('dragstart', (event) => {
   if (getCopyRowFromEvent(event)) event.preventDefault();
 });
 
