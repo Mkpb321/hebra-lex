@@ -19,6 +19,8 @@ const LONG_PRESS_COPY_MS = 620;
 const LONG_PRESS_MOVE_CANCEL_PX = 10;
 const COPY_TOAST_VISIBLE_MS = 850;
 const TOUCH_RELEASE_FALLBACK_CANCEL_MS = 1800;
+const IS_IOS_LIKE = /iP(?:ad|hone|od)/.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const BIDI_RLI = '\u2067';
 const BIDI_LRI = '\u2066';
 const BIDI_PDI = '\u2069';
@@ -41,6 +43,8 @@ const state = {
     startY: 0,
     ready: false,
     copied: false,
+    preCopied: false,
+    preCopyPromise: null,
     releaseFallbackTimerId: null,
   },
   copyToastTimerId: null,
@@ -612,10 +616,7 @@ function fallbackCopyText(text) {
     textarea.focus();
   }
 
-  const isIOS = /iP(?:ad|hone|od)/.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-  if (isIOS && selection) {
+  if (IS_IOS_LIKE && selection) {
     try {
       const range = document.createRange();
       range.selectNodeContents(textarea);
@@ -703,19 +704,27 @@ function showCopyToast() {
   }, COPY_TOAST_VISIBLE_MS);
 }
 
-async function copyResultRow(row, options = {}) {
+function markResultRowCopied(row) {
   if (!row) return;
+
+  row.classList.remove('is-copy-pending', 'is-copy-ready');
+  row.classList.add('is-copied');
+  window.setTimeout(() => row.classList.remove('is-copied'), 220);
+  showCopyToast();
+}
+
+async function copyResultRow(row, options = {}) {
+  if (!row) return false;
 
   const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
   const copied = options.fromReleaseGesture
     ? await writeClipboardTextFromReleaseGesture(text)
     : await writeClipboardText(text);
 
-  if (!copied) return;
+  if (!copied) return false;
 
-  row.classList.add('is-copied');
-  window.setTimeout(() => row.classList.remove('is-copied'), 220);
-  showCopyToast();
+  markResultRowCopied(row);
+  return true;
 }
 
 function highlightDeutsch(text, query) {
@@ -1010,7 +1019,44 @@ function cancelLongPressCopy() {
   press.startY = 0;
   press.ready = false;
   press.copied = false;
+  press.preCopied = false;
+  press.preCopyPromise = null;
   press.releaseFallbackTimerId = null;
+}
+
+function resolveLongPressVisual(row) {
+  const press = state.longPressCopy;
+  if (!row || press.row !== row || press.copied) return;
+
+  press.ready = true;
+  row.classList.remove('is-copy-pending');
+  row.classList.add('is-copy-ready');
+
+  if (press.preCopied) {
+    press.copied = true;
+    markResultRowCopied(row);
+    cancelLongPressCopy();
+  }
+}
+
+function startIOSClipboardPreCopy(row) {
+  const press = state.longPressCopy;
+  const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
+
+  press.preCopyPromise = writeClipboardTextFromReleaseGesture(text)
+    .then((copied) => {
+      if (press.row !== row) return copied;
+
+      press.preCopied = copied;
+      if (copied && press.ready && !press.copied) {
+        press.copied = true;
+        markResultRowCopied(row);
+        cancelLongPressCopy();
+      }
+
+      return copied;
+    })
+    .catch(() => false);
 }
 
 function startLongPressCopy(event) {
@@ -1033,13 +1079,17 @@ function startLongPressCopy(event) {
   press.startY = event.clientY;
   press.ready = false;
   press.copied = false;
+  press.preCopied = false;
+  press.preCopyPromise = null;
   row.classList.add('is-copy-pending');
+
+  if (press.pointerType === 'touch' && IS_IOS_LIKE) {
+    startIOSClipboardPreCopy(row);
+  }
 
   press.timerId = window.setTimeout(() => {
     press.timerId = null;
-    press.ready = true;
-    row.classList.remove('is-copy-pending');
-    row.classList.add('is-copy-ready');
+    resolveLongPressVisual(row);
   }, LONG_PRESS_COPY_MS);
 }
 
@@ -1079,6 +1129,14 @@ function endLongPressCopy(event) {
   }
 
   if (shouldCopy && press.pointerType === 'touch') {
+    if (press.preCopied) {
+      press.copied = true;
+      event.preventDefault();
+      markResultRowCopied(row);
+      cancelLongPressCopy();
+      return;
+    }
+
     if (press.releaseFallbackTimerId !== null) {
       window.clearTimeout(press.releaseFallbackTimerId);
     }
@@ -1108,6 +1166,13 @@ function endTouchLongPressCopy(event) {
 
   press.copied = true;
   event.preventDefault();
+
+  if (press.preCopied) {
+    markResultRowCopied(row);
+    cancelLongPressCopy();
+    return;
+  }
+
   row.classList.remove('is-copy-ready');
   void copyResultRow(row, { fromReleaseGesture: true });
   cancelLongPressCopy();
