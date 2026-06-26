@@ -15,15 +15,6 @@ const SECONDARY_WEIGHTS = {
   Synonyme: 0.88,
 };
 const INPUT_DEBOUNCE_MS = 180;
-const LONG_PRESS_COPY_MS = 620;
-const LONG_PRESS_MOVE_CANCEL_PX = 10;
-const COPY_TOAST_VISIBLE_MS = 850;
-const TOUCH_RELEASE_FALLBACK_CANCEL_MS = 1800;
-const IS_IOS_LIKE = /iP(?:ad|hone|od)/.test(navigator.userAgent)
-  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const BIDI_RLI = '\u2067';
-const BIDI_LRI = '\u2066';
-const BIDI_PDI = '\u2069';
 const TRANSCRIPTION_FIELD = 'Transkription';
 const HEBREW_FIELD = 'Hebräisch';
 
@@ -34,20 +25,6 @@ const state = {
   query: '',
   transcriptionQuery: '',
   hebrewQuery: '',
-  longPressCopy: {
-    timerId: null,
-    row: null,
-    pointerId: null,
-    pointerType: '',
-    startX: 0,
-    startY: 0,
-    ready: false,
-    copied: false,
-    preCopied: false,
-    preCopyPromise: null,
-    releaseFallbackTimerId: null,
-  },
-  copyToastTimerId: null,
 };
 
 const els = {
@@ -565,166 +542,124 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-function cleanCopyPart(value, fallback = '') {
-  const text = String(value ?? '')
-    .replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
+
+const BIDI_RLI = '\u2067';
+const BIDI_LRI = '\u2066';
+const BIDI_PDI = '\u2069';
+let copyToastTimeoutId = null;
+
+function normalizeCopyPart(value) {
+  return String(value ?? '')
+    .replace(/[\r\n\t]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-
-  return text || fallback;
 }
 
-function formatCopyText(hebrew, deutsch) {
-  const hebrewText = cleanCopyPart(hebrew, '—');
-  const deutschText = cleanCopyPart(deutsch, '—');
+function createEntryCopyText(entry) {
+  const hebrew = normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—';
+  const deutsch = normalizeCopyPart(entry?.Deutsch) || '—';
 
-  return `${BIDI_RLI}${hebrewText}${BIDI_PDI} - ${BIDI_LRI}${deutschText}${BIDI_PDI}`;
+  // Hebrew is isolated as RTL and German as LTR so the pasted plain-text order stays:
+  // Hebrew - Deutsch, even in mixed-direction contexts such as iOS Notes or Safari fields.
+  return `${BIDI_RLI}${hebrew}${BIDI_PDI} - ${BIDI_LRI}${deutsch}${BIDI_PDI}`;
 }
 
-function fallbackCopyText(text) {
-  const textarea = document.createElement('textarea');
-  const selection = document.getSelection?.();
-  const savedRanges = [];
+function createCopyToast() {
+  const toast = document.createElement('div');
+  toast.className = 'copy-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.setAttribute('aria-atomic', 'true');
+  toast.textContent = 'kopiert';
+  document.body.appendChild(toast);
+  return toast;
+}
 
-  if (selection) {
-    for (let index = 0; index < selection.rangeCount; index += 1) {
-      savedRanges.push(selection.getRangeAt(index));
-    }
+function showCopyToast(message = 'kopiert') {
+  const toast = document.querySelector('.copy-toast') || createCopyToast();
+  toast.textContent = message;
+
+  if (copyToastTimeoutId !== null) {
+    window.clearTimeout(copyToastTimeoutId);
+    copyToastTimeoutId = null;
   }
 
+  window.requestAnimationFrame(() => {
+    toast.classList.add('is-visible');
+  });
+
+  copyToastTimeoutId = window.setTimeout(() => {
+    toast.classList.remove('is-visible');
+    copyToastTimeoutId = null;
+  }, 900);
+}
+
+function copyWithTemporarySelection(text) {
+  const textarea = document.createElement('textarea');
   textarea.value = text;
   textarea.setAttribute('readonly', '');
   textarea.setAttribute('aria-hidden', 'true');
+  textarea.autocapitalize = 'off';
+  textarea.autocomplete = 'off';
+  textarea.autocorrect = 'off';
+  textarea.spellcheck = false;
   textarea.style.position = 'fixed';
   textarea.style.top = '0';
   textarea.style.left = '0';
-  textarea.style.width = '2px';
-  textarea.style.height = '2px';
+  textarea.style.width = '1px';
+  textarea.style.height = '1px';
   textarea.style.padding = '0';
   textarea.style.border = '0';
-  textarea.style.opacity = '0.01';
+  textarea.style.opacity = '0';
   textarea.style.pointerEvents = 'none';
   textarea.style.fontSize = '16px';
-  textarea.style.webkitUserSelect = 'text';
-  textarea.style.userSelect = 'text';
+  textarea.style.direction = 'ltr';
+  textarea.style.unicodeBidi = 'plaintext';
+
+  const activeElement = document.activeElement;
+  const selection = window.getSelection?.();
+  const previousRanges = selection
+    ? Array.from({ length: selection.rangeCount }, (_, index) => selection.getRangeAt(index).cloneRange())
+    : [];
 
   document.body.appendChild(textarea);
 
   try {
     textarea.focus({ preventScroll: true });
-  } catch (error) {
-    textarea.focus();
-  }
-
-  if (IS_IOS_LIKE && selection) {
-    try {
-      const range = document.createRange();
-      range.selectNodeContents(textarea);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } catch (error) {
-      // The textarea selection below is the primary path.
-    }
-  }
-
-  textarea.select();
-  try {
+    textarea.select();
     textarea.setSelectionRange(0, textarea.value.length);
+    return document.execCommand('copy');
   } catch (error) {
-    // Older mobile WebKit builds can reject explicit selection ranges.
-  }
+    return false;
+  } finally {
+    textarea.remove();
 
-  let copied = false;
-  try {
-    copied = document.execCommand('copy');
-  } catch (error) {
-    copied = false;
-  }
-
-  textarea.remove();
-
-  if (selection) {
-    try {
+    if (selection && previousRanges.length) {
       selection.removeAllRanges();
-      for (const range of savedRanges) {
-        selection.addRange(range);
+      for (const range of previousRanges) selection.addRange(range);
+    }
+
+    if (activeElement && typeof activeElement.focus === 'function') {
+      try {
+        activeElement.focus({ preventScroll: true });
+      } catch (error) {
+        // Restoring focus is best-effort only.
       }
-    } catch (error) {
-      // Restoring the previous selection is best-effort only.
     }
   }
-
-  return copied;
 }
 
-async function writeClipboardText(text) {
+async function copyTextToClipboard(text) {
+  // The synchronous path runs inside the click/tap gesture and is the most reliable fallback
+  // for iOS Safari, especially outside secure contexts.
+  if (copyWithTemporarySelection(text)) return true;
+
   if (navigator.clipboard?.writeText && window.isSecureContext) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (error) {
-      // Fall back below for browsers that expose Clipboard API but reject it in this context.
-    }
+    await navigator.clipboard.writeText(text);
+    return true;
   }
 
-  return fallbackCopyText(text);
-}
-
-async function writeClipboardTextFromReleaseGesture(text) {
-  if (fallbackCopyText(text)) return true;
-  return writeClipboardText(text);
-}
-
-function getCopyToast() {
-  let toast = document.getElementById('copyToast');
-  if (toast) return toast;
-
-  toast = document.createElement('div');
-  toast.id = 'copyToast';
-  toast.className = 'copy-toast';
-  toast.setAttribute('role', 'status');
-  toast.setAttribute('aria-live', 'polite');
-  toast.textContent = 'kopiert';
-  document.body.appendChild(toast);
-
-  return toast;
-}
-
-function showCopyToast() {
-  const toast = getCopyToast();
-
-  if (state.copyToastTimerId !== null) {
-    window.clearTimeout(state.copyToastTimerId);
-  }
-
-  toast.classList.add('is-visible');
-  state.copyToastTimerId = window.setTimeout(() => {
-    toast.classList.remove('is-visible');
-    state.copyToastTimerId = null;
-  }, COPY_TOAST_VISIBLE_MS);
-}
-
-function markResultRowCopied(row) {
-  if (!row) return;
-
-  row.classList.remove('is-copy-pending', 'is-copy-ready');
-  row.classList.add('is-copied');
-  window.setTimeout(() => row.classList.remove('is-copied'), 220);
-  showCopyToast();
-}
-
-async function copyResultRow(row, options = {}) {
-  if (!row) return false;
-
-  const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
-  const copied = options.fromReleaseGesture
-    ? await writeClipboardTextFromReleaseGesture(text)
-    : await writeClipboardText(text);
-
-  if (!copied) return false;
-
-  markResultRowCopied(row);
-  return true;
+  throw new Error('Clipboard API nicht verfügbar');
 }
 
 function highlightDeutsch(text, query) {
@@ -796,20 +731,15 @@ function renderResults(items, message = '') {
   }
 
   const rows = items.map(({ entry }) => {
-    const hebrew = cleanCopyPart(entry.Hebräisch, '—');
-    const deutsch = cleanCopyPart(entry.Deutsch, '—');
+    const copyText = createEntryCopyText(entry);
+    const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
 
     return `
-      <div
-        class="row"
-        data-copy-hebrew="${escapeHtml(hebrew)}"
-        data-copy-deutsch="${escapeHtml(deutsch)}"
-        title="Lange drücken zum Kopieren"
-      >
-        <div class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
-        <div class="hebrew" dir="rtl">${escapeHtml(hebrew)}</div>
-        <div class="deutsch" dir="ltr">${highlightDeutsch(deutsch, state.query)}</div>
-      </div>
+      <button class="row" type="button" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
+        <span class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</span>
+        <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
+        <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
+      </button>
     `;
   }).join('');
 
@@ -897,6 +827,19 @@ async function loadData() {
     renderResults([], localFileHint);
   }
 }
+
+els.resultsHost.addEventListener('click', async (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  const row = target?.closest('.row[data-copy-text]');
+  if (!row || !els.resultsHost.contains(row)) return;
+
+  try {
+    await copyTextToClipboard(row.dataset.copyText || '');
+    showCopyToast('kopiert');
+  } catch (error) {
+    showCopyToast('nicht kopiert');
+  }
+});
 
 els.searchInput.addEventListener('input', (event) => {
   state.query = event.target.value;
@@ -990,210 +933,6 @@ els.lessonList.addEventListener('change', (event) => {
   else state.selectedLessons.delete(lesson);
   updateFilterButtonLabel();
   render();
-});
-
-function getCopyRowFromEvent(event) {
-  return event.target?.closest?.('.row[data-copy-hebrew][data-copy-deutsch]') || null;
-}
-
-function cancelLongPressCopy() {
-  const press = state.longPressCopy;
-
-  if (press.timerId !== null) {
-    window.clearTimeout(press.timerId);
-  }
-
-  if (press.releaseFallbackTimerId !== null) {
-    window.clearTimeout(press.releaseFallbackTimerId);
-  }
-
-  if (press.row) {
-    press.row.classList.remove('is-copy-pending', 'is-copy-ready');
-  }
-
-  press.timerId = null;
-  press.row = null;
-  press.pointerId = null;
-  press.pointerType = '';
-  press.startX = 0;
-  press.startY = 0;
-  press.ready = false;
-  press.copied = false;
-  press.preCopied = false;
-  press.preCopyPromise = null;
-  press.releaseFallbackTimerId = null;
-}
-
-function resolveLongPressVisual(row) {
-  const press = state.longPressCopy;
-  if (!row || press.row !== row || press.copied) return;
-
-  press.ready = true;
-  row.classList.remove('is-copy-pending');
-  row.classList.add('is-copy-ready');
-
-  if (press.preCopied) {
-    press.copied = true;
-    markResultRowCopied(row);
-    cancelLongPressCopy();
-  }
-}
-
-function startIOSClipboardPreCopy(row) {
-  const press = state.longPressCopy;
-  const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
-
-  press.preCopyPromise = writeClipboardTextFromReleaseGesture(text)
-    .then((copied) => {
-      if (press.row !== row) return copied;
-
-      press.preCopied = copied;
-      if (copied && press.ready && !press.copied) {
-        press.copied = true;
-        markResultRowCopied(row);
-        cancelLongPressCopy();
-      }
-
-      return copied;
-    })
-    .catch(() => false);
-}
-
-function startLongPressCopy(event) {
-  if (event.pointerType === 'mouse' && event.button !== 0) return;
-
-  const row = getCopyRowFromEvent(event);
-  if (!row) return;
-
-  if (event.pointerType === 'mouse') {
-    event.preventDefault();
-  }
-
-  cancelLongPressCopy();
-
-  const press = state.longPressCopy;
-  press.row = row;
-  press.pointerId = event.pointerId;
-  press.pointerType = event.pointerType || '';
-  press.startX = event.clientX;
-  press.startY = event.clientY;
-  press.ready = false;
-  press.copied = false;
-  press.preCopied = false;
-  press.preCopyPromise = null;
-  row.classList.add('is-copy-pending');
-
-  if (press.pointerType === 'touch' && IS_IOS_LIKE) {
-    startIOSClipboardPreCopy(row);
-  }
-
-  press.timerId = window.setTimeout(() => {
-    press.timerId = null;
-    resolveLongPressVisual(row);
-  }, LONG_PRESS_COPY_MS);
-}
-
-function moveLongPressCopy(event) {
-  const press = state.longPressCopy;
-  if (!press.row || press.pointerId !== event.pointerId || press.timerId === null) return;
-
-  const movedX = Math.abs(event.clientX - press.startX);
-  const movedY = Math.abs(event.clientY - press.startY);
-  if (movedX > LONG_PRESS_MOVE_CANCEL_PX || movedY > LONG_PRESS_MOVE_CANCEL_PX) {
-    cancelLongPressCopy();
-  }
-}
-
-function endLongPressCopy(event) {
-  const press = state.longPressCopy;
-  const row = press.row;
-  const shouldCopy = !!row && press.ready && !press.copied;
-  const isMatchingPointer = press.pointerId === event.pointerId || press.pointerId === null;
-
-  if (!isMatchingPointer) return;
-
-  if (event.type === 'pointercancel') {
-    if (shouldCopy && press.pointerType === 'touch') {
-      if (press.releaseFallbackTimerId !== null) {
-        window.clearTimeout(press.releaseFallbackTimerId);
-      }
-      press.releaseFallbackTimerId = window.setTimeout(
-        cancelLongPressCopy,
-        TOUCH_RELEASE_FALLBACK_CANCEL_MS,
-      );
-      return;
-    }
-
-    cancelLongPressCopy();
-    return;
-  }
-
-  if (shouldCopy && press.pointerType === 'touch') {
-    if (press.preCopied) {
-      press.copied = true;
-      event.preventDefault();
-      markResultRowCopied(row);
-      cancelLongPressCopy();
-      return;
-    }
-
-    if (press.releaseFallbackTimerId !== null) {
-      window.clearTimeout(press.releaseFallbackTimerId);
-    }
-    press.releaseFallbackTimerId = window.setTimeout(
-      cancelLongPressCopy,
-      TOUCH_RELEASE_FALLBACK_CANCEL_MS,
-    );
-    return;
-  }
-
-  if (shouldCopy) {
-    press.copied = true;
-    event.preventDefault();
-    row.classList.remove('is-copy-ready');
-    void copyResultRow(row, { fromReleaseGesture: true });
-  }
-
-  cancelLongPressCopy();
-}
-
-function endTouchLongPressCopy(event) {
-  const press = state.longPressCopy;
-  const row = press.row;
-  const shouldCopy = !!row && press.ready && !press.copied && press.pointerType === 'touch';
-
-  if (!shouldCopy) return;
-
-  press.copied = true;
-  event.preventDefault();
-
-  if (press.preCopied) {
-    markResultRowCopied(row);
-    cancelLongPressCopy();
-    return;
-  }
-
-  row.classList.remove('is-copy-ready');
-  void copyResultRow(row, { fromReleaseGesture: true });
-  cancelLongPressCopy();
-}
-
-function cancelTouchLongPressCopy() {
-  const press = state.longPressCopy;
-  if (press.pointerType === 'touch' && !press.ready) cancelLongPressCopy();
-}
-
-els.resultsHost.addEventListener('pointerdown', startLongPressCopy);
-document.addEventListener('pointermove', moveLongPressCopy);
-document.addEventListener('pointerup', endLongPressCopy);
-document.addEventListener('pointercancel', endLongPressCopy);
-document.addEventListener('touchend', endTouchLongPressCopy, { passive: false });
-document.addEventListener('touchcancel', cancelTouchLongPressCopy, { passive: true });
-els.resultsHost.addEventListener('contextmenu', (event) => {
-  if (getCopyRowFromEvent(event)) event.preventDefault();
-});
-els.resultsHost.addEventListener('dragstart', (event) => {
-  if (getCopyRowFromEvent(event)) event.preventDefault();
 });
 
 document.addEventListener('click', (event) => {
