@@ -1168,12 +1168,21 @@ mark {
 
 .row[data-copy-hebrew][data-copy-deutsch] {
   -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
   touch-action: pan-y;
+  cursor: copy;
 }
 
-.row.is-copy-pending {
+.row[data-copy-hebrew][data-copy-deutsch] * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.row.is-copy-pending,
+.row.is-copy-ready {
   background: var(--row-hover);
 }
 

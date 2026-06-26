@@ -18,6 +18,7 @@ const INPUT_DEBOUNCE_MS = 180;
 const LONG_PRESS_COPY_MS = 620;
 const LONG_PRESS_MOVE_CANCEL_PX = 10;
 const COPY_TOAST_VISIBLE_MS = 850;
+const TOUCH_RELEASE_FALLBACK_CANCEL_MS = 1800;
 const BIDI_RLI = '\u2067';
 const BIDI_LRI = '\u2066';
 const BIDI_PDI = '\u2069';
@@ -35,9 +36,12 @@ const state = {
     timerId: null,
     row: null,
     pointerId: null,
+    pointerType: '',
     startX: 0,
     startY: 0,
+    ready: false,
     copied: false,
+    releaseFallbackTimerId: null,
   },
   copyToastTimerId: null,
 };
@@ -575,25 +579,78 @@ function formatCopyText(hebrew, deutsch) {
 
 function fallbackCopyText(text) {
   const textarea = document.createElement('textarea');
+  const selection = document.getSelection?.();
+  const savedRanges = [];
+
+  if (selection) {
+    for (let index = 0; index < selection.rangeCount; index += 1) {
+      savedRanges.push(selection.getRangeAt(index));
+    }
+  }
+
   textarea.value = text;
   textarea.setAttribute('readonly', '');
+  textarea.setAttribute('aria-hidden', 'true');
   textarea.style.position = 'fixed';
-  textarea.style.inset = '0 auto auto -9999px';
-  textarea.style.opacity = '0';
+  textarea.style.top = '0';
+  textarea.style.left = '0';
+  textarea.style.width = '2px';
+  textarea.style.height = '2px';
+  textarea.style.padding = '0';
+  textarea.style.border = '0';
+  textarea.style.opacity = '0.01';
   textarea.style.pointerEvents = 'none';
+  textarea.style.fontSize = '16px';
+  textarea.style.webkitUserSelect = 'text';
+  textarea.style.userSelect = 'text';
 
   document.body.appendChild(textarea);
-  textarea.focus();
+
+  try {
+    textarea.focus({ preventScroll: true });
+  } catch (error) {
+    textarea.focus();
+  }
+
+  const isIOS = /iP(?:ad|hone|od)/.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if (isIOS && selection) {
+    try {
+      const range = document.createRange();
+      range.selectNodeContents(textarea);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } catch (error) {
+      // The textarea selection below is the primary path.
+    }
+  }
+
   textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
+  try {
+    textarea.setSelectionRange(0, textarea.value.length);
+  } catch (error) {
+    // Older mobile WebKit builds can reject explicit selection ranges.
+  }
 
   let copied = false;
   try {
     copied = document.execCommand('copy');
   } catch (error) {
     copied = false;
-  } finally {
-    textarea.remove();
+  }
+
+  textarea.remove();
+
+  if (selection) {
+    try {
+      selection.removeAllRanges();
+      for (const range of savedRanges) {
+        selection.addRange(range);
+      }
+    } catch (error) {
+      // Restoring the previous selection is best-effort only.
+    }
   }
 
   return copied;
@@ -610,6 +667,11 @@ async function writeClipboardText(text) {
   }
 
   return fallbackCopyText(text);
+}
+
+async function writeClipboardTextFromReleaseGesture(text) {
+  if (fallbackCopyText(text)) return true;
+  return writeClipboardText(text);
 }
 
 function getCopyToast() {
@@ -641,13 +703,19 @@ function showCopyToast() {
   }, COPY_TOAST_VISIBLE_MS);
 }
 
-async function copyResultRow(row) {
+async function copyResultRow(row, options = {}) {
   if (!row) return;
 
   const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
-  const copied = await writeClipboardText(text);
+  const copied = options.fromReleaseGesture
+    ? await writeClipboardTextFromReleaseGesture(text)
+    : await writeClipboardText(text);
 
-  if (copied) showCopyToast();
+  if (!copied) return;
+
+  row.classList.add('is-copied');
+  window.setTimeout(() => row.classList.remove('is-copied'), 220);
+  showCopyToast();
 }
 
 function highlightDeutsch(text, query) {
@@ -926,16 +994,23 @@ function cancelLongPressCopy() {
     window.clearTimeout(press.timerId);
   }
 
+  if (press.releaseFallbackTimerId !== null) {
+    window.clearTimeout(press.releaseFallbackTimerId);
+  }
+
   if (press.row) {
-    press.row.classList.remove('is-copy-pending');
+    press.row.classList.remove('is-copy-pending', 'is-copy-ready');
   }
 
   press.timerId = null;
   press.row = null;
   press.pointerId = null;
+  press.pointerType = '';
   press.startX = 0;
   press.startY = 0;
+  press.ready = false;
   press.copied = false;
+  press.releaseFallbackTimerId = null;
 }
 
 function startLongPressCopy(event) {
@@ -949,18 +1024,18 @@ function startLongPressCopy(event) {
   const press = state.longPressCopy;
   press.row = row;
   press.pointerId = event.pointerId;
+  press.pointerType = event.pointerType || '';
   press.startX = event.clientX;
   press.startY = event.clientY;
+  press.ready = false;
   press.copied = false;
   row.classList.add('is-copy-pending');
 
   press.timerId = window.setTimeout(() => {
     press.timerId = null;
-    press.copied = true;
+    press.ready = true;
     row.classList.remove('is-copy-pending');
-    row.classList.add('is-copied');
-    window.setTimeout(() => row.classList.remove('is-copied'), 220);
-    void copyResultRow(row);
+    row.classList.add('is-copy-ready');
   }, LONG_PRESS_COPY_MS);
 }
 
@@ -977,19 +1052,74 @@ function moveLongPressCopy(event) {
 
 function endLongPressCopy(event) {
   const press = state.longPressCopy;
-  const wasCopied = press.copied;
+  const row = press.row;
+  const shouldCopy = !!row && press.ready && !press.copied;
+  const isMatchingPointer = press.pointerId === event.pointerId || press.pointerId === null;
 
-  if (press.pointerId === event.pointerId || press.pointerId === null) {
+  if (!isMatchingPointer) return;
+
+  if (event.type === 'pointercancel') {
+    if (shouldCopy && press.pointerType === 'touch') {
+      if (press.releaseFallbackTimerId !== null) {
+        window.clearTimeout(press.releaseFallbackTimerId);
+      }
+      press.releaseFallbackTimerId = window.setTimeout(
+        cancelLongPressCopy,
+        TOUCH_RELEASE_FALLBACK_CANCEL_MS,
+      );
+      return;
+    }
+
     cancelLongPressCopy();
+    return;
   }
 
-  if (wasCopied) event.preventDefault();
+  if (shouldCopy && press.pointerType === 'touch') {
+    if (press.releaseFallbackTimerId !== null) {
+      window.clearTimeout(press.releaseFallbackTimerId);
+    }
+    press.releaseFallbackTimerId = window.setTimeout(
+      cancelLongPressCopy,
+      TOUCH_RELEASE_FALLBACK_CANCEL_MS,
+    );
+    return;
+  }
+
+  if (shouldCopy) {
+    press.copied = true;
+    event.preventDefault();
+    row.classList.remove('is-copy-ready');
+    void copyResultRow(row, { fromReleaseGesture: true });
+  }
+
+  cancelLongPressCopy();
+}
+
+function endTouchLongPressCopy(event) {
+  const press = state.longPressCopy;
+  const row = press.row;
+  const shouldCopy = !!row && press.ready && !press.copied && press.pointerType === 'touch';
+
+  if (!shouldCopy) return;
+
+  press.copied = true;
+  event.preventDefault();
+  row.classList.remove('is-copy-ready');
+  void copyResultRow(row, { fromReleaseGesture: true });
+  cancelLongPressCopy();
+}
+
+function cancelTouchLongPressCopy() {
+  const press = state.longPressCopy;
+  if (press.pointerType === 'touch' && !press.ready) cancelLongPressCopy();
 }
 
 els.resultsHost.addEventListener('pointerdown', startLongPressCopy);
 document.addEventListener('pointermove', moveLongPressCopy);
 document.addEventListener('pointerup', endLongPressCopy);
 document.addEventListener('pointercancel', endLongPressCopy);
+document.addEventListener('touchend', endTouchLongPressCopy, { passive: false });
+document.addEventListener('touchcancel', cancelTouchLongPressCopy, { passive: true });
 els.resultsHost.addEventListener('contextmenu', (event) => {
   if (getCopyRowFromEvent(event)) event.preventDefault();
 });
