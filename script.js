@@ -15,6 +15,12 @@ const SECONDARY_WEIGHTS = {
   Synonyme: 0.88,
 };
 const INPUT_DEBOUNCE_MS = 180;
+const LONG_PRESS_COPY_MS = 620;
+const LONG_PRESS_MOVE_CANCEL_PX = 10;
+const COPY_TOAST_VISIBLE_MS = 850;
+const BIDI_RLI = '\u2067';
+const BIDI_LRI = '\u2066';
+const BIDI_PDI = '\u2069';
 const TRANSCRIPTION_FIELD = 'Transkription';
 const HEBREW_FIELD = 'Hebräisch';
 
@@ -25,6 +31,15 @@ const state = {
   query: '',
   transcriptionQuery: '',
   hebrewQuery: '',
+  longPressCopy: {
+    timerId: null,
+    row: null,
+    pointerId: null,
+    startX: 0,
+    startY: 0,
+    copied: false,
+  },
+  copyToastTimerId: null,
 };
 
 const els = {
@@ -542,6 +557,99 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function cleanCopyPart(value, fallback = '') {
+  const text = String(value ?? '')
+    .replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return text || fallback;
+}
+
+function formatCopyText(hebrew, deutsch) {
+  const hebrewText = cleanCopyPart(hebrew, '—');
+  const deutschText = cleanCopyPart(deutsch, '—');
+
+  return `${BIDI_RLI}${hebrewText}${BIDI_PDI} - ${BIDI_LRI}${deutschText}${BIDI_PDI}`;
+}
+
+function fallbackCopyText(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.inset = '0 auto auto -9999px';
+  textarea.style.opacity = '0';
+  textarea.style.pointerEvents = 'none';
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch (error) {
+    copied = false;
+  } finally {
+    textarea.remove();
+  }
+
+  return copied;
+}
+
+async function writeClipboardText(text) {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (error) {
+      // Fall back below for browsers that expose Clipboard API but reject it in this context.
+    }
+  }
+
+  return fallbackCopyText(text);
+}
+
+function getCopyToast() {
+  let toast = document.getElementById('copyToast');
+  if (toast) return toast;
+
+  toast = document.createElement('div');
+  toast.id = 'copyToast';
+  toast.className = 'copy-toast';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  toast.textContent = 'kopiert';
+  document.body.appendChild(toast);
+
+  return toast;
+}
+
+function showCopyToast() {
+  const toast = getCopyToast();
+
+  if (state.copyToastTimerId !== null) {
+    window.clearTimeout(state.copyToastTimerId);
+  }
+
+  toast.classList.add('is-visible');
+  state.copyToastTimerId = window.setTimeout(() => {
+    toast.classList.remove('is-visible');
+    state.copyToastTimerId = null;
+  }, COPY_TOAST_VISIBLE_MS);
+}
+
+async function copyResultRow(row) {
+  if (!row) return;
+
+  const text = formatCopyText(row.dataset.copyHebrew, row.dataset.copyDeutsch);
+  const copied = await writeClipboardText(text);
+
+  if (copied) showCopyToast();
+}
+
 function highlightDeutsch(text, query) {
   const safeText = escapeHtml(text);
   const normalizedQuery = normalize(query);
@@ -610,13 +718,23 @@ function renderResults(items, message = '') {
     return;
   }
 
-  const rows = items.map(({ entry }) => `
-    <div class="row">
-      <div class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
-      <div class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</div>
-      <div class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</div>
-    </div>
-  `).join('');
+  const rows = items.map(({ entry }) => {
+    const hebrew = cleanCopyPart(entry.Hebräisch, '—');
+    const deutsch = cleanCopyPart(entry.Deutsch, '—');
+
+    return `
+      <div
+        class="row"
+        data-copy-hebrew="${escapeHtml(hebrew)}"
+        data-copy-deutsch="${escapeHtml(deutsch)}"
+        title="Lange drücken zum Kopieren"
+      >
+        <div class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</div>
+        <div class="hebrew" dir="rtl">${escapeHtml(hebrew)}</div>
+        <div class="deutsch" dir="ltr">${highlightDeutsch(deutsch, state.query)}</div>
+      </div>
+    `;
+  }).join('');
 
   els.resultsHost.className = 'list';
   els.resultsHost.innerHTML = rows;
@@ -795,6 +913,85 @@ els.lessonList.addEventListener('change', (event) => {
   else state.selectedLessons.delete(lesson);
   updateFilterButtonLabel();
   render();
+});
+
+function getCopyRowFromEvent(event) {
+  return event.target?.closest?.('.row[data-copy-hebrew][data-copy-deutsch]') || null;
+}
+
+function cancelLongPressCopy() {
+  const press = state.longPressCopy;
+
+  if (press.timerId !== null) {
+    window.clearTimeout(press.timerId);
+  }
+
+  if (press.row) {
+    press.row.classList.remove('is-copy-pending');
+  }
+
+  press.timerId = null;
+  press.row = null;
+  press.pointerId = null;
+  press.startX = 0;
+  press.startY = 0;
+  press.copied = false;
+}
+
+function startLongPressCopy(event) {
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+  const row = getCopyRowFromEvent(event);
+  if (!row) return;
+
+  cancelLongPressCopy();
+
+  const press = state.longPressCopy;
+  press.row = row;
+  press.pointerId = event.pointerId;
+  press.startX = event.clientX;
+  press.startY = event.clientY;
+  press.copied = false;
+  row.classList.add('is-copy-pending');
+
+  press.timerId = window.setTimeout(() => {
+    press.timerId = null;
+    press.copied = true;
+    row.classList.remove('is-copy-pending');
+    row.classList.add('is-copied');
+    window.setTimeout(() => row.classList.remove('is-copied'), 220);
+    void copyResultRow(row);
+  }, LONG_PRESS_COPY_MS);
+}
+
+function moveLongPressCopy(event) {
+  const press = state.longPressCopy;
+  if (!press.row || press.pointerId !== event.pointerId || press.timerId === null) return;
+
+  const movedX = Math.abs(event.clientX - press.startX);
+  const movedY = Math.abs(event.clientY - press.startY);
+  if (movedX > LONG_PRESS_MOVE_CANCEL_PX || movedY > LONG_PRESS_MOVE_CANCEL_PX) {
+    cancelLongPressCopy();
+  }
+}
+
+function endLongPressCopy(event) {
+  const press = state.longPressCopy;
+  const wasCopied = press.copied;
+
+  if (press.pointerId === event.pointerId || press.pointerId === null) {
+    cancelLongPressCopy();
+  }
+
+  if (wasCopied) event.preventDefault();
+}
+
+els.resultsHost.addEventListener('pointerdown', startLongPressCopy);
+document.addEventListener('pointermove', moveLongPressCopy);
+document.addEventListener('pointerup', endLongPressCopy);
+document.addEventListener('pointercancel', endLongPressCopy);
+els.resultsHost.addEventListener('contextmenu', (event) => {
+  if (getCopyRowFromEvent(event)) event.preventDefault();
 });
 
 document.addEventListener('click', (event) => {

@@ -1165,3 +1165,47 @@ mark {
     font-size: 19px;
   }
 }
+
+.row[data-copy-hebrew][data-copy-deutsch] {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.row.is-copy-pending {
+  background: var(--row-hover);
+}
+
+.row.is-copied {
+  background: var(--accent-soft);
+}
+
+.copy-toast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 50%;
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid rgba(18, 32, 51, 0.08);
+  border-radius: 999px;
+  background: rgba(18, 32, 51, 0.88);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(16, 31, 50, 0.14);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -12px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.copy-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
