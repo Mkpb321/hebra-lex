@@ -568,7 +568,7 @@ function createEntryCopyText(entry) {
 }
 
 function createAnkiCopyHtml(copyText) {
-  return `<span style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"><b>&nbsp;${escapeHtml(copyText)}</b></span>`;
+  return `<br><span style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"><b>&nbsp;${escapeHtml(copyText)} ${BIDI_PDI}</b></span>`;
 }
 
 function loadAnkiCopyPreference() {
@@ -741,37 +741,14 @@ async function copyTextToClipboard(text) {
 }
 
 async function copyEntryToClipboard(plainText, withAnkiFormatting) {
-  if (!withAnkiFormatting) {
-    await copyTextToClipboard(plainText);
-    return 'plain';
-  }
+  const textToCopy = withAnkiFormatting
+    ? createAnkiCopyHtml(plainText)
+    : plainText;
 
-  const ankiHtml = createAnkiCopyHtml(plainText);
-  const ankiPlainText = ` ${plainText}`;
-
-  // Keep a synchronous rich-selection path for browsers that require the copy call
-  // to remain directly inside the click/tap gesture (notably iOS Safari).
-  if (copyHtmlWithTemporarySelection(ankiHtml)) return 'anki';
-
-  if (
-    navigator.clipboard?.write &&
-    typeof window.ClipboardItem === 'function' &&
-    window.isSecureContext
-  ) {
-    try {
-      const clipboardItem = new window.ClipboardItem({
-        'text/html': new Blob([ankiHtml], { type: 'text/html' }),
-        'text/plain': new Blob([ankiPlainText], { type: 'text/plain' }),
-      });
-      await navigator.clipboard.write([clipboardItem]);
-      return 'anki';
-    } catch (error) {
-      // Fall through to a transparent plain-text fallback.
-    }
-  }
-
-  await copyTextToClipboard(plainText);
-  return 'plain-fallback';
+  // Copy the Anki markup deliberately as literal text. Using the text/html clipboard
+  // MIME type would make receiving applications render the markup instead.
+  await copyTextToClipboard(textToCopy);
+  return withAnkiFormatting ? 'anki-source' : 'plain';
 }
 
 function highlightDeutsch(text, query) {
@@ -950,7 +927,7 @@ els.resultsHost.addEventListener('click', async (event) => {
       row.dataset.copyText || '',
       state.copyWithAnkiFormatting,
     );
-    showCopyToast(copyMode === 'anki' ? 'für Anki kopiert' : copyMode === 'plain-fallback' ? 'ohne Formatierung kopiert' : 'kopiert');
+    showCopyToast(copyMode === 'anki-source' ? 'Anki-HTML kopiert' : 'kopiert');
   } catch (error) {
     showCopyToast('nicht kopiert');
   }
