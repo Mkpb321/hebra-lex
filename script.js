@@ -25,6 +25,7 @@ const state = {
   query: '',
   transcriptionQuery: '',
   hebrewQuery: '',
+  copyWithAnkiFormatting: false,
 };
 
 const els = {
@@ -46,6 +47,7 @@ const els = {
   infoButton: document.getElementById('infoButton'),
   infoOverlay: document.getElementById('infoOverlay'),
   infoCloseButton: document.getElementById('infoCloseButton'),
+  ankiCopyCheckbox: document.getElementById('ankiCopyCheckbox'),
   infoTabButtons: Array.from(document.querySelectorAll('.info-tab-btn')),
   infoTabPanels: Array.from(document.querySelectorAll('.info-tab-panel')),
 };
@@ -546,6 +548,7 @@ function escapeHtml(value) {
 const BIDI_RLI = '\u2067';
 const BIDI_LRI = '\u2066';
 const BIDI_PDI = '\u2069';
+const ANKI_COPY_STORAGE_KEY = 'hebralex.copyWithAnkiFormatting';
 let copyToastTimeoutId = null;
 
 function normalizeCopyPart(value) {
@@ -562,6 +565,33 @@ function createEntryCopyText(entry) {
   // Hebrew is isolated as RTL and German as LTR so the pasted plain-text order stays:
   // Hebrew - Deutsch, even in mixed-direction contexts such as iOS Notes or Safari fields.
   return `${BIDI_RLI}${hebrew}${BIDI_PDI} - ${BIDI_LRI}${deutsch}${BIDI_PDI}`;
+}
+
+function createAnkiCopyHtml(copyText) {
+  return `<span style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"><b>&nbsp;${escapeHtml(copyText)}</b></span>`;
+}
+
+function loadAnkiCopyPreference() {
+  let enabled = false;
+
+  try {
+    enabled = window.localStorage.getItem(ANKI_COPY_STORAGE_KEY) === 'true';
+  } catch (error) {
+    // localStorage can be unavailable in restricted/private browser contexts.
+  }
+
+  state.copyWithAnkiFormatting = enabled;
+  if (els.ankiCopyCheckbox) els.ankiCopyCheckbox.checked = enabled;
+}
+
+function saveAnkiCopyPreference(enabled) {
+  state.copyWithAnkiFormatting = Boolean(enabled);
+
+  try {
+    window.localStorage.setItem(ANKI_COPY_STORAGE_KEY, String(state.copyWithAnkiFormatting));
+  } catch (error) {
+    // The setting still applies for the current page session when storage is unavailable.
+  }
 }
 
 function createCopyToast() {
@@ -649,6 +679,54 @@ function copyWithTemporarySelection(text) {
   }
 }
 
+function copyHtmlWithTemporarySelection(html) {
+  const container = document.createElement('div');
+  container.setAttribute('contenteditable', 'true');
+  container.setAttribute('aria-hidden', 'true');
+  container.style.position = 'fixed';
+  container.style.top = '0';
+  container.style.left = '-10000px';
+  container.style.width = 'max-content';
+  container.style.height = 'auto';
+  container.style.whiteSpace = 'pre-wrap';
+  container.style.pointerEvents = 'none';
+  container.innerHTML = html;
+
+  const activeElement = document.activeElement;
+  const selection = window.getSelection?.();
+  const previousRanges = selection
+    ? Array.from({ length: selection.rangeCount }, (_, index) => selection.getRangeAt(index).cloneRange())
+    : [];
+
+  document.body.appendChild(container);
+
+  try {
+    container.focus({ preventScroll: true });
+    const range = document.createRange();
+    range.selectNodeContents(container);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    return document.execCommand('copy');
+  } catch (error) {
+    return false;
+  } finally {
+    container.remove();
+
+    if (selection) {
+      selection.removeAllRanges();
+      for (const range of previousRanges) selection.addRange(range);
+    }
+
+    if (activeElement && typeof activeElement.focus === 'function') {
+      try {
+        activeElement.focus({ preventScroll: true });
+      } catch (error) {
+        // Restoring focus is best-effort only.
+      }
+    }
+  }
+}
+
 async function copyTextToClipboard(text) {
   // The synchronous path runs inside the click/tap gesture and is the most reliable fallback
   // for iOS Safari, especially outside secure contexts.
@@ -660,6 +738,40 @@ async function copyTextToClipboard(text) {
   }
 
   throw new Error('Clipboard API nicht verfügbar');
+}
+
+async function copyEntryToClipboard(plainText, withAnkiFormatting) {
+  if (!withAnkiFormatting) {
+    await copyTextToClipboard(plainText);
+    return 'plain';
+  }
+
+  const ankiHtml = createAnkiCopyHtml(plainText);
+  const ankiPlainText = ` ${plainText}`;
+
+  // Keep a synchronous rich-selection path for browsers that require the copy call
+  // to remain directly inside the click/tap gesture (notably iOS Safari).
+  if (copyHtmlWithTemporarySelection(ankiHtml)) return 'anki';
+
+  if (
+    navigator.clipboard?.write &&
+    typeof window.ClipboardItem === 'function' &&
+    window.isSecureContext
+  ) {
+    try {
+      const clipboardItem = new window.ClipboardItem({
+        'text/html': new Blob([ankiHtml], { type: 'text/html' }),
+        'text/plain': new Blob([ankiPlainText], { type: 'text/plain' }),
+      });
+      await navigator.clipboard.write([clipboardItem]);
+      return 'anki';
+    } catch (error) {
+      // Fall through to a transparent plain-text fallback.
+    }
+  }
+
+  await copyTextToClipboard(plainText);
+  return 'plain-fallback';
 }
 
 function highlightDeutsch(text, query) {
@@ -834,8 +946,11 @@ els.resultsHost.addEventListener('click', async (event) => {
   if (!row || !els.resultsHost.contains(row)) return;
 
   try {
-    await copyTextToClipboard(row.dataset.copyText || '');
-    showCopyToast('kopiert');
+    const copyMode = await copyEntryToClipboard(
+      row.dataset.copyText || '',
+      state.copyWithAnkiFormatting,
+    );
+    showCopyToast(copyMode === 'anki' ? 'für Anki kopiert' : copyMode === 'plain-fallback' ? 'ohne Formatierung kopiert' : 'kopiert');
   } catch (error) {
     showCopyToast('nicht kopiert');
   }
@@ -885,6 +1000,12 @@ els.hebrewClearBtn.addEventListener('click', () => {
   render();
   els.hebrewSearchInput.focus();
 });
+
+if (els.ankiCopyCheckbox) {
+  els.ankiCopyCheckbox.addEventListener('change', (event) => {
+    saveAnkiCopyPreference(event.target.checked);
+  });
+}
 
 els.infoButton.addEventListener('click', () => {
   openInfoOverlay();
@@ -953,5 +1074,6 @@ document.addEventListener('keydown', (event) => {
 });
 
 syncSearchUi();
+loadAnkiCopyPreference();
 setInfoTab('general');
 loadData();

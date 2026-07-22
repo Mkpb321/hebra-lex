@@ -892,6 +892,38 @@ mark {
   background: #f8fbff;
 }
 
+.info-setting-card {
+  background: #f8fbff;
+}
+
+.info-setting-option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  user-select: none;
+}
+
+.info-setting-option input {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--accent);
+}
+
+.info-setting-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.info-setting-text small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .info-warning-card {
   background: #fffaf2;
   border-color: #fde8c6;
