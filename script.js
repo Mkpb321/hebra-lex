@@ -847,6 +847,21 @@ function renderLessonList() {
   updateFilterButtonLabel();
 }
 
+function renderRootSearchControls(value) {
+  const roots = splitSlashValues(value);
+  if (!roots.length) return '<span class="root-empty">—</span>';
+
+  return roots.map((root) => `
+    <button
+      class="root-link"
+      type="button"
+      data-root-search="${escapeHtml(root)}"
+      aria-label="Nach der Wurzel ${escapeHtml(root)} suchen"
+      title="Nur nach dieser Wurzel suchen"
+    >${escapeHtml(root)}</button>
+  `).join('<span class="root-separator" aria-hidden="true">/</span>');
+}
+
 function renderResults(items, message = '') {
   if (message) {
     els.resultsHost.className = 'plain';
@@ -865,12 +880,12 @@ function renderResults(items, message = '') {
     const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
 
     return `
-      <button class="row" type="button" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
+      <div class="row" role="button" tabindex="0" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
         <span class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</span>
         <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
         <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
-        <span class="root" title="Wurzel: ${escapeHtml(entry[ROOT_FIELD] || '—')}">${escapeHtml(entry[ROOT_FIELD] || '—')}</span>
-      </button>
+        <span class="root" title="Wurzel: ${escapeHtml(entry[ROOT_FIELD] || '—')}">${renderRootSearchControls(entry[ROOT_FIELD])}</span>
+      </div>
     `;
   }).join('');
 
@@ -960,11 +975,32 @@ async function loadData() {
   }
 }
 
-els.resultsHost.addEventListener('click', async (event) => {
-  const target = event.target instanceof Element ? event.target : null;
-  const row = target?.closest('.row[data-copy-text]');
-  if (!row || !els.resultsHost.contains(row)) return;
+function applyExclusiveRootSearch(rootValue) {
+  const root = String(rootValue ?? '').trim();
+  if (!root) return;
 
+  debouncedRender.cancel();
+  closeDropdown();
+
+  els.searchInput.value = '';
+  els.transcriptionSearchInput.value = '';
+  els.hebrewSearchInput.value = '';
+  els.rootSearchInput.value = root;
+
+  state.query = '';
+  state.transcriptionQuery = '';
+  state.hebrewQuery = '';
+  state.rootQuery = root;
+  state.selectedLessons = new Set(state.lessons);
+
+  renderLessonList();
+  syncSearchUi();
+  render();
+  els.rootSearchInput.focus({ preventScroll: true });
+  els.rootSearchInput.setSelectionRange(root.length, root.length);
+}
+
+async function copyResultRow(row) {
   try {
     const copyMode = await copyEntryToClipboard(
       row.dataset.copyText || '',
@@ -974,6 +1010,31 @@ els.resultsHost.addEventListener('click', async (event) => {
   } catch (error) {
     showCopyToast('nicht kopiert');
   }
+}
+
+els.resultsHost.addEventListener('click', async (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  if (!target) return;
+
+  const rootButton = target.closest('[data-root-search]');
+  if (rootButton && els.resultsHost.contains(rootButton)) {
+    applyExclusiveRootSearch(rootButton.dataset.rootSearch || '');
+    return;
+  }
+
+  const row = target.closest('.row[data-copy-text]');
+  if (!row || !els.resultsHost.contains(row)) return;
+  await copyResultRow(row);
+});
+
+els.resultsHost.addEventListener('keydown', async (event) => {
+  const target = event.target instanceof Element ? event.target : null;
+  const row = target?.closest('.row[data-copy-text]');
+  if (!row || target !== row || !els.resultsHost.contains(row)) return;
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+
+  event.preventDefault();
+  await copyResultRow(row);
 });
 
 els.searchInput.addEventListener('input', (event) => {
