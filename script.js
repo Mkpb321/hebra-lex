@@ -17,6 +17,7 @@ const SECONDARY_WEIGHTS = {
 const INPUT_DEBOUNCE_MS = 180;
 const TRANSCRIPTION_FIELD = 'Transkription';
 const HEBREW_FIELD = 'Hebräisch';
+const ROOT_FIELD = 'Wurzel';
 
 const state = {
   entries: [],
@@ -25,6 +26,7 @@ const state = {
   query: '',
   transcriptionQuery: '',
   hebrewQuery: '',
+  rootQuery: '',
   copyWithAnkiFormatting: false,
 };
 
@@ -38,6 +40,9 @@ const els = {
   hebrewSearchInput: document.getElementById('hebrewSearchInput'),
   hebrewSearchWrap: document.getElementById('hebrewSearchWrap'),
   hebrewClearBtn: document.getElementById('hebrewClearBtn'),
+  rootSearchInput: document.getElementById('rootSearchInput'),
+  rootSearchWrap: document.getElementById('rootSearchWrap'),
+  rootClearBtn: document.getElementById('rootClearBtn'),
   filterButton: document.getElementById('filterButton'),
   dropdown: document.getElementById('dropdown'),
   selectAllBtn: document.getElementById('selectAllBtn'),
@@ -392,6 +397,7 @@ function prepareEntries(rows) {
       __search: {},
       __transcriptionSearch: prepareFieldValues(row[TRANSCRIPTION_FIELD]),
       __hebrewSearch: prepareFieldValues(row[HEBREW_FIELD]),
+      __rootSearch: prepareFieldValues(row[ROOT_FIELD]),
     };
 
     for (const field of SEARCH_FIELDS) {
@@ -453,6 +459,30 @@ function scoreHebrewEntry(entry, query) {
   return result;
 }
 
+function scoreRootCandidate(query, candidate) {
+  const q = normalizeHebrew(query);
+  const c = normalizeHebrew(candidate);
+  if (!q || !c) return 0;
+
+  if (c === q) return 140;
+  if (c.startsWith(q)) return 122;
+  if (q.length >= 2 && c.includes(q)) return 106;
+  return 0;
+}
+
+function scoreRootEntry(entry, query) {
+  const result = { root: 0, total: 0 };
+
+  for (const candidate of entry.__rootSearch) {
+    const normalizedCandidate = normalizeHebrew(candidate);
+    if (!normalizedCandidate) continue;
+    result.root = Math.max(result.root, scoreRootCandidate(query, candidate));
+  }
+
+  result.total = result.root;
+  return result;
+}
+
 function defaultSort(a, b) {
   const lessonDiff = Number(a.Lektion || 0) - Number(b.Lektion || 0);
   if (lessonDiff !== 0) return lessonDiff;
@@ -482,17 +512,22 @@ function shouldIncludeHebrewMatch(score, query) {
   return score.hebrew >= (isShort ? 98 : 62);
 }
 
-function rankEntries(entries, query, transcriptionQuery, hebrewQuery) {
+function shouldIncludeRootMatch(score, query) {
+  return !normalizeHebrew(query) || score.root > 0;
+}
+
+function rankEntries(entries, query, transcriptionQuery, hebrewQuery, rootQuery) {
   const trimmed = query.trim();
   const trimmedTranscription = transcriptionQuery.trim();
   const trimmedHebrew = hebrewQuery.trim();
+  const trimmedRoot = rootQuery.trim();
 
-  if (!trimmed && !trimmedTranscription && !trimmedHebrew) {
+  if (!trimmed && !trimmedTranscription && !trimmedHebrew && !trimmedRoot) {
     return [...entries]
       .sort(defaultSort)
       .map((entry) => ({
         entry,
-        score: { deutsch: 0, secondary: 0, transcription: 0, hebrew: 0, total: 0 },
+        score: { deutsch: 0, secondary: 0, transcription: 0, hebrew: 0, root: 0, total: 0 },
       }));
   }
 
@@ -505,6 +540,9 @@ function rankEntries(entries, query, transcriptionQuery, hebrewQuery) {
       const hebrewScore = trimmedHebrew
         ? scoreHebrewEntry(entry, trimmedHebrew)
         : { hebrew: 0, total: 0 };
+      const rootScore = trimmedRoot
+        ? scoreRootEntry(entry, trimmedRoot)
+        : { root: 0, total: 0 };
 
       return {
         entry,
@@ -513,7 +551,8 @@ function rankEntries(entries, query, transcriptionQuery, hebrewQuery) {
           secondary: textScore.secondary,
           transcription: transcriptionScore.transcription,
           hebrew: hebrewScore.hebrew,
-          total: textScore.total + (transcriptionScore.total * 4) + (hebrewScore.total * 4.25),
+          root: rootScore.root,
+          total: textScore.total + (transcriptionScore.total * 4) + (hebrewScore.total * 4.25) + (rootScore.total * 4.5),
         },
       };
     })
@@ -521,9 +560,11 @@ function rankEntries(entries, query, transcriptionQuery, hebrewQuery) {
       const matchesText = !trimmed || shouldIncludeMatch(item.score, trimmed);
       const matchesTranscription = !trimmedTranscription || shouldIncludeTranscriptionMatch(item.score, trimmedTranscription);
       const matchesHebrew = !trimmedHebrew || shouldIncludeHebrewMatch(item.score, trimmedHebrew);
-      return matchesText && matchesTranscription && matchesHebrew;
+      const matchesRoot = !trimmedRoot || shouldIncludeRootMatch(item.score, trimmedRoot);
+      return matchesText && matchesTranscription && matchesHebrew && matchesRoot;
     })
     .sort((left, right) => {
+      if (right.score.root !== left.score.root) return right.score.root - left.score.root;
       if (right.score.hebrew !== left.score.hebrew) return right.score.hebrew - left.score.hebrew;
       if (right.score.transcription !== left.score.transcription) return right.score.transcription - left.score.transcription;
       if (right.score.deutsch !== left.score.deutsch) return right.score.deutsch - left.score.deutsch;
@@ -828,6 +869,7 @@ function renderResults(items, message = '') {
         <span class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</span>
         <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
         <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
+        <span class="root" title="Wurzel: ${escapeHtml(entry[ROOT_FIELD] || '—')}">${escapeHtml(entry[ROOT_FIELD] || '—')}</span>
       </button>
     `;
   }).join('');
@@ -843,7 +885,7 @@ function render() {
     return;
   }
 
-  const ranked = rankEntries(getFilteredEntries(), state.query, state.transcriptionQuery, state.hebrewQuery);
+  const ranked = rankEntries(getFilteredEntries(), state.query, state.transcriptionQuery, state.hebrewQuery, state.rootQuery);
   renderResults(ranked);
 }
 
@@ -853,6 +895,7 @@ function syncSearchUi() {
   els.searchWrap.classList.toggle('has-value', !!els.searchInput.value.trim());
   els.transcriptionSearchWrap.classList.toggle('has-value', !!els.transcriptionSearchInput.value.trim());
   els.hebrewSearchWrap.classList.toggle('has-value', !!els.hebrewSearchInput.value.trim());
+  els.rootSearchWrap.classList.toggle('has-value', !!els.rootSearchInput.value.trim());
 }
 
 function openDropdown() {
@@ -951,6 +994,12 @@ els.hebrewSearchInput.addEventListener('input', (event) => {
   debouncedRender();
 });
 
+els.rootSearchInput.addEventListener('input', (event) => {
+  state.rootQuery = event.target.value;
+  syncSearchUi();
+  debouncedRender();
+});
+
 els.clearBtn.addEventListener('click', () => {
   debouncedRender.cancel();
   els.searchInput.value = '';
@@ -976,6 +1025,15 @@ els.hebrewClearBtn.addEventListener('click', () => {
   syncSearchUi();
   render();
   els.hebrewSearchInput.focus();
+});
+
+els.rootClearBtn.addEventListener('click', () => {
+  debouncedRender.cancel();
+  els.rootSearchInput.value = '';
+  state.rootQuery = '';
+  syncSearchUi();
+  render();
+  els.rootSearchInput.focus();
 });
 
 if (els.ankiCopyCheckbox) {

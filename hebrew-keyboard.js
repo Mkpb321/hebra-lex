@@ -150,13 +150,17 @@ const COMBO_MARK_MAP = {
       'o+2': { char: 'ֳ', code: '05B3' }
     };
 
-  const SEARCH_INPUT_ID = 'hebrewSearchInput';
+  const SEARCH_INPUT_IDS = ['hebrewSearchInput', 'rootSearchInput'];
   const PANEL_ID = 'hebrewKeyboardPanel';
   const KEYS_HOST_ID = 'hebrewKeyboardKeys';
-  const input = document.getElementById(SEARCH_INPUT_ID);
+  const inputs = SEARCH_INPUT_IDS
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
   const panel = document.getElementById(PANEL_ID);
   const keyboard = document.getElementById(KEYS_HOST_ID);
-  if (!input || !panel || !keyboard) return;
+  if (!inputs.length || !panel || !keyboard) return;
+
+  let input = inputs[0];
 
   const COMBO_BASE_KEYS = new Set(['a', 'ä', 'o']);
   const DIGIT_KEYS = new Set(['1', '2']);
@@ -335,7 +339,7 @@ const COMBO_MARK_MAP = {
   }
 
   function isKeyboardActive() {
-    return !panel.hidden && document.activeElement === input;
+    return !panel.hidden && document.activeElement === input && inputs.includes(input);
   }
 
   function isPrintableKey(event) {
@@ -512,7 +516,7 @@ const COMBO_MARK_MAP = {
 
     btn.addEventListener('mousedown', (event) => event.preventDefault());
     btn.addEventListener('click', () => {
-      showKeyboard();
+      showKeyboard(input);
       if (type === 'consonant') addConsonant(item);
       else addMark(item);
     });
@@ -544,7 +548,15 @@ const COMBO_MARK_MAP = {
     });
   }
 
-  function showKeyboard() {
+  function showKeyboard(nextInput = input) {
+    if (!inputs.includes(nextInput)) return;
+
+    for (const searchInput of inputs) {
+      searchInput.setAttribute('aria-expanded', 'false');
+    }
+
+    input = nextInput;
+    activeConsonantChar = getPreviousBaseBefore()?.char || '';
     panel.hidden = false;
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
@@ -556,30 +568,42 @@ const COMBO_MARK_MAP = {
     panel.classList.remove('is-open');
     panel.hidden = true;
     panel.setAttribute('aria-hidden', 'true');
-    input.setAttribute('aria-expanded', 'false');
+    for (const searchInput of inputs) {
+      searchInput.setAttribute('aria-expanded', 'false');
+    }
     clearActivePhysicalKeys();
   }
 
   function isInsideKeyboardOrHebrewSearch(target) {
-    return panel.contains(target) || (target instanceof Element && target.closest('#hebrewSearchWrap'));
+    return panel.contains(target) || (
+      target instanceof Element &&
+      !!target.closest('#hebrewSearchWrap, #rootSearchWrap')
+    );
   }
 
-  input.addEventListener('focus', showKeyboard);
-  input.addEventListener('click', showKeyboard);
-  input.addEventListener('blur', () => {
-    window.setTimeout(() => {
-      if (!panel.contains(document.activeElement)) hideKeyboard();
-    }, 0);
-  });
-  input.addEventListener('input', () => {
-    activeConsonantChar = getPreviousBaseBefore()?.char || '';
-    updateKeyboardState();
-  });
-  input.addEventListener('selectionchange', updateKeyboardState);
-  input.addEventListener('search', () => {
-    if (!input.value) activeConsonantChar = '';
-    hideKeyboard();
-  });
+  for (const searchInput of inputs) {
+    searchInput.addEventListener('focus', () => showKeyboard(searchInput));
+    searchInput.addEventListener('click', () => showKeyboard(searchInput));
+    searchInput.addEventListener('blur', () => {
+      window.setTimeout(() => {
+        const activeElement = document.activeElement;
+        if (!panel.contains(activeElement) && !inputs.includes(activeElement)) hideKeyboard();
+      }, 0);
+    });
+    searchInput.addEventListener('input', () => {
+      if (searchInput !== input) return;
+      activeConsonantChar = getPreviousBaseBefore()?.char || '';
+      updateKeyboardState();
+    });
+    searchInput.addEventListener('selectionchange', () => {
+      if (searchInput === input) updateKeyboardState();
+    });
+    searchInput.addEventListener('search', () => {
+      if (searchInput !== input) return;
+      if (!input.value) activeConsonantChar = '';
+      hideKeyboard();
+    });
+  }
 
   document.addEventListener('selectionchange', () => {
     if (document.activeElement === input) updateKeyboardState();

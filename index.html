@@ -44,6 +44,14 @@
           <input id="hebrewSearchInput" type="text" inputmode="none" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Hebräisch …" aria-label="Hebräisch suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
           <button class="clear-btn" id="hebrewClearBtn" type="button" aria-label="Hebräischsuche löschen">×</button>
         </label>
+
+        <label class="search" id="rootSearchWrap" for="rootSearchInput">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input id="rootSearchInput" type="text" inputmode="none" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Wurzel …" aria-label="Hebräische Wurzel suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
+          <button class="clear-btn" id="rootClearBtn" type="button" aria-label="Wurzelsuche löschen">×</button>
+        </label>
       </div>
 
       <div class="topbar-actions">
@@ -136,6 +144,10 @@
                     <dt>Hebräisch</dt>
                     <dd>Sucht im hebräischen Wortbestand ohne Vokale und Punktierung.</dd>
                   </div>
+                  <div>
+                    <dt>Wurzel</dt>
+                    <dd>Sucht gezielt im JSON-Feld „Wurzel“ nach hebräischen Radikalen.</dd>
+                  </div>
                 </dl>
               </section>
 
@@ -145,7 +157,7 @@
                   <li>Vokale, Akzente und andere Punktierungen werden entfernt.</li>
                   <li>Gesucht wird dadurch vor allem nach den Konsonanten beziehungsweise Radikalen.</li>
                   <li>Das hilft, wenn du die Vokalisierung nicht kennst oder nicht eingeben möchtest.</li>
-                  <li>Im Feld <strong>„Hebräisch …“</strong> öffnet sich eine hebräische Bildschirmtastatur.</li>
+                  <li>In den Feldern <strong>„Hebräisch …“</strong> und <strong>„Wurzel …“</strong> öffnet sich dieselbe hebräische Bildschirmtastatur.</li>
                   <li>Mehr zur Belegung der physischen Tastatur steht im Tab <strong>„Tastatur“</strong>.</li>
                 </ul>
               </section>
@@ -185,7 +197,7 @@
               <section class="info-card">
                 <h3>Tastatur</h3>
                 <ul class="info-list">
-                  <li><strong>Feld:</strong> <strong>„Hebräisch …“</strong></li>
+                  <li><strong>Felder:</strong> <strong>„Hebräisch …“</strong> und <strong>„Wurzel …“</strong></li>
                   <li><strong>Eingabe:</strong> Bildschirmtastatur oder physische Tastatur</li>
                   <li><strong>Vokale:</strong> werden auf den zuletzt eingegebenen hebräischen Buchstaben gesetzt</li>
                   <li><strong>Zeichen:</strong> Schwa und Dagesch/Mappiq werden ebenfalls an den letzten Buchstaben angefügt</li>

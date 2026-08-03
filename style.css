@@ -82,7 +82,8 @@ body {
 
 #searchInput,
 #transcriptionSearchInput,
-#hebrewSearchInput {
+#hebrewSearchInput,
+#rootSearchInput {
   flex: 1 1 auto;
   min-width: 0;
   border: 0;
@@ -95,11 +96,13 @@ body {
 
 #searchInput::placeholder,
 #transcriptionSearchInput::placeholder,
-#hebrewSearchInput::placeholder {
+#hebrewSearchInput::placeholder,
+#rootSearchInput::placeholder {
   color: #8b9ab0;
 }
 
-#hebrewSearchInput {
+#hebrewSearchInput,
+#rootSearchInput {
   direction: rtl;
   text-align: right;
   font-family: "Times New Roman", Times, Georgia, serif;
@@ -256,7 +259,7 @@ body {
   appearance: none;
   width: 100%;
   display: grid;
-  grid-template-columns: 84px minmax(150px, 240px) minmax(0, 1fr);
+  grid-template-columns: 84px minmax(150px, 220px) minmax(0, 1fr) minmax(96px, 150px);
   gap: 12px;
   align-items: center;
   padding: 10px 14px;
@@ -337,6 +340,18 @@ body {
   text-overflow: ellipsis;
 }
 
+.root {
+  direction: rtl;
+  text-align: right;
+  font-family: "Times New Roman", Times, Georgia, serif;
+  font-size: 22px;
+  color: #41536b;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 mark {
   background: rgba(24, 88, 230, 0.12);
   color: inherit;
@@ -380,7 +395,7 @@ mark {
   }
 
   .row {
-    grid-template-columns: 70px 110px minmax(0, 1fr);
+    grid-template-columns: 70px 104px minmax(0, 1fr) 84px;
     gap: 10px;
     padding: 9px 10px;
   }
@@ -391,6 +406,10 @@ mark {
 
   .deutsch {
     font-size: 14px;
+  }
+
+  .root {
+    font-size: 20px;
   }
 }
 
@@ -429,7 +448,7 @@ mark {
   }
 
   .row {
-    grid-template-columns: 64px 88px minmax(0, 1fr);
+    grid-template-columns: 58px 80px minmax(0, 1fr) 68px;
   }
 }
 
