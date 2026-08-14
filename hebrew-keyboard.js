@@ -524,6 +524,30 @@ const COMBO_MARK_MAP = {
     return btn;
   }
 
+  function makeActionKey(action, label, ariaLabel) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `hebrew-keyboard-action-key action-${action}`;
+    btn.dataset.action = action;
+    btn.textContent = label;
+    btn.setAttribute('aria-label', ariaLabel);
+    btn.title = ariaLabel;
+
+    btn.addEventListener('mousedown', (event) => event.preventDefault());
+    btn.addEventListener('click', () => {
+      if (action === 'hide') {
+        closeFromKeyboard();
+        return;
+      }
+
+      showKeyboard(input);
+      if (action === 'backspace') backspace();
+      if (action === 'space') addSpace();
+    });
+
+    return btn;
+  }
+
   function buildKeyboard() {
     const fragment = document.createDocumentFragment();
     LAYOUT.forEach((section, sectionIndex) => {
@@ -531,6 +555,15 @@ const COMBO_MARK_MAP = {
         fragment.appendChild(makeKey(item, sectionIndex, itemIndex, section.tone, section.type, section.label));
       });
     });
+
+    const actions = document.createElement('div');
+    actions.className = 'hebrew-keyboard-actions';
+    actions.setAttribute('aria-label', 'Tastaturfunktionen');
+    actions.appendChild(makeActionKey('backspace', '⌫', 'Backspace'));
+    actions.appendChild(makeActionKey('space', 'Leertaste', 'Leerzeichen einfügen'));
+    actions.appendChild(makeActionKey('hide', '⌄', 'Hebräische Tastatur ausblenden'));
+    fragment.appendChild(actions);
+
     keyboard.innerHTML = '';
     keyboard.appendChild(fragment);
     updateKeyboardState();

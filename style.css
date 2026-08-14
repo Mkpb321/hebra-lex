@@ -579,6 +579,46 @@ mark {
   transform: translateY(-1px);
 }
 
+.hebrew-keyboard-actions {
+  flex: 1 0 100%;
+  display: grid;
+  grid-template-columns: 54px minmax(120px, 1fr) 54px;
+  gap: 4px;
+  margin-top: 2px;
+  direction: ltr;
+}
+
+.hebrew-keyboard-action-key {
+  appearance: none;
+  min-width: 0;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.hebrew-keyboard-action-key:hover {
+  border-color: #b8c4d1;
+  background: #f1f5fa;
+}
+
+.hebrew-keyboard-action-key:focus-visible {
+  outline: 2px solid rgba(24, 88, 230, 0.45);
+  outline-offset: 1px;
+}
+
+.hebrew-keyboard-action-key.action-backspace,
+.hebrew-keyboard-action-key.action-hide {
+  font-size: 22px;
+}
+
 @media (max-width: 760px) {
   .hebrew-keyboard-panel {
     margin-top: -2px;
@@ -603,6 +643,22 @@ mark {
 
   .hebrew-keyboard-glyph.mark {
     font-size: 27px;
+  }
+
+  .hebrew-keyboard-actions {
+    grid-template-columns: 44px minmax(96px, 1fr) 44px;
+    gap: 3px;
+  }
+
+  .hebrew-keyboard-action-key {
+    height: 36px;
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+
+  .hebrew-keyboard-action-key.action-backspace,
+  .hebrew-keyboard-action-key.action-hide {
+    font-size: 20px;
   }
 }
 
