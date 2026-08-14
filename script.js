@@ -609,7 +609,7 @@ function createEntryCopyText(entry) {
 }
 
 function createAnkiCopyHtml(copyText) {
-  return `<br><span style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"><b>&nbsp;${escapeHtml(copyText)} ${BIDI_PDI}</b></span>`;
+  return `<span style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"><b>&nbsp;${escapeHtml(copyText)} ${BIDI_PDI}</b></span>`;
 }
 
 function loadAnkiCopyPreference() {
