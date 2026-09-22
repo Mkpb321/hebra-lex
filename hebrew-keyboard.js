@@ -152,15 +152,19 @@ const COMBO_MARK_MAP = {
 
   const SEARCH_INPUT_IDS = ['hebrewSearchInput', 'rootSearchInput'];
   const PANEL_ID = 'hebrewKeyboardPanel';
+  const PREFERENCE_CHECKBOX_ID = 'hebrewKeyboardCheckbox';
+  const PREFERENCE_STORAGE_KEY = 'hebralex.hebrewKeyboardEnabled';
   const KEYS_HOST_ID = 'hebrewKeyboardKeys';
   const inputs = SEARCH_INPUT_IDS
     .map((id) => document.getElementById(id))
     .filter(Boolean);
   const panel = document.getElementById(PANEL_ID);
   const keyboard = document.getElementById(KEYS_HOST_ID);
+  const preferenceCheckbox = document.getElementById(PREFERENCE_CHECKBOX_ID);
   if (!inputs.length || !panel || !keyboard) return;
 
   let input = inputs[0];
+  let keyboardEnabled = false;
 
   const COMBO_BASE_KEYS = new Set(['a', 'ä', 'o']);
   const DIGIT_KEYS = new Set(['1', '2']);
@@ -339,7 +343,7 @@ const COMBO_MARK_MAP = {
   }
 
   function isKeyboardActive() {
-    return !panel.hidden && document.activeElement === input && inputs.includes(input);
+    return keyboardEnabled && !panel.hidden && document.activeElement === input && inputs.includes(input);
   }
 
   function isPrintableKey(event) {
@@ -582,7 +586,10 @@ const COMBO_MARK_MAP = {
   }
 
   function showKeyboard(nextInput = input) {
-    if (!inputs.includes(nextInput)) return;
+    if (!keyboardEnabled || !inputs.includes(nextInput)) {
+      hideKeyboard();
+      return;
+    }
 
     for (const searchInput of inputs) {
       searchInput.setAttribute('aria-expanded', 'false');
@@ -605,6 +612,45 @@ const COMBO_MARK_MAP = {
       searchInput.setAttribute('aria-expanded', 'false');
     }
     clearActivePhysicalKeys();
+  }
+
+  function loadKeyboardPreference() {
+    let enabled = false;
+
+    try {
+      enabled = window.localStorage.getItem(PREFERENCE_STORAGE_KEY) === 'true';
+    } catch (error) {
+      // localStorage can be unavailable in restricted/private browser contexts.
+    }
+
+    return enabled;
+  }
+
+  function saveKeyboardPreference(enabled) {
+    try {
+      window.localStorage.setItem(PREFERENCE_STORAGE_KEY, String(Boolean(enabled)));
+    } catch (error) {
+      // The setting still applies for the current page session when storage is unavailable.
+    }
+  }
+
+  function applyKeyboardPreference(enabled, { persist = false } = {}) {
+    keyboardEnabled = Boolean(enabled);
+
+    if (preferenceCheckbox) preferenceCheckbox.checked = keyboardEnabled;
+
+    for (const searchInput of inputs) {
+      searchInput.setAttribute('inputmode', keyboardEnabled ? 'none' : 'text');
+      searchInput.setAttribute('aria-expanded', 'false');
+    }
+
+    if (!keyboardEnabled) {
+      hideKeyboard();
+    } else if (inputs.includes(document.activeElement)) {
+      showKeyboard(document.activeElement);
+    }
+
+    if (persist) saveKeyboardPreference(keyboardEnabled);
   }
 
   function isInsideKeyboardOrHebrewSearch(target) {
@@ -638,6 +684,12 @@ const COMBO_MARK_MAP = {
     });
   }
 
+  if (preferenceCheckbox) {
+    preferenceCheckbox.addEventListener('change', (event) => {
+      applyKeyboardPreference(event.target.checked, { persist: true });
+    });
+  }
+
   document.addEventListener('selectionchange', () => {
     if (document.activeElement === input) updateKeyboardState();
   });
@@ -652,5 +704,5 @@ const COMBO_MARK_MAP = {
   window.addEventListener('blur', clearActivePhysicalKeys);
 
   buildKeyboard();
-  hideKeyboard();
+  applyKeyboardPreference(loadKeyboardPreference());
 })();

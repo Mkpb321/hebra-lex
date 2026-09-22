@@ -41,7 +41,7 @@
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <input id="hebrewSearchInput" type="text" inputmode="none" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Hebräisch …" aria-label="Hebräisch suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
+          <input id="hebrewSearchInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Hebräisch …" aria-label="Hebräisch suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
           <button class="clear-btn" id="hebrewClearBtn" type="button" aria-label="Hebräischsuche löschen">×</button>
         </label>
 
@@ -49,7 +49,7 @@
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0a7 7 0 0114 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <input id="rootSearchInput" type="text" inputmode="none" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Wurzel (ungenau) …" aria-label="Hebräische Wurzel suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
+          <input id="rootSearchInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" dir="rtl" placeholder="Wurzel (ungenau) …" aria-label="Hebräische Wurzel suchen" aria-controls="hebrewKeyboardPanel" aria-expanded="false" />
           <button class="clear-btn" id="rootClearBtn" type="button" aria-label="Wurzelsuche löschen">×</button>
         </label>
       </div>
@@ -119,6 +119,17 @@
               </section>
 
               <section class="info-card info-setting-card">
+                <h3>Hebräische Tastatur</h3>
+                <label class="info-setting-option" for="hebrewKeyboardCheckbox">
+                  <input id="hebrewKeyboardCheckbox" type="checkbox" />
+                  <span class="info-setting-text">
+                    <strong>Bildschirmtastatur verwenden</strong>
+                    <small>Zeigt beim Fokus auf „Hebräisch …“ und „Wurzel …“ die integrierte hebräische Tastatur an und aktiviert deren physisches Tasten-Mapping. Standardmäßig ist sie ausgeschaltet. Ist sie aus, verhalten sich die Felder wie normale Textfelder und die hebräische Eingabe erfolgt über die Tastatur des Endgeräts. Die Einstellung wird in diesem Browser gespeichert.</small>
+                  </span>
+                </label>
+              </section>
+
+              <section class="info-card info-setting-card">
                 <h3>Kopieren</h3>
                 <label class="info-setting-option" for="ankiCopyCheckbox">
                   <input id="ankiCopyCheckbox" type="checkbox" />
@@ -157,7 +168,7 @@
                   <li>Vokale, Akzente und andere Punktierungen werden entfernt.</li>
                   <li>Gesucht wird dadurch vor allem nach den Konsonanten beziehungsweise Radikalen.</li>
                   <li>Das hilft, wenn du die Vokalisierung nicht kennst oder nicht eingeben möchtest.</li>
-                  <li>In den Feldern <strong>„Hebräisch …“</strong> und <strong>„Wurzel …“</strong> öffnet sich dieselbe hebräische Bildschirmtastatur.</li>
+                  <li>Wenn die Option <strong>„Bildschirmtastatur verwenden“</strong> aktiviert ist, öffnet sich in den Feldern <strong>„Hebräisch …“</strong> und <strong>„Wurzel …“</strong> dieselbe integrierte hebräische Tastatur.</li>
                   <li>Mehr zur Belegung der physischen Tastatur steht im Tab <strong>„Tastatur“</strong>.</li>
                 </ul>
               </section>
@@ -198,7 +209,7 @@
                 <h3>Tastatur</h3>
                 <ul class="info-list">
                   <li><strong>Felder:</strong> <strong>„Hebräisch …“</strong> und <strong>„Wurzel …“</strong></li>
-                  <li><strong>Eingabe:</strong> Bildschirmtastatur oder physische Tastatur</li>
+                  <li><strong>Eingabe:</strong> Bei aktivierter Bildschirmtastatur über die integrierte Tastatur oder ihr physisches Tasten-Mapping; sonst über die hebräische Tastatur des Endgeräts</li>
                   <li><strong>Vokale:</strong> werden auf den zuletzt eingegebenen hebräischen Buchstaben gesetzt</li>
                   <li><strong>Zeichen:</strong> Schwa und Dagesch/Mappiq werden ebenfalls an den letzten Buchstaben angefügt</li>
                   <li><strong>Darstellung:</strong> links steht das hebräische Zeichen, rechts die zugehörige Taste</li>

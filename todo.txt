@@ -1,0 +1,1 @@
+Hebralex für heb suche alle endkonsonanten zu normalen normalisieren und es soll bei heb auf dem handy tastatur anzeigen. allgemein Normalisierung bei suche überarbeitenfür transkrib
