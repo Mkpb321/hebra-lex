@@ -49,6 +49,14 @@ const els = {
   selectNoneBtn: document.getElementById('selectNoneBtn'),
   lessonList: document.getElementById('lessonList'),
   resultsHost: document.getElementById('resultsHost'),
+  exampleTooltip: document.getElementById('exampleTooltip'),
+  exampleTooltipReference: document.getElementById('exampleTooltipReference'),
+  exampleTooltipText: document.getElementById('exampleTooltipText'),
+  exampleOverlay: document.getElementById('exampleOverlay'),
+  exampleCloseButton: document.getElementById('exampleCloseButton'),
+  exampleReference: document.getElementById('exampleReference'),
+  exampleVerse: document.getElementById('exampleVerse'),
+  exampleBibleLink: document.getElementById('exampleBibleLink'),
   infoButton: document.getElementById('infoButton'),
   infoOverlay: document.getElementById('infoOverlay'),
   infoCloseButton: document.getElementById('infoCloseButton'),
@@ -591,6 +599,8 @@ const BIDI_LRI = '\u2066';
 const BIDI_PDI = '\u2069';
 const ANKI_COPY_STORAGE_KEY = 'hebralex.copyWithAnkiFormatting';
 let copyToastTimeoutId = null;
+let activeExampleTrigger = null;
+let exampleDialogReturnFocus = null;
 
 function normalizeCopyPart(value) {
   return String(value ?? '')
@@ -847,6 +857,94 @@ function renderLessonList() {
   updateFilterButtonLabel();
 }
 
+
+// Only **bold** markers from the trusted data format are interpreted; all other
+// characters are HTML-escaped before they can reach innerHTML.
+function formatExampleVerse(value) {
+  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+function getBibleServerUrl(reference) {
+  // Example: "1. Mose 1,3" -> /SLT/1.Mose1%2C3.
+  // Bibelserver calls the book of Psalms "Psalm", not "Psalmen".
+  const match = String(reference ?? '').trim().match(/^(.+?)\s+(\d+)\s*,\s*(\d+(?:[-–]\d+)?)$/);
+  if (!match) return '';
+
+  const book = match[1].trim().replace(/^Psalmen$/i, 'Psalm').replace(/\s+/g, '');
+  const chapter = match[2];
+  const verse = match[3].replace('–', '-');
+  return `https://www.bibleserver.com/SLT/${encodeURIComponent(`${book}${chapter},${verse}`)}`;
+}
+
+function getExampleEntry(trigger) {
+  const index = Number(trigger?.dataset.exampleIndex);
+  if (!Number.isInteger(index) || index < 0 || index >= state.entries.length) return null;
+  const entry = state.entries[index];
+  return String(entry?.Bibelvers ?? '').trim() ? entry : null;
+}
+
+function hideExampleTooltip() {
+  els.exampleTooltip.hidden = true;
+  if (activeExampleTrigger) activeExampleTrigger.removeAttribute('aria-describedby');
+  activeExampleTrigger = null;
+}
+
+function showExampleTooltip(trigger) {
+  if (!els.exampleOverlay.hidden) return;
+  const entry = getExampleEntry(trigger);
+  if (!entry) return;
+
+  if (activeExampleTrigger && activeExampleTrigger !== trigger) hideExampleTooltip();
+  activeExampleTrigger = trigger;
+  els.exampleTooltipReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Bibelvers';
+  els.exampleTooltipText.innerHTML = formatExampleVerse(entry.Bibelvers);
+  els.exampleTooltip.hidden = false;
+  trigger.setAttribute('aria-describedby', 'exampleTooltip');
+
+  // The tooltip lives outside the list so it is not clipped by its rounded edges.
+  const anchor = trigger.getBoundingClientRect();
+  const tooltip = els.exampleTooltip;
+  const box = tooltip.getBoundingClientRect();
+  const margin = 8;
+  const left = Math.min(Math.max(anchor.left, margin), Math.max(margin, window.innerWidth - box.width - margin));
+  const placeAbove = anchor.bottom + margin + box.height > window.innerHeight - margin
+    && anchor.top - margin >= box.height;
+  const top = placeAbove ? anchor.top - box.height - margin : anchor.bottom + margin;
+  tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${Math.max(margin, Math.min(top, window.innerHeight - box.height - margin))}px`;
+}
+
+function openExampleOverlay(trigger) {
+  const entry = getExampleEntry(trigger);
+  if (!entry) return;
+
+  hideExampleTooltip();
+  closeDropdown();
+  exampleDialogReturnFocus = trigger;
+  els.exampleReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
+  els.exampleVerse.innerHTML = formatExampleVerse(entry.Bibelvers);
+
+  const bibleUrl = getBibleServerUrl(entry.Bibelstelle);
+  els.exampleBibleLink.hidden = !bibleUrl;
+  if (bibleUrl) els.exampleBibleLink.href = bibleUrl;
+
+  els.exampleOverlay.hidden = false;
+  els.exampleCloseButton.focus({ preventScroll: true });
+}
+
+function closeExampleOverlay({ restoreFocus = false } = {}) {
+  if (els.exampleOverlay.hidden) return;
+  els.exampleOverlay.hidden = true;
+  if (restoreFocus && exampleDialogReturnFocus?.isConnected) {
+    exampleDialogReturnFocus.focus({ preventScroll: true });
+  }
+  exampleDialogReturnFocus = null;
+}
+
+function getExampleTrigger(target) {
+  return target instanceof Element ? target.closest('.example-trigger[data-example-index]') : null;
+}
+
 function renderRootSearchControls(value) {
   const roots = splitSlashValues(value);
   if (!roots.length) return '<span class="root-empty">—</span>';
@@ -863,6 +961,7 @@ function renderRootSearchControls(value) {
 }
 
 function renderResults(items, message = '') {
+  hideExampleTooltip();
   if (message) {
     els.resultsHost.className = 'plain';
     els.resultsHost.innerHTML = escapeHtml(message);
@@ -878,9 +977,15 @@ function renderResults(items, message = '') {
   const rows = items.map(({ entry }) => {
     const copyText = createEntryCopyText(entry);
     const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
+    const hasExample = Boolean(String(entry.Bibelvers ?? '').trim());
 
     return `
       <div class="row" role="button" tabindex="0" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
+        <button class="example-trigger" type="button" data-example-index="${entry.__index}" aria-label="Beispielsatz zu ${escapeHtml(copyLabel)} öffnen" title="Beispielsatz anzeigen" ${hasExample ? '' : 'disabled'}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M12 6.5c-2.7-1.9-6-2.3-9-1.6v14c3-.7 6.3-.3 9 1.6m0-14c2.7-1.9 6-2.3 9-1.6v14c-3-.7-6.3-.3-9 1.6m0-14v14" />
+          </svg>
+        </button>
         <span class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</span>
         <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
         <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
@@ -1016,6 +1121,12 @@ els.resultsHost.addEventListener('click', async (event) => {
   const target = event.target instanceof Element ? event.target : null;
   if (!target) return;
 
+  const exampleTrigger = getExampleTrigger(target);
+  if (exampleTrigger && els.resultsHost.contains(exampleTrigger)) {
+    openExampleOverlay(exampleTrigger);
+    return;
+  }
+
   const rootButton = target.closest('[data-root-search]');
   if (rootButton && els.resultsHost.contains(rootButton)) {
     applyExclusiveRootSearch(rootButton.dataset.rootSearch || '');
@@ -1025,6 +1136,37 @@ els.resultsHost.addEventListener('click', async (event) => {
   const row = target.closest('.row[data-copy-text]');
   if (!row || !els.resultsHost.contains(row)) return;
   await copyResultRow(row);
+});
+
+els.resultsHost.addEventListener('pointerover', (event) => {
+  const trigger = getExampleTrigger(event.target);
+  if (trigger && !trigger.contains(event.relatedTarget)) showExampleTooltip(trigger);
+});
+
+els.resultsHost.addEventListener('pointerout', (event) => {
+  const trigger = getExampleTrigger(event.target);
+  if (trigger && !trigger.contains(event.relatedTarget) && activeExampleTrigger === trigger) hideExampleTooltip();
+});
+
+els.resultsHost.addEventListener('focusin', (event) => {
+  const trigger = getExampleTrigger(event.target);
+  if (trigger) showExampleTooltip(trigger);
+});
+
+els.resultsHost.addEventListener('focusout', (event) => {
+  const trigger = getExampleTrigger(event.target);
+  if (trigger && activeExampleTrigger === trigger) hideExampleTooltip();
+});
+
+window.addEventListener('scroll', hideExampleTooltip, { passive: true });
+window.addEventListener('resize', hideExampleTooltip);
+
+els.exampleCloseButton.addEventListener('click', () => {
+  closeExampleOverlay({ restoreFocus: true });
+});
+
+els.exampleOverlay.addEventListener('click', (event) => {
+  if (event.target === els.exampleOverlay) closeExampleOverlay({ restoreFocus: true });
 });
 
 els.resultsHost.addEventListener('keydown', async (event) => {
@@ -1157,6 +1299,25 @@ document.addEventListener('click', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
+  if (!els.exampleOverlay.hidden) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeExampleOverlay({ restoreFocus: true });
+    } else if (event.key === 'Tab') {
+      // Keep keyboard navigation inside the active modal.
+      const focusables = [els.exampleCloseButton, els.exampleBibleLink].filter((node) => !node.hidden);
+      const activeIndex = focusables.indexOf(document.activeElement);
+      if (event.shiftKey && activeIndex <= 0) {
+        event.preventDefault();
+        focusables[focusables.length - 1].focus();
+      } else if (!event.shiftKey && (activeIndex < 0 || activeIndex === focusables.length - 1)) {
+        event.preventDefault();
+        focusables[0].focus();
+      }
+    }
+    return;
+  }
+
   if (event.key === 'Escape') closeDropdown();
   if ((event.key === 'k' && (event.ctrlKey || event.metaKey)) || event.key === '/') {
     const targetTag = document.activeElement?.tagName?.toLowerCase();
