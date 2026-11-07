@@ -53,6 +53,7 @@ const els = {
   exampleCloseButton: document.getElementById('exampleCloseButton'),
   exampleReference: document.getElementById('exampleReference'),
   exampleVerse: document.getElementById('exampleVerse'),
+  exampleHebrewVerse: document.getElementById('exampleHebrewVerse'),
   exampleBibleLink: document.getElementById('exampleBibleLink'),
   infoButton: document.getElementById('infoButton'),
   infoOverlay: document.getElementById('infoOverlay'),
@@ -854,10 +855,19 @@ function renderLessonList() {
 }
 
 
-// Only **bold** markers from the trusted data format are interpreted; all other
-// characters are HTML-escaped before they can reach innerHTML.
+// Escape all verse content before converting **bold** markers into markup.
+// Keep Hebrew spans inline (without bdi/isolating spans) so the complete verse
+// is shaped as one right-to-left sequence, even when its first word is bold.
 function formatExampleVerse(value) {
-  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return escapeHtml(value).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+}
+
+function getGermanExampleVerse(entry) {
+  return String(entry?.Bibelvers_deutsch || entry?.Bibelvers || '').trim();
+}
+
+function getHebrewExampleVerse(entry) {
+  return String(entry?.['Bibelvers-hebräisch'] || '').trim();
 }
 
 function getBibleServerUrl(reference) {
@@ -876,7 +886,7 @@ function getExampleEntry(trigger) {
   const index = Number(trigger?.dataset.exampleIndex);
   if (!Number.isInteger(index) || index < 0 || index >= state.entries.length) return null;
   const entry = state.entries[index];
-  return String(entry?.Bibelvers ?? '').trim() ? entry : null;
+  return getGermanExampleVerse(entry) || getHebrewExampleVerse(entry) ? entry : null;
 }
 
 function openExampleOverlay(trigger) {
@@ -886,7 +896,12 @@ function openExampleOverlay(trigger) {
   closeDropdown();
   exampleDialogReturnFocus = trigger;
   els.exampleReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
-  els.exampleVerse.innerHTML = formatExampleVerse(entry.Bibelvers);
+  const germanVerse = getGermanExampleVerse(entry);
+  const hebrewVerse = getHebrewExampleVerse(entry);
+  els.exampleVerse.innerHTML = formatExampleVerse(germanVerse);
+  els.exampleVerse.hidden = !germanVerse;
+  els.exampleHebrewVerse.innerHTML = formatExampleVerse(hebrewVerse);
+  els.exampleHebrewVerse.hidden = !hebrewVerse;
 
   const bibleUrl = getBibleServerUrl(entry.Bibelstelle);
   els.exampleBibleLink.hidden = !bibleUrl;
@@ -940,11 +955,7 @@ function renderResults(items, message = '') {
   const rows = items.map(({ entry }) => {
     const copyText = createEntryCopyText(entry);
     const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
-    const hasExample = Boolean(String(entry.Bibelvers ?? '').trim());
-    // Native browser tooltips only support plain text. The dialog keeps **bold** formatting.
-    const tooltipVerse = String(entry.Bibelvers ?? '').replace(/\*\*/g, '').trim();
-    const tooltipReference = String(entry.Bibelstelle ?? '').trim();
-    const tooltipText = [tooltipReference, tooltipVerse].filter(Boolean).join('\n');
+    const hasExample = Boolean(getGermanExampleVerse(entry) || getHebrewExampleVerse(entry));
 
     return `
       <div class="row" role="button" tabindex="0" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
@@ -952,7 +963,7 @@ function renderResults(items, message = '') {
         <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
         <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
         <span class="root" title="Wurzel: ${escapeHtml(entry[ROOT_FIELD] || '—')}">${renderRootSearchControls(entry[ROOT_FIELD])}</span>
-        <button class="example-trigger" type="button" data-example-index="${entry.__index}" aria-label="Beispielsatz zu ${escapeHtml(copyLabel)} öffnen" title="${escapeHtml(tooltipText || 'Kein Beispielsatz vorhanden')}" ${hasExample ? '' : 'disabled'}>
+        <button class="example-trigger" type="button" data-example-index="${entry.__index}" aria-label="Beispielsatz zu ${escapeHtml(copyLabel)} öffnen" ${hasExample ? '' : 'disabled'}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <path d="M12 6.5c-2.7-1.9-6-2.3-9-1.6v14c3-.7 6.3-.3 9 1.6m0-14c2.7-1.9 6-2.3 9-1.6v14c-3-.7-6.3-.3-9 1.6m0-14v14" />
           </svg>

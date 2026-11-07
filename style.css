@@ -1358,7 +1358,7 @@ mark {
 }
 
 
-/* Example verses: rightmost button, native browser tooltip, click/tap modal. */
+/* Example verses: rightmost button, click/tap dialog (no hover tooltip). */
 .row {
   grid-template-columns: 84px minmax(150px, 220px) minmax(0, 1fr) minmax(96px, 150px) 34px;
 }
@@ -1400,7 +1400,6 @@ mark {
   cursor: not-allowed;
 }
 
-/* The hover preview is the browser's native tooltip from the button's title. */
 .example-overlay[hidden],
 .example-bible-link[hidden] {
   display: none;
@@ -1467,11 +1466,27 @@ mark {
 }
 
 .example-verse {
-  margin: 0 0 22px;
+  margin: 0 0 10px;
   font-size: 17px;
   line-height: 1.6;
   white-space: pre-line;
   overflow-wrap: anywhere;
+}
+
+.example-verse-hebrew {
+  margin: 0 0 22px;
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: isolate;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 19px; /* 2px larger than the German verse */
+  line-height: 1.75;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.example-verse-hebrew strong {
+  font-weight: 700;
 }
 
 .example-actions {
