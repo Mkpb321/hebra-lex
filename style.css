@@ -1479,7 +1479,7 @@ mark {
   text-align: right;
   unicode-bidi: isolate;
   font-family: "Times New Roman", Times, serif;
-  font-size: 19px; /* 2px larger than the German verse */
+  font-size: 32px; /* Hebrew verse remains visibly larger than the 17px German verse */
   line-height: 1.75;
   white-space: pre-line;
   overflow-wrap: anywhere;

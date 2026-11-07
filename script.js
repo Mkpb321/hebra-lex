@@ -870,16 +870,36 @@ function getHebrewExampleVerse(entry) {
   return String(entry?.['Bibelvers-hebräisch'] || '').trim();
 }
 
-function getBibleServerUrl(reference) {
-  // Example: "1. Mose 1,3" -> /SLT/1.Mose1%2C3.
-  // Bibelserver calls the book of Psalms "Psalm", not "Psalmen".
+// CSV-Bibel uses distinct book slugs for a few names in our vocabulary.
+const CSV_BIBLE_BOOK_SLUGS = {
+  '1. chronik': '1-chronika',
+  '2. chronik': '2-chronika',
+  'hoheslied': 'hohelied',
+  'psalmen': 'psalm',
+  'rut': 'ruth',
+};
+
+function getCsvBibleUrl(reference) {
+  // Example: "Josua 3,5" -> /bibel/josua-3,5 (specific verse).
   const match = String(reference ?? '').trim().match(/^(.+?)\s+(\d+)\s*,\s*(\d+(?:[-–]\d+)?)$/);
   if (!match) return '';
 
-  const book = match[1].trim().replace(/^Psalmen$/i, 'Psalm').replace(/\s+/g, '');
+  const bookName = match[1].trim().toLocaleLowerCase('de');
+  const bookSlug = CSV_BIBLE_BOOK_SLUGS[bookName] || bookName
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\./g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+  if (!bookSlug) return '';
+
   const chapter = match[2];
   const verse = match[3].replace('–', '-');
-  return `https://www.bibleserver.com/SLT/${encodeURIComponent(`${book}${chapter},${verse}`)}`;
+  return `https://www.csv-bibel.de/bibel/${bookSlug}-${chapter},${verse}`;
 }
 
 function getExampleEntry(trigger) {
@@ -903,7 +923,7 @@ function openExampleOverlay(trigger) {
   els.exampleHebrewVerse.innerHTML = formatExampleVerse(hebrewVerse);
   els.exampleHebrewVerse.hidden = !hebrewVerse;
 
-  const bibleUrl = getBibleServerUrl(entry.Bibelstelle);
+  const bibleUrl = getCsvBibleUrl(entry.Bibelstelle);
   els.exampleBibleLink.hidden = !bibleUrl;
   if (bibleUrl) els.exampleBibleLink.href = bibleUrl;
 
