@@ -195,8 +195,8 @@
               <section class="info-card">
                 <h3>Beispielsätze</h3>
                 <ul class="info-list">
-                  <li>Das Buchsymbol links neben jedem Eintrag zeigt beim Darüberfahren mit der Maus den Bibelvers als Vorschau.</li>
-                  <li>Ein Klick oder Fingertipp öffnet den Beispielsatz in einem Fenster mit Link zur Schlachter 2000 auf Bibelserver.</li>
+                  <li>Das Buchsymbol rechts neben jedem Eintrag zeigt beim Darüberfahren mit der Maus den Bibelvers im normalen Browser-Tooltip an.</li>
+                  <li>Ein Klick oder Fingertipp öffnet den Beispielsatz in einem Dialog. Über das Linksymbol rechts unten lässt sich der Vers in der Schlachter 2000 auf Bibelserver öffnen.</li>
                   <li>Das hervorgehobene Wort im Beispielsatz ist fett dargestellt.</li>
                 </ul>
               </section>
@@ -297,18 +297,20 @@
     <div id="resultsHost" class="plain">Lade …</div>
   </div>
 
-  <div class="example-tooltip" id="exampleTooltip" role="tooltip" hidden>
-    <span class="example-tooltip-reference" id="exampleTooltipReference"></span>
-    <span class="example-tooltip-text" id="exampleTooltipText"></span>
-  </div>
-
   <div class="example-overlay" id="exampleOverlay" role="dialog" aria-modal="true" aria-labelledby="exampleDialogTitle" hidden>
     <div class="example-dialog" role="document">
       <button class="example-close-btn" id="exampleCloseButton" type="button" aria-label="Beispielsatz schließen">×</button>
       <h2 class="example-dialog-title" id="exampleDialogTitle">Beispielsatz</h2>
       <p class="example-reference" id="exampleReference"></p>
       <p class="example-verse" id="exampleVerse"></p>
-      <a class="example-bible-link" id="exampleBibleLink" href="https://www.bibleserver.com/bible/SLT" target="_blank" rel="noopener noreferrer">Vers auf Bibelserver öffnen (SLT 2000)</a>
+      <div class="example-actions">
+        <a class="example-bible-link" id="exampleBibleLink" href="https://www.bibleserver.com/bible/SLT" target="_blank" rel="noopener noreferrer" aria-label="Vers auf Bibelserver öffnen (SLT 2000)" title="Vers auf Bibelserver öffnen (SLT 2000)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72" />
+            <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72" />
+          </svg>
+        </a>
+      </div>
     </div>
   </div>
 </body>

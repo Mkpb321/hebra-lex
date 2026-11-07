@@ -1358,9 +1358,9 @@ mark {
 }
 
 
-/* Example verses: leftmost button, hover tooltip, click/tap modal. */
+/* Example verses: rightmost button, native browser tooltip, click/tap modal. */
 .row {
-  grid-template-columns: 34px 84px minmax(150px, 220px) minmax(0, 1fr) minmax(96px, 150px);
+  grid-template-columns: 84px minmax(150px, 220px) minmax(0, 1fr) minmax(96px, 150px) 34px;
 }
 
 .example-trigger {
@@ -1376,6 +1376,7 @@ mark {
   color: var(--accent);
   cursor: pointer;
   -webkit-tap-highlight-color: rgba(24, 88, 230, 0.12);
+  justify-self: end;
 }
 
 .example-trigger svg {
@@ -1399,39 +1400,10 @@ mark {
   cursor: not-allowed;
 }
 
-.example-tooltip {
-  position: fixed;
-  z-index: 60;
-  width: max-content;
-  max-width: min(370px, calc(100vw - 16px));
-  padding: 12px 14px;
-  border: 1px solid #c7d7ee;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 14px 32px rgba(16, 31, 50, 0.2);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
-  pointer-events: none;
-  overflow-wrap: anywhere;
-}
-
-.example-tooltip[hidden],
+/* The hover preview is the browser's native tooltip from the button's title. */
 .example-overlay[hidden],
 .example-bible-link[hidden] {
   display: none;
-}
-
-.example-tooltip-reference,
-.example-tooltip-text {
-  display: block;
-}
-
-.example-tooltip-reference {
-  margin-bottom: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
 }
 
 .example-overlay {
@@ -1502,17 +1474,26 @@ mark {
   overflow-wrap: anywhere;
 }
 
+.example-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .example-bible-link {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 14px;
-  min-height: 42px;
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
   border-radius: 10px;
   background: var(--accent);
   color: white;
-  font-size: 14px;
-  font-weight: 600;
   text-decoration: none;
+}
+
+.example-bible-link svg {
+  width: 21px;
+  height: 21px;
 }
 
 .example-bible-link:hover,
@@ -1523,14 +1504,14 @@ mark {
 
 @media (max-width: 760px) {
   .row {
-    grid-template-columns: 32px 70px 104px minmax(0, 1fr) 84px;
+    grid-template-columns: 70px 104px minmax(0, 1fr) 84px 32px;
     gap: 8px;
   }
 }
 
 @media (max-width: 560px) {
   .row {
-    grid-template-columns: 28px 48px 70px minmax(0, 1fr) 54px;
+    grid-template-columns: 48px 70px minmax(0, 1fr) 54px 28px;
     gap: 5px;
     padding: 9px 8px;
   }

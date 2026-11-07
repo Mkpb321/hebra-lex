@@ -49,9 +49,6 @@ const els = {
   selectNoneBtn: document.getElementById('selectNoneBtn'),
   lessonList: document.getElementById('lessonList'),
   resultsHost: document.getElementById('resultsHost'),
-  exampleTooltip: document.getElementById('exampleTooltip'),
-  exampleTooltipReference: document.getElementById('exampleTooltipReference'),
-  exampleTooltipText: document.getElementById('exampleTooltipText'),
   exampleOverlay: document.getElementById('exampleOverlay'),
   exampleCloseButton: document.getElementById('exampleCloseButton'),
   exampleReference: document.getElementById('exampleReference'),
@@ -599,7 +596,6 @@ const BIDI_LRI = '\u2066';
 const BIDI_PDI = '\u2069';
 const ANKI_COPY_STORAGE_KEY = 'hebralex.copyWithAnkiFormatting';
 let copyToastTimeoutId = null;
-let activeExampleTrigger = null;
 let exampleDialogReturnFocus = null;
 
 function normalizeCopyPart(value) {
@@ -883,42 +879,10 @@ function getExampleEntry(trigger) {
   return String(entry?.Bibelvers ?? '').trim() ? entry : null;
 }
 
-function hideExampleTooltip() {
-  els.exampleTooltip.hidden = true;
-  if (activeExampleTrigger) activeExampleTrigger.removeAttribute('aria-describedby');
-  activeExampleTrigger = null;
-}
-
-function showExampleTooltip(trigger) {
-  if (!els.exampleOverlay.hidden) return;
-  const entry = getExampleEntry(trigger);
-  if (!entry) return;
-
-  if (activeExampleTrigger && activeExampleTrigger !== trigger) hideExampleTooltip();
-  activeExampleTrigger = trigger;
-  els.exampleTooltipReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Bibelvers';
-  els.exampleTooltipText.innerHTML = formatExampleVerse(entry.Bibelvers);
-  els.exampleTooltip.hidden = false;
-  trigger.setAttribute('aria-describedby', 'exampleTooltip');
-
-  // The tooltip lives outside the list so it is not clipped by its rounded edges.
-  const anchor = trigger.getBoundingClientRect();
-  const tooltip = els.exampleTooltip;
-  const box = tooltip.getBoundingClientRect();
-  const margin = 8;
-  const left = Math.min(Math.max(anchor.left, margin), Math.max(margin, window.innerWidth - box.width - margin));
-  const placeAbove = anchor.bottom + margin + box.height > window.innerHeight - margin
-    && anchor.top - margin >= box.height;
-  const top = placeAbove ? anchor.top - box.height - margin : anchor.bottom + margin;
-  tooltip.style.left = `${left}px`;
-  tooltip.style.top = `${Math.max(margin, Math.min(top, window.innerHeight - box.height - margin))}px`;
-}
-
 function openExampleOverlay(trigger) {
   const entry = getExampleEntry(trigger);
   if (!entry) return;
 
-  hideExampleTooltip();
   closeDropdown();
   exampleDialogReturnFocus = trigger;
   els.exampleReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
@@ -961,7 +925,6 @@ function renderRootSearchControls(value) {
 }
 
 function renderResults(items, message = '') {
-  hideExampleTooltip();
   if (message) {
     els.resultsHost.className = 'plain';
     els.resultsHost.innerHTML = escapeHtml(message);
@@ -978,18 +941,22 @@ function renderResults(items, message = '') {
     const copyText = createEntryCopyText(entry);
     const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
     const hasExample = Boolean(String(entry.Bibelvers ?? '').trim());
+    // Native browser tooltips only support plain text. The dialog keeps **bold** formatting.
+    const tooltipVerse = String(entry.Bibelvers ?? '').replace(/\*\*/g, '').trim();
+    const tooltipReference = String(entry.Bibelstelle ?? '').trim();
+    const tooltipText = [tooltipReference, tooltipVerse].filter(Boolean).join('\n');
 
     return `
       <div class="row" role="button" tabindex="0" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
-        <button class="example-trigger" type="button" data-example-index="${entry.__index}" aria-label="Beispielsatz zu ${escapeHtml(copyLabel)} öffnen" title="Beispielsatz anzeigen" ${hasExample ? '' : 'disabled'}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-            <path d="M12 6.5c-2.7-1.9-6-2.3-9-1.6v14c3-.7 6.3-.3 9 1.6m0-14c2.7-1.9 6-2.3 9-1.6v14c-3-.7-6.3-.3-9 1.6m0-14v14" />
-          </svg>
-        </button>
         <span class="lesson">Lektion ${escapeHtml(entry.Lektion ?? '')}</span>
         <span class="hebrew">${escapeHtml(entry.Hebräisch || '—')}</span>
         <span class="deutsch">${highlightDeutsch(entry.Deutsch || '', state.query)}</span>
         <span class="root" title="Wurzel: ${escapeHtml(entry[ROOT_FIELD] || '—')}">${renderRootSearchControls(entry[ROOT_FIELD])}</span>
+        <button class="example-trigger" type="button" data-example-index="${entry.__index}" aria-label="Beispielsatz zu ${escapeHtml(copyLabel)} öffnen" title="${escapeHtml(tooltipText || 'Kein Beispielsatz vorhanden')}" ${hasExample ? '' : 'disabled'}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M12 6.5c-2.7-1.9-6-2.3-9-1.6v14c3-.7 6.3-.3 9 1.6m0-14c2.7-1.9 6-2.3 9-1.6v14c-3-.7-6.3-.3-9 1.6m0-14v14" />
+          </svg>
+        </button>
       </div>
     `;
   }).join('');
@@ -1137,29 +1104,6 @@ els.resultsHost.addEventListener('click', async (event) => {
   if (!row || !els.resultsHost.contains(row)) return;
   await copyResultRow(row);
 });
-
-els.resultsHost.addEventListener('pointerover', (event) => {
-  const trigger = getExampleTrigger(event.target);
-  if (trigger && !trigger.contains(event.relatedTarget)) showExampleTooltip(trigger);
-});
-
-els.resultsHost.addEventListener('pointerout', (event) => {
-  const trigger = getExampleTrigger(event.target);
-  if (trigger && !trigger.contains(event.relatedTarget) && activeExampleTrigger === trigger) hideExampleTooltip();
-});
-
-els.resultsHost.addEventListener('focusin', (event) => {
-  const trigger = getExampleTrigger(event.target);
-  if (trigger) showExampleTooltip(trigger);
-});
-
-els.resultsHost.addEventListener('focusout', (event) => {
-  const trigger = getExampleTrigger(event.target);
-  if (trigger && activeExampleTrigger === trigger) hideExampleTooltip();
-});
-
-window.addEventListener('scroll', hideExampleTooltip, { passive: true });
-window.addEventListener('resize', hideExampleTooltip);
 
 els.exampleCloseButton.addEventListener('click', () => {
   closeExampleOverlay({ restoreFocus: true });
