@@ -1453,16 +1453,9 @@ mark {
 }
 
 .example-dialog-title {
-  margin: 0 40px 8px 0;
+  margin: 0 40px 16px 0;
   font-size: 20px;
   line-height: 1.2;
-}
-
-.example-reference {
-  margin: 0 0 16px;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .example-verse {
@@ -1479,7 +1472,7 @@ mark {
   text-align: right;
   unicode-bidi: isolate;
   font-family: "Times New Roman", Times, serif;
-  font-size: 32px; /* Hebrew verse remains visibly larger than the 17px German verse */
+  font-size: 32px; /* Hebrew verse: 32px; German verse: 17px */
   line-height: 1.75;
   white-space: pre-line;
   overflow-wrap: anywhere;

@@ -51,7 +51,7 @@ const els = {
   resultsHost: document.getElementById('resultsHost'),
   exampleOverlay: document.getElementById('exampleOverlay'),
   exampleCloseButton: document.getElementById('exampleCloseButton'),
-  exampleReference: document.getElementById('exampleReference'),
+  exampleDialogTitle: document.getElementById('exampleDialogTitle'),
   exampleVerse: document.getElementById('exampleVerse'),
   exampleHebrewVerse: document.getElementById('exampleHebrewVerse'),
   exampleBibleLink: document.getElementById('exampleBibleLink'),
@@ -915,7 +915,7 @@ function openExampleOverlay(trigger) {
 
   closeDropdown();
   exampleDialogReturnFocus = trigger;
-  els.exampleReference.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
+  els.exampleDialogTitle.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
   const germanVerse = getGermanExampleVerse(entry);
   const hebrewVerse = getHebrewExampleVerse(entry);
   els.exampleVerse.innerHTML = formatExampleVerse(germanVerse);
