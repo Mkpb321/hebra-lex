@@ -56,7 +56,7 @@
     "Transkription": "wajaas",
     "Wurzel": "עשׂה",
     "Bibelstelle": "2. Chronik 33,22",
-    "Bibelvers_deutsch": "Und er tat, was böse war in den Augen des HERRN, wie sein Vater Manasse getan hatte. Und Amon opferte allen Götterbildern, die sein Vater Manasse **gemacht** hatte, und diente ihnen.",
+    "Bibelvers_deutsch": "Und er **tat**, was böse war in den Augen des HERRN, wie sein Vater Manasse getan hatte. Und Amon opferte allen Götterbildern, die sein Vater Manasse gemacht hatte, und diente ihnen.",
     "Bibelvers-hebräisch": "**וַיַּעַשׂ** הָרַע בְּעֵינֵי יְהוָה כַּאֲשֶׁר עָשָׂה מְנַשֶּׁה אָבִיו וּֽלְכָל־הַפְּסִילִים אֲשֶׁר עָשָׂה מְנַשֶּׁה אָבִיו זִבַּח אָמֹון וַיַּֽעַבְדֵֽם׃"
   },
   {
@@ -86,7 +86,7 @@
     "Transkription": "wajavo",
     "Wurzel": "בוא",
     "Bibelstelle": "2. Samuel 3,24",
-    "Bibelvers_deutsch": "Da kam Joab zum König und sagte: Was hast du getan! Siehe, Abner ist zu dir **gekommen**! Warum denn hast du ihn entlassen, sodass er ungehindert weggegangen ist?",
+    "Bibelvers_deutsch": "Da **kam** Joab zum König und sagte: Was hast du getan! Siehe, Abner ist zu dir gekommen! Warum denn hast du ihn entlassen, sodass er ungehindert weggegangen ist?",
     "Bibelvers-hebräisch": "**וַיָּבֹא** יֹואָב אֶל־הַמֶּלֶךְ וַיֹּאמֶר מֶה עָשִׂיתָה הִנֵּה־בָא אַבְנֵר אֵלֶיךָ לָמָּה־זֶּה שִׁלַּחְתֹּו וַיֵּלֶךְ הָלֹֽוךְ׃"
   },
   {
@@ -280,9 +280,9 @@
     "Synonyme": "gesehen / sehen / anschauen / ansehen / betrachten / blicken / erblicken / fixieren / gucken / Schauen / Zusehen / Aufdecken / aufklären / ausmachen / entdecken / erkennen",
     "Transkription": "wajare",
     "Wurzel": "ראה",
-    "Bibelstelle": "Jeremia 23,18",
-    "Bibelvers_deutsch": "Denn wer hat im Rat des HERRN gestanden, dass er sein Wort **gesehen** und gehört hätte? Wer hat auf sein Wort gelauscht und gehört?",
-    "Bibelvers-hebräisch": "כִּי מִי עָמַד בְּסֹוד יְהוָה **וְיֵרֶא** וְיִשְׁמַע אֶת־דְּבָרֹו מִֽי־הִקְשִׁיב דְּבָרֹו וַיִּשְׁמָֽע׃"
+    "Bibelstelle": "1. Mose 1,4",
+    "Bibelvers_deutsch": "Und Gott **sah** das Licht, dass es gut war; und Gott schied das Licht von der Finsternis.",
+    "Bibelvers-hebräisch": "**וַיַּרְא** אֱלֹהִים אֶת־הָאֹור כִּי־טֹוב וַיַּבְדֵּל אֱלֹהִים בֵּין הָאֹור וּבֵין הַחֹֽשֶׁךְ׃"
   },
   {
     "Lektion": 5,
@@ -551,7 +551,7 @@
     "Transkription": "kol",
     "Wurzel": "קול",
     "Bibelstelle": "2. Mose 19,19",
-    "Bibelvers_deutsch": "Und der Hörnerschall wurde immer stärker. Mose redete, und Gott antwortete ihm mit einer ⟨lauten⟩ **Stimme**.",
+    "Bibelvers_deutsch": "Und der **Hörnerschall** wurde immer stärker. Mose redete, und Gott antwortete ihm mit einer ⟨lauten⟩ Stimme.",
     "Bibelvers-hebräisch": "וַיְהִי **קֹול** הַשֹּׁופָר הֹולֵךְ וְחָזֵק מְאֹד מֹשֶׁה יְדַבֵּר וְהָאֱלֹהִים יַעֲנֶנּוּ בְקֹֽול׃"
   },
   {
@@ -746,7 +746,7 @@
     "Transkription": "fakad",
     "Wurzel": "פקד",
     "Bibelstelle": "4. Mose 3,15",
-    "Bibelvers_deutsch": "Mustere die Söhne Levis nach ihren Vaterhäusern, nach ihren Sippen; alles Männliche von einem Monat an und darüber sollst du **mustern**!",
+    "Bibelvers_deutsch": "**Mustere** die Söhne Levis nach ihren Vaterhäusern, nach ihren Sippen; alles Männliche von einem Monat an und darüber sollst du mustern!",
     "Bibelvers-hebräisch": "**פְּקֹד** אֶת־בְּנֵי לֵוִי לְבֵית אֲבֹתָם לְמִשְׁפְּחֹתָם כָּל־זָכָר מִבֶּן־חֹדֶשׁ וָמַעְלָה תִּפְקְדֵֽם׃"
   },
   {
@@ -1137,7 +1137,7 @@
     "Wurzel": "בני / אדם",
     "Bibelstelle": "Hesekiel 33,24",
     "Bibelvers_deutsch": "**Menschensohn**, die Bewohner jener Trümmerstätten im Land Israel sagen: Abraham war ein Einzelner, und er nahm das Land in Besitz; wir aber sind viele, uns ist das Land ⟨erst recht⟩ zum Besitz gegeben!",
-    "Bibelvers-hebräisch": "בֶּן־אָדָם יֹשְׁבֵי הֶחֳרָבֹות הָאֵלֶּה עַל־**אַדְמַת** יִשְׂרָאֵל אֹמְרִים לֵאמֹר אֶחָד הָיָה אַבְרָהָם וַיִּירַשׁ אֶת־הָאָרֶץ וַאֲנַחְנוּ רַבִּים לָנוּ נִתְּנָה הָאָרֶץ לְמֹורָשָֽׁה׃"
+    "Bibelvers-hebräisch": "**בֶּן־אָדָם** יֹשְׁבֵי הֶחֳרָבֹות הָאֵלֶּה עַל־אַדְמַת יִשְׂרָאֵל אֹמְרִים לֵאמֹר אֶחָד הָיָה אַבְרָהָם וַיִּירַשׁ אֶת־הָאָרֶץ וַאֲנַחְנוּ רַבִּים לָנוּ נִתְּנָה הָאָרֶץ לְמֹורָשָֽׁה׃"
   },
   {
     "Lektion": 8,
@@ -1480,9 +1480,9 @@
     "Synonyme": "",
     "Transkription": "atenah",
     "Wurzel": "",
-    "Bibelstelle": "2. Mose 35,26",
-    "Bibelvers_deutsch": "Alle Frauen, die **ihr** Herz mit Weisheit dazu trieb, spannen das Ziegenhaar.",
-    "Bibelvers-hebräisch": "וְכָל־הַנָּשִׁים אֲשֶׁר נָשָׂא לִבָּן **אֹתָנָה** בְּחָכְמָה טָווּ אֶת־הָעִזִּֽים׃"
+    "Bibelstelle": "1. Mose 31,6",
+    "Bibelvers_deutsch": "**Ihr** selbst wisst ja, dass ich mit all meiner Kraft eurem Vater gedient habe.",
+    "Bibelvers-hebräisch": "וְ**אַתֵּנָה** יְדַעְתֶּן כִּי בְּכָל־כֹּחִי עָבַדְתִּי אֶת־אֲבִיכֶֽן׃"
   },
   {
     "Lektion": 7,
@@ -1495,9 +1495,9 @@
     "Synonyme": "",
     "Transkription": "henah",
     "Wurzel": "",
-    "Bibelstelle": "1. Mose 37,19",
-    "Bibelvers_deutsch": "Und **sie** sagten einer zum andern: Siehe, da kommt dieser Träumer!",
-    "Bibelvers-hebräisch": "וַיֹּאמְרוּ אִישׁ אֶל־אָחִיו **הִנֵּה** בַּעַל הַחֲלֹמֹות הַלָּזֶה בָּֽא׃"
+    "Bibelstelle": "1. Mose 33,6",
+    "Bibelvers_deutsch": "Da traten die Mägde heran, **sie** und ihre Kinder, und warfen sich nieder.",
+    "Bibelvers-hebräisch": "וַתִּגַּשְׁןָ הַשְּׁפָחֹות **הֵנָּה** וְיַלְדֵיהֶן וַתִּֽשְׁתַּחֲוֶֽיןָ׃"
   },
   {
     "Lektion": 7,
@@ -1616,7 +1616,7 @@
     "Transkription": "libi",
     "Wurzel": "לבב",
     "Bibelstelle": "Psalmen 16,9",
-    "Bibelvers_deutsch": "Darum freut sich **mein** Herz und jauchzt meine Seele. Auch mein Fleisch wird in Sicherheit ruhen.",
+    "Bibelvers_deutsch": "Darum freut sich **mein Herz** und jauchzt meine Seele. Auch mein Fleisch wird in Sicherheit ruhen.",
     "Bibelvers-hebräisch": "לָכֵן ׀ שָׂמַח **לִבִּי** וַיָּגֶל כְּבֹודִי אַף־בְּשָׂרִי יִשְׁכֹּן לָבֶֽטַח׃"
   },
   {
@@ -2277,7 +2277,7 @@
     "Wurzel": "רעה",
     "Bibelstelle": "Sprüche 21,10",
     "Bibelvers_deutsch": "Die Seele des Gottlosen giert nach Bösem, keine Gnade findet bei ihm sein **Nächster**.",
-    "Bibelvers-hebräisch": "נֶפֶשׁ רָשָׁע אִוְּתָה־**רָע** לֹא־יֻחַן בְּעֵינָיו רֵעֵֽהוּ׃"
+    "Bibelvers-hebräisch": "נֶפֶשׁ רָשָׁע אִוְּתָה־רָע לֹא־יֻחַן בְּעֵינָיו **רֵעֵֽהוּ**׃"
   },
   {
     "Lektion": 9,
@@ -3055,9 +3055,9 @@
     "Synonyme": "Menge / Anzahl / Quantität / Art / Gattung / Klasse / Betrag / Summe / Fülle / Überfluss / Gedränge / Menschenmenge / Gruppe / Haufen / Partie / Posten",
     "Transkription": "rov",
     "Wurzel": "רבב",
-    "Bibelstelle": "1. Mose 24,25",
-    "Bibelvers_deutsch": "Und sie sagte ⟨weiter⟩ zu ihm: Sowohl Stroh als auch Futter ist bei uns in **Menge**, auch Platz zum Übernachten.",
-    "Bibelvers-hebräisch": "וַתֹּאמֶר אֵלָיו גַּם־תֶּבֶן גַּם־מִסְפֹּוא **רַב** עִמָּנוּ גַּם־מָקֹום לָלֽוּן׃"
+    "Bibelstelle": "1. Könige 3,8",
+    "Bibelvers_deutsch": "Und dein Knecht ist inmitten deines Volkes, das du erwählt hast, eines großen Volkes, das wegen ⟨seiner⟩ **Menge** nicht gezählt noch berechnet werden kann.",
+    "Bibelvers-hebräisch": "וְעַבְדְּךָ בְּתֹוךְ עַמְּךָ אֲשֶׁר בָּחָרְתָּ עַם־רָב אֲשֶׁר לֹֽא־יִמָּנֶה וְלֹא יִסָּפֵר **מֵרֹֽב**׃"
   },
   {
     "Lektion": 10,
@@ -3685,9 +3685,9 @@
     "Synonyme": "gross / sein / Dasein / Existenz / Vorhandensein",
     "Transkription": "gadal",
     "Wurzel": "גדל",
-    "Bibelstelle": "Josua 4,14",
-    "Bibelvers_deutsch": "An jenem Tag machte der HERR den Josua **groß** in den Augen von ganz Israel. Und sie fürchteten ihn, wie sie Mose gefürchtet hatten, alle Tage seines Lebens.",
-    "Bibelvers-hebräisch": "בַּיֹּום הַהוּא **גִּדַּל** יְהוָה אֶת־יְהֹושֻׁעַ בְּעֵינֵי כָּל־יִשְׂרָאֵל וַיִּֽרְאוּ אֹתֹו כַּאֲשֶׁר יָרְאוּ אֶת־מֹשֶׁה כָּל־יְמֵי חַיָּֽיו׃"
+    "Bibelstelle": "1. Mose 21,20",
+    "Bibelvers_deutsch": "Gott aber war mit dem Jungen, und er wurde **groß** und wohnte in der Wüste; und er wurde ein Bogenschütze.",
+    "Bibelvers-hebräisch": "וַיְהִי אֱלֹהִים אֶת־הַנַּעַר **וַיִּגְדָּל** וַיֵּשֶׁב בַּמִּדְבָּר וַיְהִי רֹבֶה קַשָּֽׁת׃"
   },
   {
     "Lektion": 12,
@@ -5156,8 +5156,8 @@
     "Transkription": "ohäl/moed",
     "Wurzel": "אהל / יעד",
     "Bibelstelle": "2. Mose 30,26",
-    "Bibelvers_deutsch": "Und du sollst damit das **Zelt** der Begegnung und die Lade des Zeugnisses salben,",
-    "Bibelvers-hebräisch": "וּמָשַׁחְתָּ בֹו אֶת־אֹהֶל **מֹועֵד** וְאֵת אֲרֹון הָעֵדֻֽת׃"
+    "Bibelvers_deutsch": "Und du sollst damit das **Zelt der Begegnung** und die Lade des Zeugnisses salben,",
+    "Bibelvers-hebräisch": "וּמָשַׁחְתָּ בֹו אֶת־**אֹהֶל מֹועֵד** וְאֵת אֲרֹון הָעֵדֻֽת׃"
   },
   {
     "Lektion": 12,
@@ -5440,9 +5440,9 @@
     "Synonyme": "",
     "Transkription": "ito",
     "Wurzel": "",
-    "Bibelstelle": "3. Mose 19,33",
-    "Bibelvers_deutsch": "Und wenn ein Fremder **bei** dir – in eurem Land – als Fremder wohnt, sollt ihr ihn nicht unterdrücken.",
-    "Bibelvers-hebräisch": "וְכִֽי־יָגוּר אִתְּךָ גֵּר בְּאַרְצְכֶם לֹא תֹונוּ **אֹתֹֽו**׃"
+    "Bibelstelle": "1. Mose 7,7",
+    "Bibelvers_deutsch": "Und Noah und seine Söhne und seine Frau und die Frauen seiner Söhne gingen **mit ihm** vor dem Wasser der Flut in die Arche.",
+    "Bibelvers-hebräisch": "וַיָּבֹא נֹחַ וּבָנָיו וְאִשְׁתֹּו וּנְשֵֽׁי־בָנָיו **אִתֹּו** אֶל־הַתֵּבָה מִפְּנֵי מֵי הַמַּבּֽוּל׃"
   },
   {
     "Lektion": 7,
@@ -5546,8 +5546,8 @@
     "Transkription": "lefi/chäräv",
     "Wurzel": "פה / חרב",
     "Bibelstelle": "2. Mose 17,13",
-    "Bibelvers_deutsch": "Und Josua besiegte Amalek und sein ⟨Kriegs⟩volk mit der **Schärfe** des Schwertes.",
-    "Bibelvers-hebräisch": "וַיַּחֲלֹשׁ יְהֹושֻׁעַ אֶת־עֲמָלֵק וְאֶת־עַמֹּו **לְפִי**־חָֽרֶב׃"
+    "Bibelvers_deutsch": "Und Josua besiegte Amalek und sein ⟨Kriegs⟩volk **mit der Schärfe des Schwertes**.",
+    "Bibelvers-hebräisch": "וַיַּחֲלֹשׁ יְהֹושֻׁעַ אֶת־עֲמָלֵק וְאֶת־עַמֹּו **לְפִי־חָֽרֶב**׃"
   },
   {
     "Lektion": 4,
@@ -5560,9 +5560,9 @@
     "Synonyme": "Herr / Gebieter / Herrscher / Monarch / Regent / Souverän / Herr(n) / Hr. / Meister",
     "Transkription": "adon",
     "Wurzel": "אדן",
-    "Bibelstelle": "Psalmen 12,4",
-    "Bibelvers_deutsch": "Der **HERR** möge ausrotten alle glatten Lippen, die Zunge, die große Dinge redet,",
-    "Bibelvers-hebräisch": "אֲשֶׁר אָֽמְרוּ ׀ לִלְשֹׁנֵנוּ נַגְבִּיר שְׂפָתֵינוּ אִתָּנוּ מִי **אָדֹון** לָֽנוּ׃"
+    "Bibelstelle": "1. Mose 24,12",
+    "Bibelvers_deutsch": "Und er sagte: HERR, Gott meines **Herrn** Abraham, lass es mir doch heute begegnen, und erweise Gnade an meinem Herrn Abraham!",
+    "Bibelvers-hebräisch": "וַיֹּאמַר ׀ יְהוָה אֱלֹהֵי **אֲדֹנִי** אַבְרָהָם הַקְרֵה־נָא לְפָנַי הַיֹּום וַעֲשֵׂה־חֶסֶד עִם אֲדֹנִי אַבְרָהָֽם׃"
   },
   {
     "Lektion": 5,
@@ -5697,7 +5697,7 @@
     "Wurzel": "בוא / שׁמשׁ",
     "Bibelstelle": "5. Mose 11,30",
     "Bibelvers_deutsch": "Sind sie nicht jenseits des Jordan, hinter dem Weg gegen **Sonnenuntergang**, im Land der Kanaaniter, die in der Ebene wohnen, Gilgal gegenüber, bei den Terebinthen More?",
-    "Bibelvers-hebräisch": "הֲלֹא־הֵמָּה בְּעֵבֶר הַיַּרְדֵּן אַֽחֲרֵי דֶּרֶךְ **מְבֹוא** הַשֶּׁמֶשׁ בְּאֶרֶץ הַֽכְּנַעֲנִי הַיֹּשֵׁב בָּעֲרָבָה מוּל הַגִּלְגָּל אֵצֶל אֵלֹונֵי מֹרֶֽה׃"
+    "Bibelvers-hebräisch": "הֲלֹא־הֵמָּה בְּעֵבֶר הַיַּרְדֵּן אַֽחֲרֵי דֶּרֶךְ **מְבֹוא הַשֶּׁמֶשׁ** בְּאֶרֶץ הַֽכְּנַעֲנִי הַיֹּשֵׁב בָּעֲרָבָה מוּל הַגִּלְגָּל אֵצֶל אֵלֹונֵי מֹרֶֽה׃"
   },
   {
     "Lektion": 13,
@@ -5771,8 +5771,8 @@
     "Transkription": "mikol/schivetä/jiseräl",
     "Wurzel": "כלל / שׁבט / שׂרי / אל",
     "Bibelstelle": "Hesekiel 48,19",
-    "Bibelvers_deutsch": "Und die ⟨in⟩ der Stadt arbeiten, sollen es bearbeiten aus **allen** Stämmen Israels.",
-    "Bibelvers-hebräisch": "וְהָעֹבֵד הָעִיר יַעַבְדוּהוּ מִכֹּל שִׁבְטֵי **יִשְׂרָאֵֽל**׃"
+    "Bibelvers_deutsch": "Und die ⟨in⟩ der Stadt arbeiten, sollen es bearbeiten aus **allen Stämmen Israels**.",
+    "Bibelvers-hebräisch": "וְהָעֹבֵד הָעִיר יַעַבְדוּהוּ **מִכֹּל שִׁבְטֵי יִשְׂרָאֵֽל**׃"
   },
   {
     "Lektion": 9,
@@ -5785,9 +5785,9 @@
     "Synonyme": "zum / anderen",
     "Transkription": "isch/älachiw",
     "Wurzel": "אנשׁ / אחי",
-    "Bibelstelle": "3. Mose 7,10",
-    "Bibelvers_deutsch": "Und alles Speisopfer, das mit Öl gemengt oder trocken ist, soll allen Söhnen Aarons gehören, dem einen wie dem **anderen**.",
-    "Bibelvers-hebräisch": "וְכָל־מִנְחָה בְלוּלָֽה־בַשֶּׁמֶן וַחֲרֵבָה לְכָל־בְּנֵי אַהֲרֹן תִּהְיֶה **אִישׁ** כְּאָחִֽיו׃"
+    "Bibelstelle": "1. Mose 37,19",
+    "Bibelvers_deutsch": "Und sie sagten **einer zum andern**: Siehe, da kommt dieser Träumer!",
+    "Bibelvers-hebräisch": "וַיֹּאמְרוּ **אִישׁ אֶל־אָחִיו** הִנֵּה בַּעַל הַחֲלֹמֹות הַלָּזֶה בָּֽא׃"
   },
   {
     "Lektion": 8,
@@ -5817,7 +5817,7 @@
     "Wurzel": "בני / שׁנה",
     "Bibelstelle": "2. Mose 29,38",
     "Bibelvers_deutsch": "Und dies ist es, was du auf dem Altar darbringen sollst: täglich zwei **einjährige** Lämmer als regelmäßiges ⟨Brandopfer⟩.",
-    "Bibelvers-hebräisch": "וְזֶה אֲשֶׁר תַּעֲשֶׂה עַל־הַמִּזְבֵּחַ כְּבָשִׂים **בְּנֵֽי**־שָׁנָה שְׁנַיִם לַיֹּום תָּמִֽיד׃"
+    "Bibelvers-hebräisch": "וְזֶה אֲשֶׁר תַּעֲשֶׂה עַל־הַמִּזְבֵּחַ כְּבָשִׂים **בְּנֵֽי־שָׁנָה** שְׁנַיִם לַיֹּום תָּמִֽיד׃"
   },
   {
     "Lektion": 12,
@@ -5831,7 +5831,7 @@
     "Transkription": "chomah",
     "Wurzel": "חמי",
     "Bibelstelle": "Sprüche 25,28",
-    "Bibelvers_deutsch": "Eine aufgebrochene **Stadt** ohne Mauer, ⟨so ist⟩ ein Mann ohne Selbstbeherrschung.",
+    "Bibelvers_deutsch": "Eine aufgebrochene Stadt ohne **Mauer**, ⟨so ist⟩ ein Mann ohne Selbstbeherrschung.",
     "Bibelvers-hebräisch": "עִיר פְּרוּצָה אֵין **חֹומָה** אִישׁ אֲשֶׁר אֵין מַעְצָר לְרוּחֹֽו׃"
   },
   {
@@ -5921,8 +5921,8 @@
     "Transkription": "koh/amar/jehwah",
     "Wurzel": "אמר",
     "Bibelstelle": "2. Mose 4,22",
-    "Bibelvers_deutsch": "Und du sollst zum Pharao sagen: »So **spricht** der HERR: Mein erstgeborener Sohn ist Israel –",
-    "Bibelvers-hebräisch": "וְאָמַרְתָּ אֶל־פַּרְעֹה כֹּה אָמַר **יְהוָה** בְּנִי בְכֹרִי יִשְׂרָאֵֽל׃"
+    "Bibelvers_deutsch": "Und du sollst zum Pharao sagen: »**So spricht der HERR**: Mein erstgeborener Sohn ist Israel –",
+    "Bibelvers-hebräisch": "וְאָמַרְתָּ אֶל־פַּרְעֹה **כֹּה אָמַר יְהוָה** בְּנִי בְכֹרִי יִשְׂרָאֵֽל׃"
   },
   {
     "Lektion": 13,
@@ -5966,7 +5966,7 @@
     "Transkription": "parah",
     "Wurzel": "פרר",
     "Bibelstelle": "4. Mose 19,2",
-    "Bibelvers_deutsch": "Dies ist die Ordnung des Gesetzes, das der HERR geboten hat, indem er sprach: Rede zu den Söhnen Israel, dass sie dir eine rote **junge** Kuh bringen, ohne Fehler, an der kein Makel ist, auf die ⟨noch⟩ kein Joch gekommen ist;",
+    "Bibelvers_deutsch": "Dies ist die Ordnung des Gesetzes, das der HERR geboten hat, indem er sprach: Rede zu den Söhnen Israel, dass sie dir eine rote junge **Kuh** bringen, ohne Fehler, an der kein Makel ist, auf die ⟨noch⟩ kein Joch gekommen ist;",
     "Bibelvers-hebräisch": "זֹאת חֻקַּת הַתֹּורָה אֲשֶׁר־צִוָּה יְהוָה לֵאמֹר דַּבֵּר ׀ אֶל־בְּנֵי יִשְׂרָאֵל וְיִקְחוּ אֵלֶיךָ **פָרָה** אֲדֻמָּה תְּמִימָה אֲשֶׁר אֵֽין־בָּהּ מוּם אֲשֶׁר לֹא־עָלָה עָלֶיהָ עֹֽל׃"
   },
   {
@@ -6101,7 +6101,7 @@
     "Transkription": "haächad/haächad",
     "Wurzel": "אחד",
     "Bibelstelle": "2. Mose 26,26",
-    "Bibelvers_deutsch": "Und fertige Riegel aus Akazienholz an: fünf für die Bretter **der** einen Längsseite der Wohnung,",
+    "Bibelvers_deutsch": "Und fertige Riegel aus Akazienholz an: fünf für die Bretter der **einen** Längsseite der Wohnung,",
     "Bibelvers-hebräisch": "וְעָשִׂיתָ בְרִיחִם עֲצֵי שִׁטִּים חֲמִשָּׁה לְקַרְשֵׁי צֶֽלַע־הַמִּשְׁכָּן **הָאֶחָֽד**׃"
   },
   {
@@ -6192,7 +6192,7 @@
     "Wurzel": "טמא",
     "Bibelstelle": "Hesekiel 44,25",
     "Bibelvers_deutsch": "Und zu einem toten Menschen sollen sie nicht hineingehen, sich unrein zu machen; nur beim Vater und der Mutter und beim Sohn und der Tochter, beim Bruder und bei der Schwester, die keinem Mann gehört hat, dürfen sie sich **verunreinigen**.",
-    "Bibelvers-hebräisch": "וְאֶל־מֵת אָדָם לֹא יָבֹוא **לְטָמְאָה** כִּי אִם־לְאָב וּלְאֵם וּלְבֵן וּלְבַת לְאָח וּלְאָחֹות אֲשֶֽׁר־לֹא־הָיְתָה לְאִישׁ יִטַּמָּֽאוּ׃"
+    "Bibelvers-hebräisch": "וְאֶל־מֵת אָדָם לֹא יָבֹוא לְטָמְאָה כִּי אִם־לְאָב וּלְאֵם וּלְבֵן וּלְבַת לְאָח וּלְאָחֹות אֲשֶֽׁר־לֹא־הָיְתָה לְאִישׁ **יִטַּמָּֽאוּ**׃"
   },
   {
     "Lektion": 14,
@@ -6491,7 +6491,7 @@
     "Transkription": "natan/leischah",
     "Wurzel": "נתן / אנשׁ",
     "Bibelstelle": "1. Mose 29,28",
-    "Bibelvers_deutsch": "Und Jakob tat so und vollendete die ⟨Hochzeits⟩woche ⟨mit⟩ dieser. Dann **gab** er ihm seine Tochter Rahel zur Frau.",
+    "Bibelvers_deutsch": "Und Jakob tat so und vollendete die ⟨Hochzeits⟩woche ⟨mit⟩ dieser. Dann **gab** er ihm seine Tochter Rahel **zur Frau**.",
     "Bibelvers-hebräisch": "וַיַּעַשׂ יַעֲקֹב כֵּן וַיְמַלֵּא שְׁבֻעַ זֹאת **וַיִּתֶּן**־לֹו אֶת־רָחֵל בִּתֹּו לֹו **לְאִשָּֽׁה**׃"
   },
   {
@@ -6522,7 +6522,7 @@
     "Wurzel": "בני / שׂרי / אל",
     "Bibelstelle": "2. Mose 1,1",
     "Bibelvers_deutsch": "Und dies sind die Namen der **Söhne Israel**, die nach Ägypten kamen – mit Jakob kamen sie, jeder mit seinem Haus:",
-    "Bibelvers-hebräisch": "וְאֵלֶּה שְׁמֹות **בְּנֵי** יִשְׂרָאֵל הַבָּאִים מִצְרָיְמָה אֵת יַעֲקֹב אִישׁ וּבֵיתֹו בָּֽאוּ׃"
+    "Bibelvers-hebräisch": "וְאֵלֶּה שְׁמֹות **בְּנֵי יִשְׂרָאֵל** הַבָּאִים מִצְרָיְמָה אֵת יַעֲקֹב אִישׁ וּבֵיתֹו בָּֽאוּ׃"
   },
   {
     "Lektion": 6,
@@ -6536,8 +6536,8 @@
     "Transkription": "bänbakar",
     "Wurzel": "בני / בקר",
     "Bibelstelle": "4. Mose 15,8",
-    "Bibelvers_deutsch": "Und wenn du ein junges **Rind** als Brandopfer oder als Schlachtopfer opferst, um ein Gelübde zu erfüllen, oder als Heilsopfer für den HERRN,",
-    "Bibelvers-hebräisch": "וְכִֽי־תַעֲשֶׂה בֶן־**בָּקָר** עֹלָה אֹו־זָבַח לְפַלֵּא־נֶדֶר אֹֽו־שְׁלָמִים לַֽיהוָֽה׃"
+    "Bibelvers_deutsch": "Und wenn du ein **junges Rind** als Brandopfer oder als Schlachtopfer opferst, um ein Gelübde zu erfüllen, oder als Heilsopfer für den HERRN,",
+    "Bibelvers-hebräisch": "וְכִֽי־תַעֲשֶׂה **בֶן־בָּקָר** עֹלָה אֹו־זָבַח לְפַלֵּא־נֶדֶר אֹֽו־שְׁלָמִים לַֽיהוָֽה׃"
   },
   {
     "Lektion": 6,
@@ -6566,7 +6566,7 @@
     "Transkription": "ami",
     "Wurzel": "עמם",
     "Bibelstelle": "2. Mose 10,4",
-    "Bibelvers_deutsch": "Denn wenn du dich weigerst, **mein** Volk ziehen zu lassen, siehe, dann will ich morgen Heuschrecken in dein Gebiet bringen.",
+    "Bibelvers_deutsch": "Denn wenn du dich weigerst, **mein Volk** ziehen zu lassen, siehe, dann will ich morgen Heuschrecken in dein Gebiet bringen.",
     "Bibelvers-hebräisch": "כִּי אִם־מָאֵן אַתָּה לְשַׁלֵּחַ אֶת־**עַמִּי** הִנְנִי מֵבִיא מָחָר אַרְבֶּה בִּגְבֻלֶֽךָ׃"
   },
   {
@@ -6580,9 +6580,9 @@
     "Synonyme": "Da / erging / Wort / Herrn / ergehen / befinden",
     "Transkription": "wajehi/devar/jehwah",
     "Wurzel": "היה / דבר",
-    "Bibelstelle": "1. Samuel 4,1",
-    "Bibelvers_deutsch": "Und das Wort Samuels **erging** an ganz Israel. Und Israel zog aus, den Philistern entgegen zum Kampf: Und sie lagerten sich bei Eben-Eser, und die Philister lagerten zu Afek.",
-    "Bibelvers-hebräisch": "**וַיְהִי** דְבַר־שְׁמוּאֵל לְכָל־יִשְׂרָאֵל וַיֵּצֵא יִשְׂרָאֵל לִקְרַאת פְּלִשְׁתִּים לַמִּלְחָמָה וַֽיַּחֲנוּ עַל־הָאֶבֶן הָעֵזֶר וּפְלִשְׁתִּים חָנוּ בַאֲפֵֽק׃"
+    "Bibelstelle": "Jeremia 1,4",
+    "Bibelvers_deutsch": "Und das **Wort des HERRN** geschah zu mir so:",
+    "Bibelvers-hebräisch": "**וַיְהִי דְבַר־יְהוָה** אֵלַי לֵאמֹֽר׃"
   },
   {
     "Lektion": 6,
@@ -6685,9 +6685,9 @@
     "Synonyme": "zum / anderen",
     "Transkription": "isch/älreehu",
     "Wurzel": "אנשׁ / רעה",
-    "Bibelstelle": "3. Mose 7,10",
-    "Bibelvers_deutsch": "Und alles Speisopfer, das mit Öl gemengt oder trocken ist, soll allen Söhnen Aarons gehören, dem einen wie dem **anderen**.",
-    "Bibelvers-hebräisch": "וְכָל־מִנְחָה בְלוּלָֽה־בַשֶּׁמֶן וַחֲרֵבָה לְכָל־בְּנֵי אַהֲרֹן תִּהְיֶה **אִישׁ** כְּאָחִֽיו׃"
+    "Bibelstelle": "1. Mose 11,3",
+    "Bibelvers_deutsch": "Und sie sagten **einer zum anderen**: Auf, lasst uns Ziegel streichen und hart brennen! Und der Ziegel diente ihnen als Stein, und der Asphalt diente ihnen als Mörtel.",
+    "Bibelvers-hebräisch": "וַיֹּאמְרוּ **אִישׁ אֶל־רֵעֵהוּ** הָבָה נִלְבְּנָה לְבֵנִים וְנִשְׂרְפָה לִשְׂרֵפָה וַתְּהִי לָהֶם הַלְּבֵנָה לְאָבֶן וְהַחֵמָר הָיָה לָהֶם לַחֹֽמֶר׃"
   },
   {
     "Lektion": 9,
@@ -6761,7 +6761,7 @@
     "Transkription": "schem",
     "Wurzel": "שׁם",
     "Bibelstelle": "1. Mose 28,19",
-    "Bibelvers_deutsch": "Und er gab dieser Stätte den Namen Bethel. Im Anfang jedoch war Lus der **Name** der Stadt.",
+    "Bibelvers_deutsch": "Und er gab dieser Stätte den **Namen** Bethel. Im Anfang jedoch war Lus der Name der Stadt.",
     "Bibelvers-hebräisch": "וַיִּקְרָא אֶת־**שֵֽׁם**־הַמָּקֹום הַהוּא בֵּֽית־אֵל וְאוּלָם לוּז שֵׁם־הָעִיר לָרִאשֹׁנָֽה׃"
   },
   {
@@ -7165,9 +7165,9 @@
     "Synonyme": "",
     "Transkription": "el/al",
     "Wurzel": "",
-    "Bibelstelle": "1. Samuel 24,3",
-    "Bibelvers_deutsch": "Und Saul nahm dreitausend auserlesene Männer aus ganz Israel und zog hin, um David und seine Männer in **Richtung** auf die Steinbockfelsen zu suchen.",
-    "Bibelvers-hebräisch": "וַיָּבֹא **אֶל**־גִּדְרֹות הַצֹּאן עַל־הַדֶּרֶךְ וְשָׁם מְעָרָה וַיָּבֹא שָׁאוּל לְהָסֵךְ אֶת־רַגְלָיו וְדָוִד וַאֲנָשָׁיו בְּיַרְכְּתֵי הַמְּעָרָה יֹשְׁבִֽים׃"
+    "Bibelstelle": "1. Mose 4,9",
+    "Bibelvers_deutsch": "Und der HERR sprach **zu** Kain: Wo ist dein Bruder Abel? Und er sagte: Ich weiß nicht. Bin ich meines Bruders Hüter?",
+    "Bibelvers-hebräisch": "וַיֹּאמֶר יְהוָה **אֶל**־קַיִן אֵי הֶבֶל אָחִיךָ וַיֹּאמֶר לֹא יָדַעְתִּי הֲשֹׁמֵר אָחִי אָנֹֽכִי׃"
   },
   {
     "Lektion": 3,
@@ -7181,8 +7181,8 @@
     "Transkription": "kaljiseräl",
     "Wurzel": "כלל / שׂרי / אל",
     "Bibelstelle": "1. Könige 15,33",
-    "Bibelvers_deutsch": "Im dritten Jahr Asas, des Königs von Juda, wurde Bascha, der Sohn Ahijas, König über **ganz** Israel in Tirza ⟨und regierte⟩ 24 Jahre ⟨lang⟩.",
-    "Bibelvers-hebräisch": "בִּשְׁנַת שָׁלֹשׁ לְאָסָא מֶלֶךְ יְהוּדָה מָלַךְ בַּעְשָׁא בֶן־אֲחִיָּה עַל־כָּל־יִשְׂרָאֵל בְּתִרְצָה **עֶשְׂרִים** וְאַרְבַּע שָׁנָֽה׃"
+    "Bibelvers_deutsch": "Im dritten Jahr Asas, des Königs von Juda, wurde Bascha, der Sohn Ahijas, König über **ganz Israel** in Tirza ⟨und regierte⟩ 24 Jahre ⟨lang⟩.",
+    "Bibelvers-hebräisch": "בִּשְׁנַת שָׁלֹשׁ לְאָסָא מֶלֶךְ יְהוּדָה מָלַךְ בַּעְשָׁא בֶן־אֲחִיָּה עַל־**כָּל־יִשְׂרָאֵל** בְּתִרְצָה עֶשְׂרִים וְאַרְבַּע שָׁנָֽה׃"
   },
   {
     "Lektion": 3,
@@ -7466,7 +7466,7 @@
     "Transkription": "hächoli",
     "Wurzel": "חלה",
     "Bibelstelle": "2. Chronik 21,15",
-    "Bibelvers_deutsch": "Du aber wirst eine schwere **Krankheit** erleiden, eine Krankheit deiner Eingeweide, bis deine Eingeweide im Laufe der Zeit infolge der Krankheit heraustreten werden.",
+    "Bibelvers_deutsch": "Du aber wirst eine schwere Krankheit erleiden, eine Krankheit deiner Eingeweide, bis deine Eingeweide im Laufe der Zeit infolge der **Krankheit** heraustreten werden.",
     "Bibelvers-hebräisch": "וְאַתָּה בָּחֳלָיִים רַבִּים בְּמַחֲלֵה מֵעֶיךָ עַד־יֵצְאוּ מֵעֶיךָ מִן־**הַחֹלִי** יָמִים עַל־יָמִֽים׃"
   },
   {
@@ -7498,7 +7498,7 @@
     "Wurzel": "",
     "Bibelstelle": "1. Mose 3,11",
     "Bibelvers_deutsch": "Und er sprach: Wer hat dir erzählt, dass du nackt bist? **Hast** du etwa von dem Baum gegessen, von dem ich dir geboten habe, du solltest nicht davon essen?",
-    "Bibelvers-hebräisch": "וַיֹּאמֶר מִי הִגִּיד לְךָ כִּי עֵירֹם **אָתָּה** הֲמִן־הָעֵץ אֲשֶׁר צִוִּיתִיךָ לְבִלְתִּי אֲכָל־מִמֶּנּוּ אָכָֽלְתָּ׃",
+    "Bibelvers-hebräisch": "וַיֹּאמֶר מִי הִגִּיד לְךָ כִּי עֵירֹם אָתָּה **הֲ**מִן־הָעֵץ אֲשֶׁר צִוִּיתִיךָ לְבִלְתִּי אֲכָל־מִמֶּנּוּ אָכָֽלְתָּ׃",
     "Bibelhinweis": "Die hebräische Fragepartikel הֲ hat im Deutschen kein einzelnes Wort als Entsprechung; fett markiert ist die Fragekonstruktion."
   },
   {
@@ -7543,8 +7543,8 @@
     "Transkription": "lo/od",
     "Wurzel": "",
     "Bibelstelle": "2. Mose 10,29",
-    "Bibelvers_deutsch": "Darauf sagte Mose: Du hast recht geredet, ich werde dir **nicht** mehr unter die Augen treten.",
-    "Bibelvers-hebräisch": "וַיֹּאמֶר מֹשֶׁה כֵּן דִּבַּרְתָּ לֹא־אֹסִף **עֹוד** רְאֹות פָּנֶֽיךָ׃"
+    "Bibelvers_deutsch": "Darauf sagte Mose: Du hast recht geredet, ich werde dir **nicht mehr** unter die Augen treten.",
+    "Bibelvers-hebräisch": "וַיֹּאמֶר מֹשֶׁה כֵּן דִּבַּרְתָּ **לֹא**־אֹסִף **עֹוד** רְאֹות פָּנֶֽיךָ׃"
   },
   {
     "Lektion": 7,
@@ -7933,7 +7933,7 @@
     "Transkription": "faal/aschah",
     "Wurzel": "פעל / עשׂה",
     "Bibelstelle": "1. Mose 6,14",
-    "Bibelvers_deutsch": "Mache dir eine Arche aus Goferholz; mit Zellen sollst du die Arche **machen** und sie von innen und von außen mit Pech verpichen!",
+    "Bibelvers_deutsch": "**Mache** dir eine Arche aus Goferholz; mit Zellen sollst du die Arche machen und sie von innen und von außen mit Pech verpichen!",
     "Bibelvers-hebräisch": "**עֲשֵׂה** לְךָ תֵּבַת עֲצֵי־גֹפֶר קִנִּים תַּֽעֲשֶׂה אֶת־הַתֵּבָה וְכָֽפַרְתָּ אֹתָהּ מִבַּיִת וּמִחוּץ בַּכֹּֽפֶר׃"
   },
   {
@@ -8022,9 +8022,9 @@
     "Synonyme": "Gewalt / Beherrschung / Herrschaft / Macht / Stärke / Heftigkeit / Kraft / Wucht",
     "Transkription": "chamas",
     "Wurzel": "חמס",
-    "Bibelstelle": "Sprüche 8,36",
-    "Bibelvers_deutsch": "Wer mich aber verfehlt, tut sich selbst **Gewalt** an. Alle, die mich hassen, lieben den Tod.",
-    "Bibelvers-hebräisch": "וְֽחֹטְאִי **חֹמֵס** נַפְשֹׁו כָּל־מְשַׂנְאַי אָהֲבוּ מָֽוֶת׃"
+    "Bibelstelle": "1. Mose 6,11",
+    "Bibelvers_deutsch": "Die Erde aber war verdorben vor Gott, und die Erde war erfüllt mit **Gewalttat**.",
+    "Bibelvers-hebräisch": "וַתִּשָּׁחֵת הָאָרֶץ לִפְנֵי הָֽאֱלֹהִים וַתִּמָּלֵא הָאָרֶץ **חָמָֽס**׃"
   },
   {
     "Lektion": 10,
@@ -8038,8 +8038,8 @@
     "Transkription": "ohäl/moed",
     "Wurzel": "אהל / יעד",
     "Bibelstelle": "2. Mose 30,26",
-    "Bibelvers_deutsch": "Und du sollst damit das **Zelt** der Begegnung und die Lade des Zeugnisses salben,",
-    "Bibelvers-hebräisch": "וּמָשַׁחְתָּ בֹו אֶת־אֹהֶל **מֹועֵד** וְאֵת אֲרֹון הָעֵדֻֽת׃"
+    "Bibelvers_deutsch": "Und du sollst damit das **Zelt der Begegnung** und die Lade des Zeugnisses salben,",
+    "Bibelvers-hebräisch": "וּמָשַׁחְתָּ בֹו אֶת־**אֹהֶל מֹועֵד** וְאֵת אֲרֹון הָעֵדֻֽת׃"
   },
   {
     "Lektion": 10,
@@ -8367,9 +8367,9 @@
     "Synonyme": "Andenken / Gedächtnis / Gedenken / Erinnerungsvermögen",
     "Transkription": "sikaron",
     "Wurzel": "זכר",
-    "Bibelstelle": "Jeremia 4,16",
-    "Bibelvers_deutsch": "Ruft es den Nationen ins **Gedächtnis**, siehe, verkündet es Jerusalem: Belagerer kommen aus einem fernen Land und lassen ihre Stimme erschallen gegen die Städte Judas!",
-    "Bibelvers-hebräisch": "**הַזְכִּירוּ** לַגֹּויִם הִנֵּה הַשְׁמִיעוּ עַל־יְרוּשָׁלִַם נֹצְרִים בָּאִים מֵאֶרֶץ הַמֶּרְחָק וַֽיִּתְּנוּ עַל־עָרֵי יְהוּדָה קֹולָֽם׃"
+    "Bibelstelle": "2. Mose 12,14",
+    "Bibelvers_deutsch": "Und dieser Tag soll euch eine **Erinnerung** sein, und ihr sollt ihn feiern als Fest für den HERRN. Als ewige Ordnung für ⟨all⟩ eure Generationen sollt ihr ihn feiern.",
+    "Bibelvers-hebräisch": "וְהָיָה הַיֹּום הַזֶּה לָכֶם לְ**זִכָּרֹון** וְחַגֹּתֶם אֹתֹו חַג לַֽיהוָה לְדֹרֹתֵיכֶם חֻקַּת עֹולָם תְּחָגֻּֽהוּ׃"
   },
   {
     "Lektion": 11,
@@ -8758,7 +8758,7 @@
     "Transkription": "schama",
     "Wurzel": "שׁמע",
     "Bibelstelle": "Psalmen 26,7",
-    "Bibelvers_deutsch": "um laut ein Danklied **hören** zu lassen und alle deine Wundertaten zu erzählen.",
+    "Bibelvers_deutsch": "um laut ein Danklied **hören zu lassen** und alle deine Wundertaten zu erzählen.",
     "Bibelvers-hebräisch": "**לַשְׁמִעַ** בְּקֹול תֹּודָה וּלְסַפֵּר כָּל־נִפְלְאֹותֶֽיךָ׃"
   },
   {
@@ -9239,7 +9239,7 @@
     "Wurzel": "בית",
     "Bibelstelle": "2. Könige 23,7",
     "Bibelvers_deutsch": "Und er riss die **Häuser** der Tempelhurer nieder, die ⟨sich⟩ im Haus des HERRN ⟨befanden⟩, in denen die Frauen Gewänder für die Aschera webten.",
-    "Bibelvers-hebräisch": "וַיִּתֹּץ אֶת־בָּתֵּי הַקְּדֵשִׁים אֲשֶׁר בְּבֵית יְהוָה אֲשֶׁר הַנָּשִׁים אֹרְגֹות שָׁם **בָּתִּים** לָאֲשֵׁרָֽה׃"
+    "Bibelvers-hebräisch": "וַיִּתֹּץ אֶת־**בָּתֵּי** הַקְּדֵשִׁים אֲשֶׁר בְּבֵית יְהוָה אֲשֶׁר הַנָּשִׁים אֹרְגֹות שָׁם בָּתִּים לָאֲשֵׁרָֽה׃"
   },
   {
     "Lektion": 15,
@@ -9313,7 +9313,7 @@
     "Transkription": "chag/hapäsach",
     "Wurzel": "חגג / פסח",
     "Bibelstelle": "2. Chronik 35,17",
-    "Bibelvers_deutsch": "Und die Söhne Israel, die sich einfanden, feierten in jener Zeit das Passah und das **Fest** der ungesäuerten Brote sieben Tage lang.",
+    "Bibelvers_deutsch": "Und die Söhne Israel, die sich einfanden, feierten in jener Zeit das **Passah** und das Fest der ungesäuerten Brote sieben Tage lang.",
     "Bibelvers-hebräisch": "וַיַּעֲשׂוּ בְנֵֽי־יִשְׂרָאֵל הַֽנִּמְצְאִים אֶת־**הַפֶּסַח** בָּעֵת הַהִיא וְאֶת־חַג הַמַּצֹּות שִׁבְעַת יָמִֽים׃"
   },
   {
@@ -10722,9 +10722,9 @@
     "Synonyme": "Wort / Spruch / Rede / Ausdruck / Term / Satzpartikel / Satzteil / Aussage / Schlagwort / Slogan / Werbespruch / Sprichwort / Urteil / Urteilsspruch / Ansprache / Monolog",
     "Transkription": "emär/imerah",
     "Wurzel": "אמר",
-    "Bibelstelle": "Jesaja 30,12",
-    "Bibelvers_deutsch": "Darum, so spricht der Heilige Israels: Weil ihr dieses **Wort** verwerft und auf Unterdrückung und Arglist vertraut und euch darauf stützt,",
-    "Bibelvers-hebräisch": "לָכֵן כֹּה **אָמַר** קְדֹושׁ יִשְׂרָאֵל יַעַן מָֽאָסְכֶם בַּדָּבָר הַזֶּה וַֽתִּבְטְחוּ בְּעֹשֶׁק וְנָלֹוז וַתִּֽשָּׁעֲנוּ עָלָֽיו׃"
+    "Bibelstelle": "Psalmen 119,11",
+    "Bibelvers_deutsch": "In meinem Herzen habe ich dein **Wort** verwahrt, damit ich nicht gegen dich sündige.",
+    "Bibelvers-hebräisch": "בְּלִבִּי צָפַנְתִּי **אִמְרָתֶךָ** לְמַעַן לֹא אֶֽחֱטָא־לָֽךְ׃"
   },
   {
     "Lektion": 17,
@@ -11398,8 +11398,8 @@
     "Transkription": "jam/haaravah",
     "Wurzel": "ימם / ערב",
     "Bibelstelle": "5. Mose 4,49",
-    "Bibelvers_deutsch": "und die ganze Ebene jenseits des Jordan, nach Osten zu und bis an das **Meer** der Ebene unterhalb der Abhänge des Pisga.",
-    "Bibelvers-hebräisch": "וְכָל־**הָעֲרָבָה** עֵבֶר הַיַּרְדֵּן מִזְרָחָה וְעַד יָם הָעֲרָבָה תַּחַת אַשְׁדֹּת הַפִּסְגָּֽה׃"
+    "Bibelvers_deutsch": "und die ganze Ebene jenseits des Jordan, nach Osten zu und bis an das **Meer der Ebene** unterhalb der Abhänge des Pisga.",
+    "Bibelvers-hebräisch": "וְכָל־הָעֲרָבָה עֵבֶר הַיַּרְדֵּן מִזְרָחָה וְעַד **יָם הָעֲרָבָה** תַּחַת אַשְׁדֹּת הַפִּסְגָּֽה׃"
   },
   {
     "Lektion": 18,
@@ -12973,7 +12973,7 @@
     "Transkription": "juchal",
     "Wurzel": "יכל",
     "Bibelstelle": "Hiob 4,2",
-    "Bibelvers_deutsch": "Wenn man ein Wort an dich versucht, **wird** es dich ermüden? Aber Worte zurückhalten, wer könnte das?",
+    "Bibelvers_deutsch": "Wenn man ein Wort an dich versucht, wird es dich ermüden? Aber Worte zurückhalten, wer **könnte** das?",
     "Bibelvers-hebräisch": "הֲנִסָּה דָבָר אֵלֶיךָ תִּלְאֶה וַעְצֹר בְּמִלִּין מִי **יוּכָֽל**׃"
   },
   {
@@ -13183,7 +13183,7 @@
     "Transkription": "mischetäh",
     "Wurzel": "שׁתה",
     "Bibelstelle": "Jeremia 16,8",
-    "Bibelvers_deutsch": "Auch in ein Haus, ⟨in dem⟩ ein Gastmahl ⟨stattfindet⟩, sollst du nicht gehen, um bei ihnen zu sitzen, zu essen und zu **trinken**.",
+    "Bibelvers_deutsch": "Auch in ein Haus, ⟨in dem⟩ ein **Gastmahl** ⟨stattfindet⟩, sollst du nicht gehen, um bei ihnen zu sitzen, zu essen und zu trinken.",
     "Bibelvers-hebräisch": "וּבֵית־**מִשְׁתֶּה** לֹא־תָבֹוא לָשֶׁבֶת אֹותָם לֶאֱכֹל וְלִשְׁתֹּֽות׃"
   },
   {
@@ -13198,7 +13198,7 @@
     "Transkription": "schatah",
     "Wurzel": "שׁתה",
     "Bibelstelle": "1. Mose 24,18",
-    "Bibelvers_deutsch": "Und sie sagte: Trinke, mein Herr! Und eilends ließ sie ihren Krug auf ihre Hand herunter und gab ihm zu **trinken**.",
+    "Bibelvers_deutsch": "Und sie sagte: **Trinke**, mein Herr! Und eilends ließ sie ihren Krug auf ihre Hand herunter und gab ihm zu trinken.",
     "Bibelvers-hebräisch": "וַתֹּאמֶר **שְׁתֵה** אֲדֹנִי וַתְּמַהֵר וַתֹּרֶד כַּדָּהּ עַל־יָדָהּ וַתַּשְׁקֵֽהוּ׃"
   },
   {
@@ -13272,9 +13272,9 @@
     "Synonyme": "Prostituierte / Prostituierter",
     "Transkription": "sonah",
     "Wurzel": "זנה",
-    "Bibelstelle": "1. Könige 3,16",
-    "Bibelvers_deutsch": "Damals kamen zwei **Huren** zum König und traten vor ihn.",
-    "Bibelvers-hebräisch": "אָז תָּבֹאנָה שְׁתַּיִם נָשִׁים זֹנֹות אֶל־הַמֶּלֶךְ **וַֽתַּעֲמֹדְנָה** לְפָנָֽיו׃"
+    "Bibelstelle": "Josua 2,1",
+    "Bibelvers_deutsch": "Und Josua, der Sohn des Nun, sandte von Schittim heimlich zwei Männer als Kundschafter aus und sagte: Geht, seht ⟨euch⟩ das Land an und Jericho! Da gingen sie hin und kamen in das Haus einer **Hure**; ihr Name war Rahab. Und sie legten sich dort schlafen.",
+    "Bibelvers-hebräisch": "וַיִּשְׁלַח יְהֹושֻׁעַ־בִּן־נוּן מִֽן־הַשִּׁטִּים שְׁנַֽיִם־אֲנָשִׁים מְרַגְּלִים חֶרֶשׁ לֵאמֹר לְכוּ רְאוּ אֶת־הָאָרֶץ וְאֶת־יְרִיחֹו וַיֵּלְכוּ וַיָּבֹאוּ בֵּית־אִשָּׁה **זֹונָה** וּשְׁמָהּ רָחָב וַיִּשְׁכְּבוּ־שָֽׁמָּה׃"
   },
   {
     "Lektion": 22,
@@ -13378,9 +13378,9 @@
     "Synonyme": "schauen / anschauen / ansehen / betrachten / blicken / erblicken / fixieren / gucken / Sehen / Zusehen",
     "Transkription": "chasah",
     "Wurzel": "חזה",
-    "Bibelstelle": "Daniel 7,2",
-    "Bibelvers_deutsch": "Daniel fing an und sprach: Ich schaute in meiner **Vision** in der Nacht, und siehe, die vier Winde des Himmels wühlten das große Meer auf.",
-    "Bibelvers-hebräisch": "עָנֵה דָנִיֵּאל וְאָמַר **חָזֵה** הֲוֵית בְּחֶזְוִי עִם־לֵֽילְיָא וַאֲרוּ אַרְבַּע רוּחֵי שְׁמַיָּא מְגִיחָן לְיַמָּא רַבָּֽא׃"
+    "Bibelstelle": "Jesaja 1,1",
+    "Bibelvers_deutsch": "Die Vision, die Jesaja, der Sohn des Amoz, über Juda und Jerusalem **geschaut** hat in den Tagen von Usija, Jotam, Ahas, Hiskia, den Königen von Juda.",
+    "Bibelvers-hebräisch": "חֲזֹון יְשַֽׁעְיָהוּ בֶן־אָמֹוץ אֲשֶׁר **חָזָה** עַל־יְהוּדָה וִירוּשָׁלִָם בִּימֵי עֻזִּיָּהוּ יֹותָם אָחָז יְחִזְקִיָּהוּ מַלְכֵי יְהוּדָֽה׃"
   },
   {
     "Lektion": 22,
@@ -13769,7 +13769,7 @@
     "Transkription": "nus",
     "Wurzel": "נוס",
     "Bibelstelle": "Josua 20,3",
-    "Bibelvers_deutsch": "damit dorthin ein Totschläger fliehen ⟨kann⟩, der jemanden aus Versehen, unabsichtlich, erschlagen hat! Sie sollen euch als Zuflucht **vor** dem Bluträcher dienen.",
+    "Bibelvers_deutsch": "damit dorthin ein Totschläger **fliehen** ⟨kann⟩, der jemanden aus Versehen, unabsichtlich, erschlagen hat! Sie sollen euch als Zuflucht vor dem Bluträcher dienen.",
     "Bibelvers-hebräisch": "**לָנוּס** שָׁמָּה רֹוצֵחַ מַכֵּה־נֶפֶשׁ בִּשְׁגָגָה בִּבְלִי־דָעַת וְהָיוּ לָכֶם לְמִקְלָט מִגֹּאֵל הַדָּֽם׃"
   },
   {
@@ -13798,9 +13798,9 @@
     "Synonyme": "ruhen / ausruhen / bleiben / schlafen / schlummern / einfrieren / erlahmen / festfahren / Gleichbleiben / Stillstehen / Stocken / stagnieren",
     "Transkription": "nucha",
     "Wurzel": "נוח",
-    "Bibelstelle": "Rut 3,1",
-    "Bibelvers_deutsch": "Und Noomi, ihre Schwiegermutter, sagte zu ihr: Meine Tochter, sollte ich dir nicht einen **Ruheplatz** suchen, damit es dir gut geht?",
-    "Bibelvers-hebräisch": "וַתֹּאמֶר לָהּ נָעֳמִי חֲמֹותָהּ בִּתִּי הֲלֹא אֲבַקֶּשׁ־לָךְ **מָנֹוחַ** אֲשֶׁר יִֽיטַב־לָֽךְ׃"
+    "Bibelstelle": "2. Mose 20,11",
+    "Bibelvers_deutsch": "Denn in sechs Tagen hat der HERR den Himmel und die Erde gemacht, das Meer und alles, was in ihnen ist, und er **ruhte** am siebten Tag; darum segnete der HERR den Sabbattag und heiligte ihn.",
+    "Bibelvers-hebräisch": "כִּי שֵֽׁשֶׁת־יָמִים עָשָׂה יְהוָה אֶת־הַשָּׁמַיִם וְאֶת־הָאָרֶץ אֶת־הַיָּם וְאֶת־כָּל־אֲשֶׁר־בָּם **וַיָּנַח** בַּיֹּום הַשְּׁבִיעִי עַל־כֵּן בֵּרַךְ יְהוָה אֶת־יֹום הַשַּׁבָּת וַֽיְקַדְּשֵֽׁהוּ׃"
   },
   {
     "Lektion": 23,
@@ -13873,9 +13873,9 @@
     "Synonyme": "sterben / lassen / töten / erlauben / ermöglichen / gestatten / gewähren / lizenzieren / zulassen / Meucheln / Umbringen / Erschlagen / beseitigen / ermorden / liquidieren / neutralisieren",
     "Transkription": "mut",
     "Wurzel": "מות",
-    "Bibelstelle": "1. Chronik 17,11",
-    "Bibelvers_deutsch": "Und es wird geschehen, wenn deine Tage erfüllt sind, sodass du zu deinen Vätern hingehst, dann werde ich deinen Nachkommen nach dir aufstehen **lassen**, der von deinen Söhnen sein wird, und werde seine Königsherrschaft festigen.",
-    "Bibelvers-hebräisch": "וְהָיָה כִּֽי־מָלְאוּ יָמֶיךָ לָלֶכֶת עִם־אֲבֹתֶיךָ **וַהֲקִֽימֹותִי** אֶֽת־זַרְעֲךָ אַחֲרֶיךָ אֲשֶׁר יִהְיֶה מִבָּנֶיךָ וַהֲכִינֹותִי אֶת־מַלְכוּתֹֽו׃"
+    "Bibelstelle": "2. Könige 5,7",
+    "Bibelvers_deutsch": "Und es geschah, als der König von Israel den Brief gelesen hatte, da zerriss er seine Kleider und sagte: Bin ich Gott, ⟨der die Macht hat,⟩ zu **töten** und lebendig zu machen, dass dieser zu mir sendet, einen Menschen von seinem Aussatz zu befreien? Ja, wahrlich, erkennt doch und seht, dass er einen Anlass ⟨zum Streit mit⟩ mir sucht!",
+    "Bibelvers-hebräisch": "וַיְהִי כִּקְרֹא מֶֽלֶךְ־יִשְׂרָאֵל אֶת־הַסֵּפֶר וַיִּקְרַע בְּגָדָיו וַיֹּאמֶר הַאֱלֹהִים אָנִי **לְהָמִית** וּֽלְהַחֲיֹות כִּֽי־זֶה שֹׁלֵחַ אֵלַי לֶאֱסֹף אִישׁ מִצָּֽרַעְתֹּו כִּי אַךְ־דְּעֽוּ־נָא וּרְאוּ כִּֽי־מִתְאַנֶּה הוּא לִֽי׃"
   },
   {
     "Lektion": 23,
@@ -14023,9 +14023,9 @@
     "Synonyme": "streiten / rechten / argumentieren / bereden / besprechen / debattieren / diskutieren / durchsprechen / Erörtern / Konferieren / Ausfechten / hadern",
     "Transkription": "riv",
     "Wurzel": "ריב",
-    "Bibelstelle": "Hiob 33,19",
-    "Bibelvers_deutsch": "Auch wird er gezüchtigt durch Schmerzen auf seinem Lager, und ununterbrochen ⟨währt⟩ der **Streit** in seinen Gebeinen.",
-    "Bibelvers-hebräisch": "וְהוּכַח בְּמַכְאֹוב עַל־מִשְׁכָּבֹו וְ **רֹוב** עֲצָמָיו אֵתָֽן׃"
+    "Bibelstelle": "1. Mose 26,20",
+    "Bibelvers_deutsch": "Da **stritten** sich die Hirten von Gerar mit den Hirten Isaaks und sagten: Uns gehört das Wasser! Da gab er dem Brunnen den Namen Esek, weil sie mit ihm gezankt hatten.",
+    "Bibelvers-hebräisch": "**וַיָּרִיבוּ** רֹעֵי גְרָר עִם־רֹעֵי יִצְחָק לֵאמֹר לָנוּ הַמָּיִם וַיִּקְרָא שֵֽׁם־הַבְּאֵר עֵשֶׂק כִּי הִֽתְעַשְּׂקוּ עִמֹּֽו׃"
   },
   {
     "Lektion": 23,
@@ -14144,9 +14144,9 @@
     "Synonyme": "zusammenschnüren / eng / sein / verknüpfen / zusammenbinden / Dasein / Existenz / Vorhandensein / dicht / massiv / innig / intim / fest",
     "Transkription": "zarar",
     "Wurzel": "צרר",
-    "Bibelstelle": "Psalmen 74,23",
-    "Bibelvers_deutsch": "Vergiss nicht die Stimme deiner Widersacher, das ständig aufsteigende Getöse derer, die sich gegen **dich** erheben.",
-    "Bibelvers-hebräisch": "אַל־תִּשְׁכַּח קֹול **צֹרְרֶיךָ** שְׁאֹון קָמֶיךָ עֹלֶה תָמִֽיד׃"
+    "Bibelstelle": "5. Mose 14,25",
+    "Bibelvers_deutsch": "dann sollst du es für Geld geben. Und dann **binde** das Geld in deine Hand **zusammen** und geh an die Stätte, die der HERR, dein Gott, erwählen wird!",
+    "Bibelvers-hebräisch": "וְנָתַתָּה בַּכָּסֶף **וְצַרְתָּ** הַכֶּסֶף בְּיָדְךָ וְהָֽלַכְתָּ אֶל־הַמָּקֹום אֲשֶׁר יִבְחַר יְהוָה אֱלֹהֶיךָ בֹּֽו׃"
   },
   {
     "Lektion": 24,
