@@ -1401,7 +1401,9 @@ mark {
 }
 
 .example-overlay[hidden],
-.example-bible-link[hidden] {
+.example-bible-link[hidden],
+.example-verse[hidden],
+.example-verse-hebrew[hidden] {
   display: none;
 }
 
@@ -1480,6 +1482,57 @@ mark {
 
 .example-verse-hebrew strong {
   font-weight: 700;
+}
+
+/* Indexed verse navigation: physical left/back and right/next. */
+.example-navigation {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0 12px;
+  direction: ltr;
+}
+
+.example-nav-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #f3f7fd;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.example-nav-btn svg {
+  width: 23px;
+  height: 23px;
+}
+
+.example-nav-btn:hover:not(:disabled),
+.example-nav-btn:focus-visible {
+  border-color: #94b5f6;
+  background: #e8f0ff;
+}
+
+.example-nav-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.example-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.example-position {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
 }
 
 .example-actions {

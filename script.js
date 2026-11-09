@@ -54,6 +54,9 @@ const els = {
   exampleDialogTitle: document.getElementById('exampleDialogTitle'),
   exampleVerse: document.getElementById('exampleVerse'),
   exampleHebrewVerse: document.getElementById('exampleHebrewVerse'),
+  examplePreviousButton: document.getElementById('examplePreviousButton'),
+  exampleNextButton: document.getElementById('exampleNextButton'),
+  examplePosition: document.getElementById('examplePosition'),
   exampleBibleLink: document.getElementById('exampleBibleLink'),
   infoButton: document.getElementById('infoButton'),
   infoOverlay: document.getElementById('infoOverlay'),
@@ -598,6 +601,8 @@ const BIDI_PDI = '\u2069';
 const ANKI_COPY_STORAGE_KEY = 'hebralex.copyWithAnkiFormatting';
 let copyToastTimeoutId = null;
 let exampleDialogReturnFocus = null;
+let activeExampleVerses = [];
+let activeExampleIndex = 0;
 
 function normalizeCopyPart(value) {
   return String(value ?? '')
@@ -862,12 +867,32 @@ function formatExampleVerse(value) {
   return escapeHtml(value).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
 }
 
-function getGermanExampleVerse(entry) {
-  return String(entry?.Bibelvers_deutsch || entry?.Bibelvers || '').trim();
+// Retain the original positions: an empty element in one list must never
+// shift the Bible reference or verse at the same index in another list.
+// Older vocabulary with single strings is treated as a one-element list.
+function asExampleList(value) {
+  return (Array.isArray(value) ? value : [value])
+    .map((part) => String(part ?? '').trim());
 }
 
-function getHebrewExampleVerse(entry) {
-  return String(entry?.['Bibelvers-hebräisch'] || '').trim();
+function getExampleVerses(entry) {
+  const references = asExampleList(entry?.Bibelstelle);
+  const german = asExampleList(entry?.Bibelvers_deutsch ?? entry?.Bibelvers);
+  const hebrew = asExampleList(entry?.['Bibelvers-hebräisch']);
+  const length = Math.max(references.length, german.length, hebrew.length);
+  const verses = [];
+
+  for (let index = 0; index < length; index += 1) {
+    const reference = references[index] || '';
+    const germanVerse = german[index] || '';
+    const hebrewVerse = hebrew[index] || '';
+    // Keep index alignment, including records with only a reference.
+    if (reference || germanVerse || hebrewVerse) {
+      verses.push({ reference, germanVerse, hebrewVerse });
+    }
+  }
+
+  return verses;
 }
 
 // CSV-Bibel uses distinct book slugs for a few names in our vocabulary.
@@ -906,7 +931,35 @@ function getExampleEntry(trigger) {
   const index = Number(trigger?.dataset.exampleIndex);
   if (!Number.isInteger(index) || index < 0 || index >= state.entries.length) return null;
   const entry = state.entries[index];
-  return getGermanExampleVerse(entry) || getHebrewExampleVerse(entry) ? entry : null;
+  return getExampleVerses(entry).length ? entry : null;
+}
+
+function renderExampleVerse() {
+  const verse = activeExampleVerses[activeExampleIndex];
+  if (!verse) return;
+
+  els.exampleDialogTitle.textContent = verse.reference || 'Ohne Bibelstellenangabe';
+  els.exampleVerse.innerHTML = formatExampleVerse(verse.germanVerse);
+  els.exampleVerse.hidden = !verse.germanVerse;
+  els.exampleHebrewVerse.innerHTML = formatExampleVerse(verse.hebrewVerse);
+  els.exampleHebrewVerse.hidden = !verse.hebrewVerse;
+
+  const bibleUrl = getCsvBibleUrl(verse.reference);
+  els.exampleBibleLink.hidden = !bibleUrl;
+  if (bibleUrl) els.exampleBibleLink.href = bibleUrl;
+  else els.exampleBibleLink.removeAttribute('href');
+
+  els.examplePosition.textContent = `${activeExampleIndex + 1} von ${activeExampleVerses.length}`;
+  els.examplePreviousButton.disabled = activeExampleIndex === 0;
+  els.exampleNextButton.disabled = activeExampleIndex === activeExampleVerses.length - 1;
+}
+
+function changeExampleVerse(direction) {
+  if (els.exampleOverlay.hidden || !activeExampleVerses.length) return;
+  const nextIndex = activeExampleIndex + direction;
+  if (nextIndex < 0 || nextIndex >= activeExampleVerses.length) return;
+  activeExampleIndex = nextIndex;
+  renderExampleVerse();
 }
 
 function openExampleOverlay(trigger) {
@@ -915,18 +968,9 @@ function openExampleOverlay(trigger) {
 
   closeDropdown();
   exampleDialogReturnFocus = trigger;
-  els.exampleDialogTitle.textContent = String(entry.Bibelstelle ?? '').trim() || 'Ohne Bibelstellenangabe';
-  const germanVerse = getGermanExampleVerse(entry);
-  const hebrewVerse = getHebrewExampleVerse(entry);
-  els.exampleVerse.innerHTML = formatExampleVerse(germanVerse);
-  els.exampleVerse.hidden = !germanVerse;
-  els.exampleHebrewVerse.innerHTML = formatExampleVerse(hebrewVerse);
-  els.exampleHebrewVerse.hidden = !hebrewVerse;
-
-  const bibleUrl = getCsvBibleUrl(entry.Bibelstelle);
-  els.exampleBibleLink.hidden = !bibleUrl;
-  if (bibleUrl) els.exampleBibleLink.href = bibleUrl;
-
+  activeExampleVerses = getExampleVerses(entry);
+  activeExampleIndex = 0;
+  renderExampleVerse();
   els.exampleOverlay.hidden = false;
   els.exampleCloseButton.focus({ preventScroll: true });
 }
@@ -934,6 +978,8 @@ function openExampleOverlay(trigger) {
 function closeExampleOverlay({ restoreFocus = false } = {}) {
   if (els.exampleOverlay.hidden) return;
   els.exampleOverlay.hidden = true;
+  activeExampleVerses = [];
+  activeExampleIndex = 0;
   if (restoreFocus && exampleDialogReturnFocus?.isConnected) {
     exampleDialogReturnFocus.focus({ preventScroll: true });
   }
@@ -975,7 +1021,7 @@ function renderResults(items, message = '') {
   const rows = items.map(({ entry }) => {
     const copyText = createEntryCopyText(entry);
     const copyLabel = `${normalizeCopyPart(entry?.[HEBREW_FIELD]) || '—'} - ${normalizeCopyPart(entry?.Deutsch) || '—'}`;
-    const hasExample = Boolean(getGermanExampleVerse(entry) || getHebrewExampleVerse(entry));
+    const hasExample = getExampleVerses(entry).length > 0;
 
     return `
       <div class="row" role="button" tabindex="0" data-copy-text="${escapeHtml(copyText)}" aria-label="Eintrag kopieren: ${escapeHtml(copyLabel)}">
@@ -1140,6 +1186,9 @@ els.exampleCloseButton.addEventListener('click', () => {
   closeExampleOverlay({ restoreFocus: true });
 });
 
+els.examplePreviousButton.addEventListener('click', () => changeExampleVerse(-1));
+els.exampleNextButton.addEventListener('click', () => changeExampleVerse(1));
+
 els.exampleOverlay.addEventListener('click', (event) => {
   if (event.target === els.exampleOverlay) closeExampleOverlay({ restoreFocus: true });
 });
@@ -1278,9 +1327,17 @@ document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       event.preventDefault();
       closeExampleOverlay({ restoreFocus: true });
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      changeExampleVerse(event.key === 'ArrowLeft' ? -1 : 1);
     } else if (event.key === 'Tab') {
       // Keep keyboard navigation inside the active modal.
-      const focusables = [els.exampleCloseButton, els.exampleBibleLink].filter((node) => !node.hidden);
+      const focusables = [
+        els.exampleCloseButton,
+        els.examplePreviousButton,
+        els.exampleNextButton,
+        els.exampleBibleLink,
+      ].filter((node) => !node.hidden && !node.disabled);
       const activeIndex = focusables.indexOf(document.activeElement);
       if (event.shiftKey && activeIndex <= 0) {
         event.preventDefault();

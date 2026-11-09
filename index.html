@@ -195,8 +195,9 @@
               <section class="info-card">
                 <h3>Beispielsätze</h3>
                 <ul class="info-list">
-                  <li>Das Buchsymbol rechts neben jedem Eintrag öffnet beim Anklicken den zugehörigen Beispielsatz.</li>
-                  <li>Im Dialog steht der hebräische Vers unter dem deutschen. Über das Symbol rechts unten lässt sich die Bibelstelle auf CSV-Bibel in der Elberfelder Übersetzung (Edition CSV) öffnen.</li>
+                  <li>Das Buchsymbol rechts neben jedem Eintrag öffnet die zugehörigen Bibelverse.</li>
+                  <li>Bei mehreren Bibelstellen blätterst du mit den Pfeilen links/rechts oder den Pfeiltasten durch die Verse. Bibelstelle, deutscher Vers und hebräischer Vers gehören jeweils über ihre Position in den Datenlisten zusammen.</li>
+                  <li>Im Dialog steht der hebräische Vers unter dem deutschen. Über das Symbol rechts unten lässt sich die aktuell angezeigte Bibelstelle auf CSV-Bibel in der Elberfelder Übersetzung (Edition CSV) öffnen.</li>
                   <li>Die im Vokabular markierten Wörter sind in beiden Sprachen fett dargestellt.</li>
                 </ul>
               </section>
@@ -303,6 +304,19 @@
       <h2 class="example-dialog-title" id="exampleDialogTitle">Bibelstelle</h2>
       <p class="example-verse" id="exampleVerse" lang="de" dir="ltr"></p>
       <p class="example-verse-hebrew" id="exampleHebrewVerse" lang="he" dir="rtl" hidden></p>
+      <nav class="example-navigation" aria-label="Zwischen Bibelstellen blättern">
+        <button class="example-nav-btn" id="examplePreviousButton" type="button" aria-label="Vorherige Bibelstelle" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
+        </button>
+        <span class="example-position" id="examplePosition" aria-live="polite" aria-atomic="true"></span>
+        <button class="example-nav-btn" id="exampleNextButton" type="button" aria-label="Nächste Bibelstelle" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </button>
+      </nav>
       <div class="example-actions">
         <a class="example-bible-link" id="exampleBibleLink" href="https://www.csv-bibel.de/bibel/josua-3,5" target="_blank" rel="noopener noreferrer" aria-label="Bibelstelle auf CSV-Bibel öffnen (Elberfelder Übersetzung)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
