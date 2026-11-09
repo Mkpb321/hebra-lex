@@ -1484,21 +1484,21 @@ mark {
   font-weight: 700;
 }
 
-/* Indexed verse navigation: physical left/back and right/next. */
+/* Indexed verse navigation stays directly to the left of the Bible link. */
 .example-navigation {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-columns: 42px auto 42px;
   align-items: center;
-  gap: 10px;
-  margin: 20px 0 12px;
+  gap: 8px;
+  margin: 0;
   direction: ltr;
 }
 
 .example-nav-btn {
   display: inline-grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   padding: 0;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
@@ -1533,11 +1533,15 @@ mark {
   font-size: 13px;
   font-weight: 600;
   text-align: center;
+  white-space: nowrap;
 }
 
 .example-actions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .example-bible-link {
